@@ -1,12 +1,16 @@
 :root[data-theme='light'] {
   --background-primary: #ffffff;
   --background-secondary: #f5f5f5;
-  --text-primary: #333333;
-  --text-secondary: #666666;
+  --text-primary: #000000;
+  --text-secondary: #6a6a6a;
   --accent-color: #1db954;
   --border-color: #e0e0e0;
   --card-background: #ffffff;
   --hover-background: #f0f0f0;
+  --sidebar-background: #f9f9f9;
+  --topbar-background: rgba(255, 255, 255, 0.9);
+  --card-hover: #f7f7f7;
+  --play-button-color: #1db954;
 }
 
 :root[data-theme='dark'] {
@@ -16,8 +20,12 @@
   --text-secondary: #b3b3b3;
   --accent-color: #1db954;
   --border-color: #282828;
-  --card-background: #282828;
-  --hover-background: #2a2a2a;
+  --card-background: #181818;
+  --hover-background: #282828;
+  --sidebar-background: #000000;
+  --topbar-background: rgba(0, 0, 0, 0.7);
+  --card-hover: #282828;
+  --play-button-color: #1db954;
 }
 
 /* Transitions pour un changement de thème fluide */
@@ -35,14 +43,29 @@ body {
 /* Styles de base pour les composants communs */
 .card {
   background-color: var(--card-background);
-  border: 1px solid var(--border-color);
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.card:hover {
+  background-color: var(--card-hover);
 }
 
 button {
   background-color: var(--accent-color);
   color: white;
+  border: none;
+  border-radius: 500px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 8px 32px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  background-color: var(--hover-background);
+  transform: scale(1.04);
+  background-color: var(--accent-color);
 }

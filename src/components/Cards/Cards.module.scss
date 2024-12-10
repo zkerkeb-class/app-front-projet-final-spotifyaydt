@@ -2,18 +2,18 @@
   background-color: var(--card-background);
   border-radius: 8px;
   overflow: hidden;
-  width: 200px;
+  width: 180px;
   flex-shrink: 0;
-  transition:
-    transform 0.2s ease,
-    background-color 0.3s ease;
+  padding: 16px;
+  transition: background-color 0.3s ease;
+  position: relative;
 
   &:hover {
-    transform: translateY(-5px);
+    background-color: var(--card-hover);
 
     .playButton {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
+      transform: translate(50%, -50%) scale(1);
     }
   }
 
@@ -26,6 +26,9 @@
   position: relative;
   width: 100%;
   padding-top: 100%;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -40,41 +43,44 @@
 
 .artistImage {
   border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .playButton {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
-  background-color: var(--accent-color);
+  bottom: 8px;
+  right: 8px;
+  transform: translate(50%, -50%) scale(0.8);
+  background-color: var(--play-button-color);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   opacity: 0;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 2;
 
   &:hover {
-    transform: translate(-50%, -50%) scale(1.1);
-    background-color: lighten($color: #1db954, $amount: 5%);
+    transform: translate(50%, -50%) scale(1.1);
+    background-color: var(--accent-color);
   }
 }
 
 .content {
-  padding: 1rem;
+  padding: 0;
 }
 
 .title {
   color: var(--text-primary);
   font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
+  font-weight: 700;
+  margin: 0 0 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -85,6 +91,7 @@
 .year {
   color: var(--text-secondary);
   font-size: 0.875rem;
+  font-weight: 400;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -95,6 +102,28 @@
   text-align: center;
 
   .imageContainer {
-    margin-bottom: 0.5rem;
+    margin-bottom: 16px;
   }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .followers {
+    font-size: 0.875rem;
+  }
+}
+
+// Ajout des styles pour les badges et étiquettes
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: var(--accent-color);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  z-index: 1;
 }
