@@ -1,5 +1,6 @@
 .app-container {
   display: flex;
+  flex-direction: column;
   height: 100vh;
   background-color: var(--background-primary);
 }
@@ -47,9 +48,8 @@
 }
 
 .main-content {
-  flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   overflow: hidden;
 }
 
@@ -58,8 +58,9 @@
   background-color: var(--topbar-background);
   backdrop-filter: blur(10px);
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 0 32px;
+  padding: 18px 32px;
   gap: 16px;
   position: sticky;
   top: 0;
