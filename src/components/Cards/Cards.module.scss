@@ -1,0 +1,100 @@
+.card {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 200px;
+  flex-shrink: 0;
+  transition:
+    transform 0.2s ease,
+    background-color 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+
+    .playButton {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 150px;
+  }
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  overflow: hidden;
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artistImage {
+  border-radius: 50%;
+}
+
+.playButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    background-color: lighten($color: #1db954, $amount: 5%);
+  }
+}
+
+.content {
+  padding: 1rem;
+}
+
+.title {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist,
+.followers,
+.year {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artistCard {
+  text-align: center;
+
+  .imageContainer {
+    margin-bottom: 0.5rem;
+  }
+}

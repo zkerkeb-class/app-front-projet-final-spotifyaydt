@@ -1,0 +1,48 @@
+:root[data-theme='light'] {
+  --background-primary: #ffffff;
+  --background-secondary: #f5f5f5;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --accent-color: #1db954;
+  --border-color: #e0e0e0;
+  --card-background: #ffffff;
+  --hover-background: #f0f0f0;
+}
+
+:root[data-theme='dark'] {
+  --background-primary: #121212;
+  --background-secondary: #181818;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --accent-color: #1db954;
+  --border-color: #282828;
+  --card-background: #282828;
+  --hover-background: #2a2a2a;
+}
+
+/* Transitions pour un changement de thème fluide */
+* {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+body {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+}
+
+/* Styles de base pour les composants communs */
+.card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+}
+
+button {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+button:hover {
+  background-color: var(--hover-background);
+}
