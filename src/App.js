@@ -4,27 +4,7 @@ import './styles/theme.css';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import Home from './pages/Home/Home';
 import Navbar from './components/Navbar/Navbar';
-
-// Composant pour la barre latérale
-const Sidebar = () => {
-  return (
-    <div className="sidebar">
-      <nav>
-        <ul>
-          <li className="active">
-            <span>🏠</span> Accueil
-          </li>
-          <li>
-            <span>🔍</span> Rechercher
-          </li>
-          <li>
-            <span>📚</span> Bibliothèque
-          </li>
-        </ul>
-      </nav>
-    </div>
-  );
-};
+import Sidebar from './components/SideBar/SideBar';
 
 // Composant principal de l'application
 const AppContent = () => {

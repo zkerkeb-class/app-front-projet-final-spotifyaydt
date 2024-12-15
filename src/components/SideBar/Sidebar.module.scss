@@ -1,0 +1,45 @@
+@use '../../styles/theme.scss' as *;
+
+.sidebar {
+  width: 420px;
+  background-color: var(--sidebar-background);
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .logo {
+    padding: 0 12px;
+
+    h1 {
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      margin: 0;
+    }
+  }
+
+  nav {
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      padding: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+
+      &:hover,
+      &.active {
+        color: var(--text-primary);
+        background-color: var(--hover-background);
+      }
+    }
+  }
+}
