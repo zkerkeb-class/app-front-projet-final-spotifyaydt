@@ -1,10 +1,11 @@
 import React from 'react';
 import './App.css';
-import './styles/theme.css';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import './styles/theme.scss';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Home from './pages/Home/Home';
 import Navbar from './components/Navbar/Navbar';
-import Sidebar from './components/SideBar/SideBar';
+import SidebarLeft from './components/SideBarLeft/SideBar';
+import SideBarRight from './components/SideBarRight/SideBar';
 
 // Composant principal de l'application
 const AppContent = () => {
@@ -12,10 +13,11 @@ const AppContent = () => {
     <div className="app-container">
       <Navbar />
       <div className="main-content">
-        <Sidebar />
+        <SidebarLeft />
         <div className="content-wrapper">
           <Home />
         </div>
+        <SideBarRight />
       </div>
     </div>
   );

@@ -15,15 +15,15 @@
 }
 
 [data-theme='dark'] {
-  --background-primary: #121212;
-  --background-secondary: #1f1f1f;
+  --background-primary: #000000;
+  --background-secondary: #121212;
   --text-primary: #ffffff;
   --text-secondary: #b3b3b3;
   --accent-color: #1db954;
   --border-color: #282828;
   --card-background: #181818;
   --hover-background: #282828;
-  --sidebar-background: #000000;
+  --sidebar-background: #121212;
   --topbar-background: rgba(0, 0, 0, 0.7);
   --card-hover: #282828;
   --play-button-color: #1db954;
@@ -40,6 +40,7 @@
 body {
   background-color: var(--background-primary);
   color: var(--text-primary);
+  box-sizing: border-box;
 }
 
 // Styles pour les composants communs
@@ -56,18 +57,5 @@ body {
 }
 
 button {
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 500px;
-  font-weight: 700;
-  font-size: 0.875rem;
-  padding: 8px 32px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: scale(1.04);
-    background-color: var(--accent-color);
-  }
+  all: unset;
 }

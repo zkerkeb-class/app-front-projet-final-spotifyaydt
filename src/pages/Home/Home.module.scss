@@ -1,8 +1,7 @@
 .home {
   min-height: 100vh;
-  background-color: var(--background-primary);
+  background-color: var(--background-secondary);
   color: var(--text-primary);
-  padding: 2rem 0;
   overflow-x: hidden;
 
   @media (max-width: 768px) {
