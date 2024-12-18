@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import styles from './Home.module.scss';
+
+// Components
 import HorizontalScroll from '../../components/HorizontalScroll/HorizontalScroll';
 import TrackCard from '../../components/Cards/TrackCard';
 import ArtistCard from '../../components/Cards/ArtistCard';

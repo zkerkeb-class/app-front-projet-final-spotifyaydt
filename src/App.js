@@ -2,7 +2,9 @@ import React from 'react';
 import './App.css';
 import './styles/theme.scss';
 import { ThemeProvider } from './contexts/ThemeContext';
-import Home from './pages/Home/Home';
+
+// Components
+import Main from './pages/Main/Main';
 import Navbar from './components/Navbar/Navbar';
 import SidebarLeft from './components/SideBarLeft/SideBar';
 import SideBarRight from './components/SideBarRight/SideBar';
@@ -15,7 +17,7 @@ const AppContent = () => {
       <div className="main-content">
         <SidebarLeft />
         <div className="content-wrapper">
-          <Home />
+          <Main />
         </div>
         <SideBarRight />
       </div>
