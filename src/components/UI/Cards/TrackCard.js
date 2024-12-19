@@ -9,7 +9,7 @@ const TrackCard = ({ track }) => {
         <button className={styles.playButton}>▶</button>
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>{track.title}</h3>
+        <span className={styles.title}>{track.title}</span>
         <p className={styles.artist}>{track.artist}</p>
       </div>
     </div>

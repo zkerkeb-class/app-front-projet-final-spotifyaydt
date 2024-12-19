@@ -1,5 +1,5 @@
-@use '../../styles/theme.scss' as *;
-@import '../../styles/variables';
+@use '../../../styles/theme.scss' as *;
+@import '../../../styles/variables';
 
 .sidebar {
   width: $right-sidebar-width;

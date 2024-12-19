@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import style from './Sidebar.module.scss';
 
-import Filter from '../Filter/Filter';
+import Filter from '../../UI/Filter/Filter';
 
 //icons
 import { FaPlus } from 'react-icons/fa6';
@@ -46,6 +46,7 @@ const SideBar = () => {
             </span>
           </div>
         </div>
+
         <div className={style.filters}>
           <Filter filterName="Playlist" />
           <Filter filterName="Album" />
@@ -66,6 +67,7 @@ const SideBar = () => {
               className={searchVisible ? style.show : ''}
             />
           </div>
+
           <div className={style.sort}>
             <span>Recent</span>
             <span className={style.icon_sort}>
@@ -73,6 +75,8 @@ const SideBar = () => {
             </span>
           </div>
         </div>
+
+        <div className={style.list}></div>
       </div>
     </div>
   );

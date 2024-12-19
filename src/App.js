@@ -5,9 +5,10 @@ import { ThemeProvider } from './contexts/ThemeContext';
 
 // Components
 import Main from './pages/Main/Main';
-import Navbar from './components/Navbar/Navbar';
-import SidebarLeft from './components/SideBarLeft/SideBar';
-import SideBarRight from './components/SideBarRight/SideBar';
+import Navbar from './components/partials/Navbar/Navbar';
+import SidebarLeft from './components/partials/SideBarLeft/SideBar';
+import SideBarRight from './components/partials/SideBarRight/SideBar';
+import AudioPlayer from './components/partials/AudioPlayer/AudioPlayer';
 
 // Composant principal de l'application
 const AppContent = () => {
@@ -21,6 +22,7 @@ const AppContent = () => {
         </div>
         <SideBarRight />
       </div>
+      <AudioPlayer />
     </div>
   );
 };

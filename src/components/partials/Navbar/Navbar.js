@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import style from './Navbar.module.scss';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../../contexts/ThemeContext';
 
 //icons
 import { FiSearch } from 'react-icons/fi';

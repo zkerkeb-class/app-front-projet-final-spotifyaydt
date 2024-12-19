@@ -3,10 +3,10 @@ import { useTheme } from '../../contexts/ThemeContext';
 import styles from './Home.module.scss';
 
 // Components
-import HorizontalScroll from '../../components/HorizontalScroll/HorizontalScroll';
-import TrackCard from '../../components/Cards/TrackCard';
-import ArtistCard from '../../components/Cards/ArtistCard';
-import AlbumCard from '../../components/Cards/AlbumCard';
+import HorizontalScroll from '../../components/UI/HorizontalScroll/HorizontalScroll';
+import TrackCard from '../../components/UI/Cards/TrackCard';
+import ArtistCard from '../../components/UI/Cards/ArtistCard';
+import AlbumCard from '../../components/UI/Cards/AlbumCard';
 
 // Données temporaires pour la démo
 const mockData = {

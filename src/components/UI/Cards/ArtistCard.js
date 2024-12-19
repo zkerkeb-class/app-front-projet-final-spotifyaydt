@@ -10,9 +10,10 @@ const ArtistCard = ({ artist }) => {
           alt={artist.name}
           className={`${styles.image} ${styles.artistImage}`}
         />
+        <button className={styles.playButton}>▶</button>
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>{artist.name}</h3>
+        <span className={styles.title}>{artist.name}</span>
         <p className={styles.followers}>{artist.followers} followers</p>
       </div>
     </div>

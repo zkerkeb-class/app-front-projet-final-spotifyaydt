@@ -9,7 +9,7 @@ const AlbumCard = ({ album }) => {
         <button className={styles.playButton}>▶</button>
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>{album.title}</h3>
+        <span className={styles.title}>{album.title}</span>
         <p className={styles.artist}>{album.artist}</p>
         <p className={styles.year}>{album.year}</p>
       </div>
