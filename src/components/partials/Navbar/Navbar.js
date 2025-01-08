@@ -15,7 +15,7 @@ import { FaUserNinja } from 'react-icons/fa6';
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [hasNotification, setHasNotification] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState('');
+  const avatarUrl = `https://picsum.photos/200?random=1`;
 
   const addNotification = () => {
     setHasNotification(true);
@@ -66,11 +66,8 @@ const Navbar = () => {
           <HiMiniUserGroup className={style.user_icon} />
         </button>
         <div className={style.avatar_button}>
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="avatar" className={style.avatar} />
-          ) : (
-            <FaUserNinja className={style.avatar} />
-          )}
+          <img src={avatarUrl} alt="avatar" className={style.avatar} />
+          <FaUserNinja className={style.avatar} />
         </div>
       </div>
     </div>

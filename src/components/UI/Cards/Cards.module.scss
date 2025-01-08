@@ -1,7 +1,7 @@
 .card {
   border-radius: 8px;
   overflow: hidden;
-  width: 180px;
+  width: 150px;
   padding: 12px;
   flex-shrink: 0;
   transition: background-color 0.3s ease;
@@ -102,8 +102,13 @@
 .artistCard {
   text-align: left;
 
-  .imageContainer {
+  .artistImageContainer {
     margin-bottom: 15px;
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border-radius: 100%;
   }
 
   .title {

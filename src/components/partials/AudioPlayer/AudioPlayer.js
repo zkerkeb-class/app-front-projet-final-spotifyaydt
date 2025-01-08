@@ -1,63 +1,98 @@
 import React, { useState, useRef } from 'react';
 import style from './AudioPlayer.module.scss';
-import { FaPlay, FaPause, FaStepForward, FaStepBackward } from 'react-icons/fa';
-import { PiShuffleBold } from 'react-icons/pi';
-import { BiRepeat } from 'react-icons/bi';
-import {
-  IoPlayCircle,
-  IoPauseCircle,
-  IoPlaySkipForward,
-  IoPlaySkipBack,
-} from 'react-icons/io5';
 
-const AudioPlayer = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
+import Controls from './Controls';
+
+// Importing icons
+import { IoMdAddCircleOutline } from 'react-icons/io';
+import { BsFilePlay } from 'react-icons/bs';
+import { TbMicrophone2 } from 'react-icons/tb';
+import { HiOutlineQueueList } from 'react-icons/hi2';
+import { PiDevicesBold } from 'react-icons/pi';
+import { HiOutlineVolumeUp } from 'react-icons/hi';
+import { HiOutlineVolumeOff } from 'react-icons/hi';
+import { CgMiniPlayer } from 'react-icons/cg';
+import { LuMaximize2 } from 'react-icons/lu';
+
+// Données temporaires pour la démo
+const mockData = {
+  tracks: Array(1)
+    .fill(null)
+    .map((_, i) => ({
+      id: i,
+      title: `Top Track ${i + 1}`,
+      artist: `Artist ${i + 1}`,
+      coverUrl: `https://picsum.photos/200?random=${i}`,
+    })),
+};
+
+const AudioPlayer = ({ track }) => {
+  const [volume, setVolume] = useState(0.5);
+  const handleVolume = (e) => {
+    const volumeBar = e.target.value;
+    const volume = e.nativeEvent.offsetX / volumeBar.offsetWidth;
+    setVolume(volume);
+  };
   return (
+    //Artist and track info
     <div className={style.player}>
-      <div className={style.player__music}>
-        <div className={style.player__music__cover}>
-          <img src="https://via.placeholder.com/150" alt="Cover" />
+      {mockData.tracks.map((track) => (
+        <div className={style.player__music}>
+          <div className={style.player__music__cover}>
+            <img src={track.coverUrl} alt={track.title} />
+          </div>
+          <div className={style.player__music__info}>
+            <span className={style.player__music__info__title}>
+              {track.title}
+            </span>
+            <span className={style.player__music__info__artist}>
+              {track.artist}
+            </span>
+          </div>
+          <div className={style.player__music__add}>
+            <IoMdAddCircleOutline className={style.player__music__add__icon} />
+          </div>
         </div>
-        <div className={style.player__music__info}>
-          <span className={style.player__music__info__title}>Rainbows</span>
-          <span className={style.player__music__info__artist}>Artistes</span>
-        </div>
-      </div>
+      ))}
+
+      {/*Player controls*/}
       <div className={style.player__controls}>
-        <div className={style.player__controls__buttons}>
-          <div className={style.player__controls__buttons__left}>
-            <PiShuffleBold
-              className={style.player__controls__buttons__left__shuffle}
-            />
-            <IoPlaySkipBack
-              className={style.player__controls__buttons__left__backward}
-            />
-          </div>
-          <div className={style.player__controls__buttons__center}>
-            {isPlaying ? (
-              <IoPlayCircle
-                className={style.player__controls__buttons__center__play}
-                onClick={() => setIsPlaying(false)}
-              />
-            ) : (
-              <IoPauseCircle
-                className={style.player__controls__buttons__center__play}
-                onClick={() => setIsPlaying(true)}
-              />
-            )}
-          </div>
-          <div className={style.player__controls__buttons__right}>
-            <IoPlaySkipForward
-              className={style.player__controls__buttons__right__forward}
-            />
-            <BiRepeat
-              className={style.player__controls__buttons__right__repeat}
-            />
-          </div>
-        </div>
-        <div className={style.player__controls__progress}></div>
+        <Controls />
       </div>
-      <div className={style.player__options}></div>
+
+      {/*Other controls*/}
+      <div className={style.player__options}>
+        <div className={style.player__options__left}>
+          <BsFilePlay className={style.player__options__left__play} />
+          <TbMicrophone2 className={style.player__options__left__micro} />
+          <HiOutlineQueueList className={style.player__options__left__queue} />
+        </div>
+        <div className={style.player__options__center}>
+          <PiDevicesBold className={style.player__options__center__devices} />
+        </div>
+        <div className={style.player__options__right}>
+          {volume > 0.5 ? (
+            <HiOutlineVolumeUp
+              className={style.player__options__right__volume}
+            />
+          ) : (
+            <HiOutlineVolumeOff
+              className={style.player__options__right__volume}
+            />
+          )}
+          <div
+            className={style.player__options__right__volumeBar}
+            onClick={handleVolume}
+          >
+            <div
+              className={style.player__options__right__volumeBar__progress}
+              style={{ width: `${volume * 100}%` }}
+            ></div>
+          </div>
+          <CgMiniPlayer className={style.player__options__right__mini} />
+          <LuMaximize2 className={style.player__options__right__max} />
+        </div>
+      </div>
     </div>
   );
 };

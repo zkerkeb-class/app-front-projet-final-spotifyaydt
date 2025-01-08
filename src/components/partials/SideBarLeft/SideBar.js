@@ -2,12 +2,45 @@ import React, { useState } from 'react';
 import style from './Sidebar.module.scss';
 
 import Filter from '../../UI/Filter/Filter';
+import Playlist from '../../UI/SideItems/Playlist';
 
 //icons
 import { FaPlus } from 'react-icons/fa6';
 import { FaArrowRight } from 'react-icons/fa6';
 import { FiSearch } from 'react-icons/fi';
 import { FaListUl } from 'react-icons/fa6';
+
+// Données temporaires pour la démo
+const mockData = {
+  tracks: Array(10)
+    .fill(null)
+    .map((_, i) => ({
+      id: i,
+      type: 'track',
+      title: `Top Track ${i + 1}`,
+      artist: `Artist ${i + 1}`,
+      coverUrl: `https://picsum.photos/200?random=${i}`,
+    })),
+  artists: Array(10)
+    .fill(null)
+    .map((_, i) => ({
+      id: i,
+      type: 'artist',
+      name: `Popular Artist ${i + 1}`,
+      followers: Math.floor(Math.random() * 1000000),
+      imageUrl: `https://picsum.photos/200?random=${i + 20}`,
+    })),
+  albums: Array(10)
+    .fill(null)
+    .map((_, i) => ({
+      id: i,
+      type: 'Playlist',
+      title: `New Album ${i + 1}`,
+      artist: `Artist ${i + 1}`,
+      year: 2023,
+      coverUrl: `https://picsum.photos/200?random=${i + 40}`,
+    })),
+};
 
 const SideBar = () => {
   const [searchVisible, setSearchVisible] = useState(false);
@@ -76,7 +109,11 @@ const SideBar = () => {
           </div>
         </div>
 
-        <div className={style.list}></div>
+        <div className={style.list}>
+          {mockData.albums.map((album) => (
+            <Playlist key={album.id} album={album} />
+          ))}
+        </div>
       </div>
     </div>
   );

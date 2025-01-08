@@ -76,9 +76,12 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    min-height: 100%;
     padding: 0 8px 8px;
-    overflow-y: auto;
+    overflow-y: hidden;
+
+    &:hover {
+      overflow-y: auto;
+    }
 
     .topbar {
       display: flex;
@@ -151,5 +154,28 @@
         }
       }
     }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+    }
   }
+}
+
+/* Styles pour la scrollbar */
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-primary);
 }

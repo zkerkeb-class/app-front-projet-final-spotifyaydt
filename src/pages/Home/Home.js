@@ -14,6 +14,7 @@ const mockData = {
     .fill(null)
     .map((_, i) => ({
       id: i,
+      type: 'track',
       title: `Top Track ${i + 1}`,
       artist: `Artist ${i + 1}`,
       coverUrl: `https://picsum.photos/200?random=${i}`,
@@ -22,6 +23,7 @@ const mockData = {
     .fill(null)
     .map((_, i) => ({
       id: i,
+      type: 'artist',
       name: `Popular Artist ${i + 1}`,
       followers: Math.floor(Math.random() * 1000000),
       imageUrl: `https://picsum.photos/200?random=${i + 20}`,
@@ -30,6 +32,7 @@ const mockData = {
     .fill(null)
     .map((_, i) => ({
       id: i,
+      type: 'Playlist',
       title: `New Album ${i + 1}`,
       artist: `Artist ${i + 1}`,
       year: 2023,

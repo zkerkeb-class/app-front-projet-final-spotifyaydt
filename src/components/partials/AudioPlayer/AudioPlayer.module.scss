@@ -14,8 +14,10 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
     padding-inline-start: 8px;
     gap: 10px;
+    width: 30%;
 
     &__cover {
       width: 56px;
@@ -23,6 +25,7 @@
       border-radius: 5px;
       overflow: hidden;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
     }
 
     &__info {
@@ -39,18 +42,33 @@
         font-size: 12px;
       }
     }
+    &__add {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      width: 30px;
+      padding: 0 10px;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--text-secondary);
+      }
+    }
   }
 
   &__controls {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
     gap: 10px;
+    width: 100%;
 
     &__buttons {
       display: flex;
       flex-direction: row;
       align-items: center;
+      margin: 0 auto;
       gap: 10px;
 
       &__left {
@@ -62,7 +80,7 @@
 
         &__shuffle,
         &__backward {
-          font-size: 20px;
+          font-size: 16px;
           color: var(--text-secondary);
           cursor: pointer;
 
@@ -80,7 +98,7 @@
         gap: 10px;
 
         &__play {
-          font-size: 50px;
+          font-size: 32px;
           color: var(--text-primary);
           cursor: pointer;
 
@@ -100,7 +118,7 @@
 
         &__forward,
         &__repeat {
-          font-size: 20px;
+          font-size: 16px;
           color: var(--text-secondary);
           cursor: pointer;
 
@@ -112,11 +130,140 @@
     }
 
     &__progress {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
       width: 100%;
+      gap: 10px;
       height: 5px;
       background-color: var(--background-secondary);
       border-radius: 5px;
-      position: relative;
+      &__bar {
+        width: 100%;
+        height: 100%;
+        background-color: var(--card-hover);
+        border-radius: 5px;
+
+        &__progression {
+          width: 50%;
+          height: 100%;
+          background-color: white;
+          border-radius: 5px;
+        }
+      }
+
+      span {
+        font-size: 0.75em;
+      }
+    }
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-inline-end: 8px;
+    width: 30%;
+
+    &__left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+
+      &__play,
+      &__micro,
+      &__queue {
+        font-size: 20px;
+        padding: 4px;
+        color: var(--text-secondary);
+        cursor: pointer;
+
+        &:hover {
+          color: var(--text-primary);
+        }
+
+        &::after {
+          content: '';
+          display: block;
+          width: 2px;
+          height: 2px;
+          background-color: var(--text-secondary);
+          border-radius: 50%;
+          margin-inline-start: 5px;
+          background-color: #1db954;
+          bottom: 0;
+          left: 50%;
+          position: absolute;
+          -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+          inline-size: 4px !important;
+        }
+      }
+    }
+
+    &__center {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+
+      &__devices {
+        font-size: 20px;
+        padding: 4px;
+        color: var(--text-secondary);
+        cursor: pointer;
+
+        &:hover {
+          color: var(--text-primary);
+        }
+      }
+    }
+
+    &__right {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+
+      &__volume {
+        font-size: 20px;
+        color: var(--text-secondary);
+        cursor: pointer;
+
+        &:hover {
+          color: var(--text-primary);
+        }
+      }
+      &__volumeBar {
+        width: 100px;
+        height: 5px;
+        background-color: var(--card-hover);
+        border-radius: 5px;
+        position: relative;
+
+        &__progress {
+          width: 50%;
+          height: 100%;
+          background-color: var(--text-primary);
+          border-radius: 5px;
+          position: absolute;
+        }
+      }
+      &__mini,
+      &__max {
+        font-size: 20px;
+        padding: 4px;
+        color: var(--text-secondary);
+        cursor: pointer;
+
+        &:hover {
+          color: var(--text-primary);
+        }
+      }
     }
   }
 }
