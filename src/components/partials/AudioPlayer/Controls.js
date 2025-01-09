@@ -11,7 +11,7 @@ import {
   IoPlaySkipBack,
 } from 'react-icons/io5';
 
-import Audio from '../../../assests/audio/vlog.mp3';
+import Audio from '../../../assests/audio/lazy-day.mp3';
 
 const Controls = () => {
   const audioRef = useRef(null);
@@ -36,9 +36,9 @@ const Controls = () => {
     const audio = audioRef.current;
     if (!audio) return;
     if (isPlaying) {
-      audio.current.pause();
+      audio.pause();
     } else {
-      audio.current.play();
+      audio.play();
     }
     setIsPlaying(!isPlaying);
   };
@@ -58,61 +58,59 @@ const Controls = () => {
   };
 
   return (
-    <div>
-      {/*Player controls*/}
-      <div className={style.player__controls}>
-        <div className={style.player__controls__buttons}>
-          <div className={style.player__controls__buttons__left}>
-            <button>
-              <PiShuffleBold
-                className={style.player__controls__buttons__left__shuffle}
-              />
-            </button>
-            <button>
-              <IoPlaySkipBack
-                className={style.player__controls__buttons__left__backward}
-              />
-            </button>
-          </div>
-          <div className={style.player__controls__buttons__center}>
-            <button onClick={togglePlayPause}>
-              {isPlaying ? (
-                <IoPauseCircle
-                  className={style.player__controls__buttons__center__play}
-                />
-              ) : (
-                <IoPlayCircle
-                  className={style.player__controls__buttons__center__play}
-                />
-              )}
-            </button>
-          </div>
-          <div className={style.player__controls__buttons__right}>
-            <button>
-              <IoPlaySkipForward
-                className={style.player__controls__buttons__right__forward}
-              />
-            </button>
-            <button>
-              <BiRepeat
-                className={style.player__controls__buttons__right__repeat}
-              />
-            </button>
-          </div>
+    //Player controls
+    <div className={style.player__controls}>
+      <div className={style.player__controls__buttons}>
+        <div className={style.player__controls__buttons__left}>
+          <button className={style.controlsButton}>
+            <PiShuffleBold
+              className={style.player__controls__buttons__left__shuffle}
+            />
+          </button>
+          <button className={style.controlsButton}>
+            <IoPlaySkipBack
+              className={style.player__controls__buttons__left__backward}
+            />
+          </button>
         </div>
-        <div className={style.player__controls__progress}>
-          <span>{formatTime(currentTime)}</span>
+        <div className={style.player__controls__buttons__center}>
+          <button onClick={togglePlayPause}>
+            {isPlaying ? (
+              <IoPauseCircle
+                className={style.player__controls__buttons__center__play}
+              />
+            ) : (
+              <IoPlayCircle
+                className={style.player__controls__buttons__center__play}
+              />
+            )}
+          </button>
+        </div>
+        <div className={style.player__controls__buttons__right}>
+          <button className={style.controlsButton}>
+            <IoPlaySkipForward
+              className={style.player__controls__buttons__right__forward}
+            />
+          </button>
+          <button className={style.controlsButton}>
+            <BiRepeat
+              className={style.player__controls__buttons__right__repeat}
+            />
+          </button>
+        </div>
+      </div>
+      <div className={style.player__controls__progress}>
+        <span>{formatTime(currentTime)}</span>
+        <div
+          className={style.player__controls__progress__bar}
+          onClick={handleTimeDrag}
+        >
           <div
-            className={style.player__controls__progress__bar}
-            onClick={handleTimeDrag}
-          >
-            <div
-              className={style.player__controls__progress__bar__progression}
-              style={{ width: `${(currentTime / duration) * 100}%` }}
-            ></div>
-          </div>
-          <span>{formatTime(duration)}</span>
+            className={style.player__controls__progress__bar__progression}
+            style={{ width: `${(currentTime / duration) * 100}%` }}
+          ></div>
         </div>
+        <span>{formatTime(duration)}</span>
       </div>
 
       <audio ref={audioRef} src={Audio} onTimeUpdate={updateTime}></audio>

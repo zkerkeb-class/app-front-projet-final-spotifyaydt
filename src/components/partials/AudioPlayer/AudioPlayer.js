@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import style from './AudioPlayer.module.scss';
 
 import Controls from './Controls';
@@ -14,6 +14,8 @@ import { HiOutlineVolumeOff } from 'react-icons/hi';
 import { CgMiniPlayer } from 'react-icons/cg';
 import { LuMaximize2 } from 'react-icons/lu';
 
+import Audio from '../../../assests/audio/vlog.mp3';
+
 // Données temporaires pour la démo
 const mockData = {
   tracks: Array(1)
@@ -23,11 +25,13 @@ const mockData = {
       title: `Top Track ${i + 1}`,
       artist: `Artist ${i + 1}`,
       coverUrl: `https://picsum.photos/200?random=${i}`,
+      audio: Audio,
     })),
 };
 
 const AudioPlayer = ({ track }) => {
   const [volume, setVolume] = useState(0.5);
+
   const handleVolume = (e) => {
     const volumeBar = e.target.value;
     const volume = e.nativeEvent.offsetX / volumeBar.offsetWidth;
@@ -56,7 +60,7 @@ const AudioPlayer = ({ track }) => {
       ))}
 
       {/*Player controls*/}
-      <div className={style.player__controls}>
+      <div className={style.player__controlsContainer}>
         <Controls />
       </div>
 
