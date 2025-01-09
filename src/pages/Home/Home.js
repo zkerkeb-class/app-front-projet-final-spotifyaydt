@@ -7,6 +7,7 @@ import HorizontalScroll from '../../components/UI/HorizontalScroll/HorizontalScr
 import TrackCard from '../../components/UI/Cards/TrackCard';
 import ArtistCard from '../../components/UI/Cards/ArtistCard';
 import AlbumCard from '../../components/UI/Cards/AlbumCard';
+import RecentSection from '../../components/UI/RecentSection/RecentSection';
 
 // Données temporaires pour la démo
 const mockData = {
@@ -45,12 +46,8 @@ const Home = () => {
 
   return (
     <div className={styles.home}>
-      <header className={styles.header}>
-        <h1>Bienvenue sur Spotify AYDT</h1>
-        <p className={styles.subtitle}>
-          Découvrez votre nouvelle expérience musicale
-        </p>
-      </header>
+      <h1>Bienvenue sur Spotify AYDT</h1>
+      <RecentSection />
 
       <main className={styles.mainContent}>
         <HorizontalScroll title="Top 10 des derniers sons">

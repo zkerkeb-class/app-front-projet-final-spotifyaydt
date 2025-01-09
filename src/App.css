@@ -2,9 +2,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  height: 100vh;
+  height: 100%;
   min-height: 100vh;
-  padding: 8px;
+  padding: 0 8px;
   background-color: var(--background-primary);
 }
 
@@ -27,7 +27,7 @@
 
 /* Styles pour la scrollbar */
 .content-wrapper::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .content-wrapper::-webkit-scrollbar-track {
@@ -36,7 +36,6 @@
 
 .content-wrapper::-webkit-scrollbar-thumb {
   background: var(--text-secondary);
-  border-radius: 4px;
 }
 
 .content-wrapper::-webkit-scrollbar-thumb:hover {
