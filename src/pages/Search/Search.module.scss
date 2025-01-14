@@ -1,0 +1,11 @@
+.container {
+  min-height: 100%;
+  padding: 8px 24px;
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+
+  @media (max-width: 768px) {
+    padding: 1rem 0;
+  }
+}
