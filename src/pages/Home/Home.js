@@ -8,6 +8,7 @@ import TrackCard from '../../components/UI/Cards/TrackCard';
 import ArtistCard from '../../components/UI/Cards/ArtistCard';
 import AlbumCard from '../../components/UI/Cards/AlbumCard';
 import RecentSection from '../../components/UI/RecentSection/RecentSection';
+import Filter from '../../components/UI/Filter/Filter';
 
 // Données temporaires pour la démo
 const mockData = {
@@ -46,7 +47,13 @@ const Home = () => {
 
   return (
     <div className={styles.home}>
-      <h1>Bienvenue sur Spotify AYDT</h1>
+      <header className={styles.header}>
+        <Filter filterName="All" />
+        <Filter filterName="Tracks" />
+        <Filter filterName="Artists" />
+        <Filter filterName="Albums" />
+      </header>
+
       <RecentSection />
 
       <main className={styles.mainContent}>
