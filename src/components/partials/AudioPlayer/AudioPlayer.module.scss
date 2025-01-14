@@ -161,6 +161,10 @@
         background-color: var(--card-hover);
         border-radius: 5px;
 
+        &:hover {
+          cursor: pointer;
+        }
+
         &__progression {
           width: 50%;
           height: 100%;
@@ -169,6 +173,7 @@
 
           &:hover {
             background-color: var(--accent-color);
+            cursor: pointer;
           }
         }
       }

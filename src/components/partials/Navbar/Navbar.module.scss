@@ -17,7 +17,8 @@
 
   .navigation_buttons {
     display: flex;
-    gap: 16px;
+    align-items: center;
+    gap: 8px;
 
     .logo {
       display: flex;
@@ -32,6 +33,29 @@
         display: flex;
         align-items: center;
         font-size: 32px;
+      }
+    }
+    .nav_button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+
+      .nav_buttons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 50%;
+        padding: 8px;
+        color: var(--text-secondary);
+        background-color: var(--background-secondary);
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--text-primary);
+        }
       }
     }
   }

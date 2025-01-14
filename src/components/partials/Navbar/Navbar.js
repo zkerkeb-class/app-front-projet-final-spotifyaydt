@@ -10,7 +10,7 @@ import { PiSunDimFill } from 'react-icons/pi';
 import { PiMoonFill } from 'react-icons/pi';
 import { HiMiniUserGroup } from 'react-icons/hi2';
 import { IoMdNotifications } from 'react-icons/io';
-import { FaUserNinja } from 'react-icons/fa6';
+import { FaUserNinja, FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -29,6 +29,14 @@ const Navbar = () => {
             <FaSpotify />
           </div>
           <span>Spotify AYDT</span>
+        </div>
+        <div className={style.nav_button}>
+          <button className={style.nav_buttons}>
+            <FaChevronLeft />
+          </button>
+          <button className={style.nav_buttons}>
+            <FaChevronRight />
+          </button>
         </div>
       </div>
       <div className={style.middle_cont}>
