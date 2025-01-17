@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import style from './AudioPlayer.module.scss';
+import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
 import Controls from './Controls';
 
@@ -9,12 +10,10 @@ import { BsFilePlay } from 'react-icons/bs';
 import { TbMicrophone2 } from 'react-icons/tb';
 import { HiOutlineQueueList } from 'react-icons/hi2';
 import { PiDevicesBold } from 'react-icons/pi';
-import { HiOutlineVolumeUp } from 'react-icons/hi';
-import { HiOutlineVolumeOff } from 'react-icons/hi';
 import { CgMiniPlayer } from 'react-icons/cg';
 import { LuMaximize2 } from 'react-icons/lu';
 
-import Audio from '../../../assests/audio/vlog.mp3';
+import Audio from '../../../assests/audio/lazy-day.mp3';
 
 // Données temporaires pour la démo
 const mockData = {
@@ -29,14 +28,10 @@ const mockData = {
     })),
 };
 
+// to separate the controls from the player component create hook and context for the player so that the audioref can be shared between the two components
 const AudioPlayer = ({ track }) => {
-  const [volume, setVolume] = useState(0.5);
+  const { volume, handleVolume, toggleMute, getVolumeIcon } = useAudioPlayer();
 
-  const handleVolume = (e) => {
-    const volumeBar = e.target.value;
-    const volume = e.nativeEvent.offsetX / volumeBar.offsetWidth;
-    setVolume(volume);
-  };
   return (
     //Artist and track info
     <div className={style.player}>
@@ -75,15 +70,12 @@ const AudioPlayer = ({ track }) => {
           <PiDevicesBold className={style.player__options__center__devices} />
         </div>
         <div className={style.player__options__right}>
-          {volume > 0.5 ? (
-            <HiOutlineVolumeUp
-              className={style.player__options__right__volume}
-            />
-          ) : (
-            <HiOutlineVolumeOff
-              className={style.player__options__right__volume}
-            />
-          )}
+          <div
+            className={style.player__options__right__volume}
+            onClick={toggleMute}
+          >
+            {getVolumeIcon()}
+          </div>
           <div
             className={style.player__options__right__volumeBar}
             onClick={handleVolume}
@@ -97,6 +89,7 @@ const AudioPlayer = ({ track }) => {
           <LuMaximize2 className={style.player__options__right__max} />
         </div>
       </div>
+      <audio src={Audio} ref={useAudioPlayer().audioRef} preload="metadata" />
     </div>
   );
 };

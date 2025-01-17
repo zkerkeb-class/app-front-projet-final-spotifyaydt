@@ -270,6 +270,7 @@
         background-color: var(--card-hover);
         border-radius: 5px;
         position: relative;
+        cursor: pointer;
 
         &__progress {
           width: 50%;
@@ -277,6 +278,11 @@
           background-color: var(--text-primary);
           border-radius: 5px;
           position: absolute;
+          cursor: pointer;
+
+          &:hover {
+            background-color: var(--accent-color);
+          }
         }
       }
       &__mini,

@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import style from './AudioPlayer.module.scss';
+import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
 // Importing icons
 import { PiShuffleBold } from 'react-icons/pi';
@@ -11,51 +12,15 @@ import {
   IoPlaySkipBack,
 } from 'react-icons/io5';
 
-import Audio from '../../../assests/audio/lazy-day.mp3';
-
 const Controls = () => {
-  const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    audio.addEventListener('timeupdate', updateTime);
-    audio.addEventListener('loadedmetadata', () => setDuration(audio.duration));
-    return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-    };
-  }, []);
-
-  const updateTime = () => {
-    setCurrentTime(audioRef.current.currentTime);
-  };
-
-  const togglePlayPause = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play();
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleTimeDrag = (e) => {
-    const progressBar = e.target;
-    const newTime =
-      (e.nativeEvent.offsetX / progressBar.offsetWidth) * duration;
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
-
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
+  const {
+    isPlaying,
+    togglePlayPause,
+    currentTime,
+    duration,
+    handleSeek,
+    formatTime,
+  } = useAudioPlayer();
 
   return (
     //Player controls
@@ -103,7 +68,7 @@ const Controls = () => {
         <span>{formatTime(currentTime)}</span>
         <div
           className={style.player__controls__progress__bar}
-          onClick={handleTimeDrag}
+          onClick={handleSeek}
         >
           <div
             className={style.player__controls__progress__bar__progression}
@@ -112,8 +77,6 @@ const Controls = () => {
         </div>
         <span>{formatTime(duration)}</span>
       </div>
-
-      <audio ref={audioRef} src={Audio} onTimeUpdate={updateTime}></audio>
     </div>
   );
 };

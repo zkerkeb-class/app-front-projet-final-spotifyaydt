@@ -8,7 +8,7 @@ import Main from './pages/Main/Main';
 import Navbar from './components/partials/Navbar/Navbar';
 import SidebarLeft from './components/partials/SideBarLeft/SideBar';
 import SideBarRight from './components/partials/SideBarRight/SideBar';
-import AudioPlayer from './components/partials/AudioPlayer/AudioPlayer';
+import AudioPlayer from './components/partials/AudioPlayer/AudioPlayerF';
 
 // Composant principal de l'application
 const AppContent = () => {
