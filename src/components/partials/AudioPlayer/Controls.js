@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
 // Importing icons
 import { PiShuffleBold } from 'react-icons/pi';
-import { BiRepeat } from 'react-icons/bi';
 import {
   IoPlayCircle,
   IoPauseCircle,
   IoPlaySkipForward,
   IoPlaySkipBack,
 } from 'react-icons/io5';
+
+import { GoDotFill } from 'react-icons/go';
+import { TbRepeat, TbRepeatOnce } from 'react-icons/tb';
 
 const Controls = () => {
   const {
@@ -20,17 +22,66 @@ const Controls = () => {
     duration,
     handleSeek,
     formatTime,
+    shuffleOn,
+    toggleShuffle,
+    repeatTrack,
+    repeatPlaylist,
+    toggleRepeat,
   } = useAudioPlayer();
+
+  const getShuffleIcon = () => {
+    if (shuffleOn)
+      return (
+        <>
+          <PiShuffleBold
+            className={style.player__controls__buttons__left__shuffle}
+            style={{ color: 'var(--accent-color)' }}
+          />
+          <GoDotFill className={style.buttonActive} />
+        </>
+      );
+    return (
+      <PiShuffleBold
+        className={style.player__controls__buttons__left__shuffle}
+      />
+    );
+  };
+
+  const getRepeatIcon = () => {
+    if (repeatPlaylist)
+      return (
+        <>
+          <TbRepeat
+            className={style.player__controls__buttons__right__repeat}
+            style={{ color: 'var(--accent-color)' }}
+          />
+          <GoDotFill className={style.buttonActive} />
+        </>
+      );
+
+    if (repeatTrack)
+      return (
+        <>
+          <TbRepeatOnce
+            className={style.player__controls__buttons__right__repeat}
+            style={{ color: 'var(--accent-color)' }}
+          />
+          <GoDotFill className={style.buttonActive} />
+        </>
+      );
+
+    return (
+      <TbRepeat className={style.player__controls__buttons__right__repeat} />
+    );
+  };
 
   return (
     //Player controls
     <div className={style.player__controls}>
       <div className={style.player__controls__buttons}>
         <div className={style.player__controls__buttons__left}>
-          <button className={style.controlsButton}>
-            <PiShuffleBold
-              className={style.player__controls__buttons__left__shuffle}
-            />
+          <button className={style.controlsButton} onClick={toggleShuffle}>
+            {getShuffleIcon()}
           </button>
           <button className={style.controlsButton}>
             <IoPlaySkipBack
@@ -57,10 +108,8 @@ const Controls = () => {
               className={style.player__controls__buttons__right__forward}
             />
           </button>
-          <button className={style.controlsButton}>
-            <BiRepeat
-              className={style.player__controls__buttons__right__repeat}
-            />
+          <button className={style.controlsButton} onClick={toggleRepeat}>
+            {getRepeatIcon()}
           </button>
         </div>
       </div>

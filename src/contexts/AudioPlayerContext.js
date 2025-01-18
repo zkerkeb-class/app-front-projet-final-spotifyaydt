@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 
-import { LuVolume, LuVolume1, LuVolume2 } from 'react-icons/lu';
+import { LuVolume, LuVolume1, LuVolume2, LuVolumeX } from 'react-icons/lu';
 
 const AudioPlayerContext = createContext();
 
@@ -19,6 +19,15 @@ export const AudioPlayerProvider = ({ children }) => {
   const [previousVolume, setPreviousVolume] = useState(0.5);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [shuffleOn, setShuffleOn] = useState(false);
+  const [repeatTrack, setRepeatTrack] = useState(false);
+  const [repeatPlaylist, setRepeatPlaylist] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [displayPlay, setDisplayPlay] = useState(false);
+  const [displayLyrics, setDisplayLyrics] = useState(false);
+  const [displayQueue, setDisplayQueue] = useState(false);
+  const [displayDevices, setDisplayDevices] = useState(false);
+  const [displayMini, setDisplayMini] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -41,7 +50,8 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const getVolumeIcon = () => {
-    if (volume <= 0) return <LuVolume />;
+    if (volume === 0) return <LuVolumeX />;
+    if (volume <= 0.25) return <LuVolume />;
     if (volume <= 0.5) return <LuVolume1 />;
     return <LuVolume2 />;
   };
@@ -88,22 +98,76 @@ export const AudioPlayerProvider = ({ children }) => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
+  const toggleShuffle = () => {
+    setShuffleOn(!shuffleOn);
+  };
+
+  const toggleRepeat = () => {
+    setClickCount((prevCount) => (prevCount + 1) % 3);
+
+    if (clickCount === 0) {
+      setRepeatTrack(false);
+      setRepeatPlaylist(true);
+    } else if (clickCount === 1) {
+      setRepeatTrack(true);
+      setRepeatPlaylist(false);
+    } else {
+      setRepeatTrack(false);
+      setRepeatPlaylist(false);
+    }
+  };
+
+  const toggleDisplayPlay = () => {
+    setDisplayPlay(!displayPlay);
+  };
+
+  const toggleLyrics = () => {
+    setDisplayLyrics(!displayLyrics);
+  };
+
+  const toggleQueue = () => {
+    setDisplayQueue(!displayQueue);
+  };
+
+  const toggleDevices = () => {
+    setDisplayDevices(!displayDevices);
+  };
+
+  const toggleMini = () => {
+    setDisplayMini(!displayMini);
+  };
+
   return (
     <AudioPlayerContext.Provider
       value={{
         audioRef,
         isPlaying,
         togglePlayPause,
-        volume,
-        handleVolume,
-        toggleMute,
-        getVolumeIcon,
-        previousVolume,
         updateTime,
         currentTime,
         duration,
         handleSeek,
         formatTime,
+        volume,
+        handleVolume,
+        toggleMute,
+        getVolumeIcon,
+        previousVolume,
+        shuffleOn,
+        toggleShuffle,
+        repeatTrack,
+        repeatPlaylist,
+        toggleRepeat,
+        displayPlay,
+        toggleDisplayPlay,
+        displayLyrics,
+        toggleLyrics,
+        displayQueue,
+        toggleQueue,
+        displayDevices,
+        toggleDevices,
+        displayMini,
+        toggleMini,
       }}
     >
       {children}
