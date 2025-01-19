@@ -49,6 +49,18 @@ export const AudioPlayerProvider = ({ children }) => {
     setIsPlaying(!isPlaying);
   };
 
+  const togglePrevious = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime -= 10;
+  };
+
+  const toggleNext = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime += 10;
+  };
+
   const getVolumeIcon = () => {
     if (volume === 0) return <LuVolumeX />;
     if (volume <= 0.25) return <LuVolume />;

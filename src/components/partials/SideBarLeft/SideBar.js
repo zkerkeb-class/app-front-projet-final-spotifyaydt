@@ -6,7 +6,6 @@ import Playlist from '../../UI/SideItems/Playlist';
 
 //icons
 import { FaPlus } from 'react-icons/fa6';
-import { FaArrowRight } from 'react-icons/fa6';
 import { FiSearch } from 'react-icons/fi';
 import { FaListUl } from 'react-icons/fa6';
 
@@ -73,9 +72,6 @@ const SideBar = () => {
           <div className={style.header_button}>
             <span>
               <FaPlus />
-            </span>
-            <span>
-              <FaArrowRight />
             </span>
           </div>
         </div>
