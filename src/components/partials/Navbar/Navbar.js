@@ -9,16 +9,17 @@ import { FaSpotify } from 'react-icons/fa';
 import { PiSunDimFill } from 'react-icons/pi';
 import { PiMoonFill } from 'react-icons/pi';
 import { HiMiniUserGroup } from 'react-icons/hi2';
-import { IoMdNotifications } from 'react-icons/io';
 import { FaUserNinja, FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
+import { FaGlobe } from 'react-icons/fa';
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [hasNotification, setHasNotification] = useState(false);
   const avatarUrl = `https://picsum.photos/200?random=1`;
 
-  const addNotification = () => {
-    setHasNotification(true);
+  const [language, setLanguage] = useState('ENG');
+
+  const handleLanguageChange = (event) => {
+    setLanguage(event.target.value);
   };
 
   return (
@@ -64,15 +65,20 @@ const Navbar = () => {
             <PiMoonFill className={style.toggle_icon} />
           )}
         </button>
-        <button className={style.user_button} onClick={addNotification}>
-          <IoMdNotifications className={style.user_icon} />
-          {hasNotification ? (
-            <span className={style.notification_dot}></span>
-          ) : null}
-        </button>
         <button className={style.user_button}>
           <HiMiniUserGroup className={style.user_icon} />
         </button>
+        <div className={style.language_selector}>
+          <FaGlobe aria-hidden="true" />
+          <select
+            value={language}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+          >
+            <option value="FR">FR</option>
+            <option value="EN">EN</option>
+            <option value="AR">AR</option>
+          </select>
+        </div>
         <div className={style.avatar_button}>
           <img src={avatarUrl} alt="avatar" className={style.avatar} />
           <FaUserNinja className={style.avatar} />

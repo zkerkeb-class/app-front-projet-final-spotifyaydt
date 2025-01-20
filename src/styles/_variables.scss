@@ -1,6 +1,54 @@
-$primary-color: #1db954;
-$secondary-color: #191414;
 $font-family: 'Roboto', sans-serif;
 
 $left-sidebar-width: 420px;
 $right-sidebar-width: 281px;
+
+// Remplacer les valeurs fixes par des variables CSS
+$primary-color: var(--primary-color);
+$secondary-color: var(--secondary-color);
+$background-color: var(--background-color);
+$text-color: var(--text-color);
+$border-color: var(--border-color);
+$error-color: var(--error-color);
+$sidebar-background: var(--sidebar-background);
+
+// Espacement
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Bordures
+$border-radius: 8px;
+$border-radius-sm: 4px;
+$border-radius-lg: 12px;
+
+// Transitions
+$transition-duration: 0.2s;
+
+// Z-index
+$z-index-modal: 1000;
+$z-index-dropdown: 100;
+$z-index-header: 50;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Typographie
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+
+// Ombres
+$box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+$box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+$error-color: #ff4444;
+$warning-color: #ffbb33;
+$success-color: #00c851;
