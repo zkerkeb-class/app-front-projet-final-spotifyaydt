@@ -236,14 +236,15 @@ const Controls = () => {
             onClick={toggleShuffle}
             aria-label={`Shuffle ${shuffleOn ? 'on' : 'off'}`}
             aria-pressed={shuffleOn}
+            title={`Shuffle ${shuffleOn ? 'on' : 'off'}`}
           >
             {getShuffleIcon()}
           </button>
           <button
             className={style.controlsButton}
             onClick={handlePreviousClick}
-            aria-label="Previous track (Ctrl+P). Double-click to restart current track"
-            title="Previous track (Ctrl+P). Double-click to restart current track"
+            aria-label="Previous track (Ctrl+P)"
+            title="Previous track (Ctrl+P)"
           >
             <IoPlaySkipBack
               className={style.player__controls__buttons__left__backward}
@@ -257,6 +258,7 @@ const Controls = () => {
               isBuffering ? style.buffering : ''
             }`}
             aria-label={isPlaying ? 'Pause' : 'Play'}
+            title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
               <IoPauseCircle
@@ -285,6 +287,7 @@ const Controls = () => {
             onClick={toggleRepeat}
             aria-label={`Repeat ${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`}
             aria-pressed={repeatTrack || repeatPlaylist}
+            title={`Repeat ${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`}
           >
             {getRepeatIcon()}
           </button>

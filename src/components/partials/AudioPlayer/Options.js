@@ -151,6 +151,7 @@ const Options = () => {
           onClick={toggleDisplayPlay}
           aria-label={`Now playing view ${displayPlay ? 'on' : 'off'}`}
           aria-pressed={displayPlay}
+          title={`Now playing view ${displayPlay ? 'on' : 'off'}`}
         >
           {getPlayIcon()}
         </button>
@@ -159,6 +160,7 @@ const Options = () => {
           onClick={toggleLyrics}
           aria-label={`Lyrics ${displayLyrics ? 'on' : 'off'}`}
           aria-pressed={displayLyrics}
+          title={`Lyrics ${displayLyrics ? 'on' : 'off'}`}
         >
           {getLyricsIcon()}
         </button>
@@ -167,6 +169,7 @@ const Options = () => {
           onClick={toggleQueue}
           aria-label={`Queue ${displayQueue ? 'visible' : 'hidden'}`}
           aria-pressed={displayQueue}
+          title={`Queue ${displayQueue ? 'visible' : 'hidden'}`}
         >
           {getQueueIcon()}
         </button>
@@ -177,6 +180,7 @@ const Options = () => {
           onClick={toggleDevices}
           aria-label={`Connect to device ${displayDevices ? 'menu open' : 'menu closed'}`}
           aria-pressed={displayDevices}
+          title={`Connect to device ${displayDevices ? 'menu open' : 'menu closed'}`}
         >
           {getDevicesIcon()}
         </button>
@@ -224,10 +228,15 @@ const Options = () => {
           onClick={toggleMini}
           aria-label={`Mini player ${displayMini ? 'on' : 'off'}`}
           aria-pressed={displayMini}
+          title={`Mini player ${displayMini ? 'on' : 'off'}`}
         >
           {getMiniIcon()}
         </button>
-        <button className={style.controlsButton} aria-label="Full screen">
+        <button
+          className={style.controlsButton}
+          aria-label="Full screen"
+          title="Full screen"
+        >
           <LuMaximize2 className={style.player__options__right__max} />
         </button>
       </div>

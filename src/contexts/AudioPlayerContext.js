@@ -531,6 +531,11 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const toggleDisplayPlay = () => {
+    // If turning on displayPlay, turn off others
+    if (!displayPlay) {
+      setDisplayQueue(false);
+      setDisplayDevices(false);
+    }
     setDisplayPlay(!displayPlay);
   };
 
@@ -539,10 +544,20 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const toggleQueue = () => {
+    // If turning on displayQueue, turn off others
+    if (!displayQueue) {
+      setDisplayPlay(false);
+      setDisplayDevices(false);
+    }
     setDisplayQueue(!displayQueue);
   };
 
   const toggleDevices = () => {
+    // If turning on displayDevices, turn off others
+    if (!displayDevices) {
+      setDisplayPlay(false);
+      setDisplayQueue(false);
+    }
     setDisplayDevices(!displayDevices);
   };
 
