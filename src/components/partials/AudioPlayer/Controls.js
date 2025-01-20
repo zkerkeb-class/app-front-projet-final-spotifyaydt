@@ -299,7 +299,9 @@ const Controls = () => {
         role="group"
         aria-label="Playback progress"
       >
-        <span aria-label="Current time">{formatTime(displayTime)}</span>
+        <span aria-label="Current time">
+          {formatTime(previewTime !== null ? previewTime : currentTime)}
+        </span>
         <div
           ref={progressBarRef}
           className={`${style.player__controls__progress__bar} ${isDragging ? style.dragging : ''}`}

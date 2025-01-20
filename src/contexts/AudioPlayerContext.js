@@ -45,6 +45,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const [shuffleQueue, setShuffleQueue] = useState([]);
   const [shuffleQueueIndex, setShuffleQueueIndex] = useState(0);
   const [shuffleHistory, setShuffleHistory] = useState([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const createShuffleQueue = useCallback(() => {
     const indices = Array.from({ length: mockTracks.length }, (_, i) => i);
@@ -565,6 +566,14 @@ export const AudioPlayerProvider = ({ children }) => {
     setDisplayMini(!displayMini);
   };
 
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
+
+  const closeFullscreen = useCallback(() => {
+    setIsFullscreen(false);
+  }, []);
+
   return (
     <AudioPlayerContext.Provider
       value={{
@@ -614,6 +623,9 @@ export const AudioPlayerProvider = ({ children }) => {
         currentTrackIndex,
         playNextTrack,
         playPreviousTrack,
+        isFullscreen,
+        toggleFullscreen,
+        closeFullscreen,
       }}
     >
       {children}
