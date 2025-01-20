@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
@@ -13,7 +14,14 @@ import { GoDotFill } from 'react-icons/go';
 const Options = () => {
   const {
     volume,
-    handleVolume,
+    previewVolume,
+    volumeBarRef,
+    isAdjustingVolume,
+    handleVolumeStart,
+    handleVolumeUpdate,
+    handleVolumeEnd,
+    handleVolumeClick,
+    handleVolumeKeyDown,
     toggleMute,
     getVolumeIcon,
     displayPlay,
@@ -28,6 +36,37 @@ const Options = () => {
     toggleMini,
   } = useAudioPlayer();
 
+  const handleMouseMove = useCallback(
+    (e) => {
+      e.preventDefault();
+      handleVolumeUpdate(e);
+    },
+    [handleVolumeUpdate]
+  );
+
+  const handleMouseUp = useCallback(
+    (e) => {
+      e.preventDefault();
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      handleVolumeEnd(e);
+    },
+    [handleVolumeEnd, handleMouseMove]
+  );
+
+  const initializeVolumeAdjust = useCallback(
+    (e) => {
+      e.preventDefault();
+      handleVolumeStart(e);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    },
+    [handleVolumeStart, handleMouseMove, handleMouseUp]
+  );
+
+  const displayVolume = previewVolume !== null ? previewVolume : volume;
+  const volumePercentage = Math.round(displayVolume * 100);
+
   const getPlayIcon = () => {
     if (displayPlay)
       return (
@@ -36,7 +75,7 @@ const Options = () => {
             className={style.player__options__left__play}
             style={{ color: 'var(--accent-color)' }}
           />
-          <GoDotFill className={style.buttonActive} />
+          <GoDotFill className={style.buttonActive} aria-hidden="true" />
         </>
       );
     return <BsFilePlay className={style.player__options__left__play} />;
@@ -50,7 +89,7 @@ const Options = () => {
             className={style.player__options__left__micro}
             style={{ color: 'var(--accent-color)' }}
           />
-          <GoDotFill className={style.buttonActive} />
+          <GoDotFill className={style.buttonActive} aria-hidden="true" />
         </>
       );
     return <TbMicrophone2 className={style.player__options__left__micro} />;
@@ -64,7 +103,7 @@ const Options = () => {
             className={style.player__options__left__queue}
             style={{ color: 'var(--accent-color)' }}
           />
-          <GoDotFill className={style.buttonActive} />
+          <GoDotFill className={style.buttonActive} aria-hidden="true" />
         </>
       );
     return (
@@ -80,7 +119,7 @@ const Options = () => {
             className={style.player__options__center__devices}
             style={{ color: 'var(--accent-color)' }}
           />
-          <GoDotFill className={style.buttonActive} />
+          <GoDotFill className={style.buttonActive} aria-hidden="true" />
         </>
       );
     return <PiDevicesBold className={style.player__options__center__devices} />;
@@ -94,54 +133,110 @@ const Options = () => {
             className={style.player__options__right__mini}
             style={{ color: 'var(--accent-color)' }}
           />
-          <GoDotFill className={style.buttonActive} />
+          <GoDotFill className={style.buttonActive} aria-hidden="true" />
         </>
       );
     return <CgMiniPlayer className={style.player__options__right__mini} />;
   };
 
   return (
-    <div className={style.player__options}>
+    <div
+      className={style.player__options}
+      role="group"
+      aria-label="Additional playback options"
+    >
       <div className={style.player__options__left}>
-        <button className={style.controlsButton} onClick={toggleDisplayPlay}>
+        <button
+          className={style.controlsButton}
+          onClick={toggleDisplayPlay}
+          aria-label={`Now playing view ${displayPlay ? 'on' : 'off'}`}
+          aria-pressed={displayPlay}
+        >
           {getPlayIcon()}
         </button>
-        <button className={style.controlsButton} onClick={toggleLyrics}>
+        <button
+          className={style.controlsButton}
+          onClick={toggleLyrics}
+          aria-label={`Lyrics ${displayLyrics ? 'on' : 'off'}`}
+          aria-pressed={displayLyrics}
+        >
           {getLyricsIcon()}
         </button>
-        <button className={style.controlsButton} onClick={toggleQueue}>
+        <button
+          className={style.controlsButton}
+          onClick={toggleQueue}
+          aria-label={`Queue ${displayQueue ? 'visible' : 'hidden'}`}
+          aria-pressed={displayQueue}
+        >
           {getQueueIcon()}
         </button>
       </div>
       <div className={style.player__options__center}>
-        <button className={style.controlsButton} onClick={toggleDevices}>
+        <button
+          className={style.controlsButton}
+          onClick={toggleDevices}
+          aria-label={`Connect to device ${displayDevices ? 'menu open' : 'menu closed'}`}
+          aria-pressed={displayDevices}
+        >
           {getDevicesIcon()}
         </button>
       </div>
       <div className={style.player__options__right}>
         <div className={style.player__options__right__volume}>
-          <button className={style.controlsButton} onClick={toggleMute}>
+          <button
+            className={style.controlsButton}
+            onClick={toggleMute}
+            aria-label={volume === 0 ? 'Unmute (Ctrl+M)' : 'Mute (Ctrl+M)'}
+            title={volume === 0 ? 'Unmute (Ctrl+M)' : 'Mute (Ctrl+M)'}
+          >
             {getVolumeIcon()}
           </button>
         </div>
         <div
-          className={style.player__options__right__volumeBar}
-          onClick={handleVolume}
+          ref={volumeBarRef}
+          className={`${style.player__options__right__volumeBar} ${isAdjustingVolume ? style.adjusting : ''}`}
+          onClick={handleVolumeClick}
+          onMouseDown={initializeVolumeAdjust}
+          onKeyDown={handleVolumeKeyDown}
+          role="slider"
+          aria-label="Volume"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow={volumePercentage}
+          aria-valuetext={`Volume ${volumePercentage}%${volume === 0 ? ' (muted)' : ''}`}
+          tabIndex="0"
+          title={`Volume ${volumePercentage}%${volume === 0 ? ' (muted)' : ''}`}
         >
           <div
             className={style.player__options__right__volumeBar__progress}
-            style={{ width: `${volume * 100}%` }}
-          ></div>
+            style={{ width: `${volumePercentage}%` }}
+          >
+            <div
+              className={`${style.player__options__right__volumeBar__progress__handle} ${isAdjustingVolume ? style.active : ''}`}
+              style={{
+                transform: `translate(${volume === 0 ? '50%' : '50%'}, -50%)`,
+              }}
+            />
+          </div>
         </div>
-        <button className={style.controlsButton} onClick={toggleMini}>
+        <button
+          className={style.controlsButton}
+          onClick={toggleMini}
+          aria-label={`Mini player ${displayMini ? 'on' : 'off'}`}
+          aria-pressed={displayMini}
+        >
           {getMiniIcon()}
         </button>
-        <button className={style.controlsButton}>
+        <button className={style.controlsButton} aria-label="Full screen">
           <LuMaximize2 className={style.player__options__right__max} />
         </button>
       </div>
     </div>
   );
+};
+
+Options.propTypes = {
+  className: PropTypes.string,
 };
 
 export default Options;

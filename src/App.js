@@ -1,38 +1,68 @@
-import React from 'react';
+import React, { lazy, Suspense, memo } from 'react';
+import PropTypes from 'prop-types';
 import './App.css';
 import './styles/theme.scss';
 import { ThemeProvider } from './contexts/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
-// Components
-import Main from './pages/Main/Main';
-import Navbar from './components/partials/Navbar/Navbar';
-import SidebarLeft from './components/partials/SideBarLeft/SideBar';
-import SideBarRight from './components/partials/SideBarRight/SideBar';
-import AudioPlayer from './components/partials/AudioPlayer/AudioPlayerF';
+// Lazy loaded components
+const Main = lazy(() => import('./pages/Main/Main'));
+const Navbar = lazy(() => import('./components/partials/Navbar/Navbar'));
+const SidebarLeft = lazy(
+  () => import('./components/partials/SideBarLeft/SideBar')
+);
+const SideBarRight = lazy(
+  () => import('./components/partials/SideBarRight/SideBar')
+);
+const AudioPlayer = lazy(
+  () => import('./components/partials/AudioPlayer/AudioPlayerF')
+);
 
-// Composant principal de l'application
-const AppContent = () => {
-  return (
-    <div className="app-container">
+// Loading fallback component
+const LoadingFallback = () => (
+  <div className="loading-spinner">
+    <div className="spinner"></div>
+  </div>
+);
+
+const AppLayout = memo(({ children }) => (
+  <div className="app-container">
+    <Suspense fallback={<LoadingFallback />}>
       <Navbar />
-      <div className="main-content">
-        <SidebarLeft />
-        <div className="content-wrapper">
-          <Main />
-        </div>
-        <SideBarRight />
-      </div>
+      {children}
       <AudioPlayer />
-    </div>
-  );
+    </Suspense>
+  </div>
+));
+
+AppLayout.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
-function App() {
-  return (
+AppLayout.displayName = 'AppLayout';
+
+const MainContent = memo(() => (
+  <div className="main-content">
+    <Suspense fallback={<LoadingFallback />}>
+      <SidebarLeft />
+      <div className="content-wrapper">
+        <Main />
+      </div>
+      <SideBarRight />
+    </Suspense>
+  </div>
+));
+
+MainContent.displayName = 'MainContent';
+
+const App = () => (
+  <ErrorBoundary>
     <ThemeProvider>
-      <AppContent />
+      <AppLayout>
+        <MainContent />
+      </AppLayout>
     </ThemeProvider>
-  );
-}
+  </ErrorBoundary>
+);
 
 export default App;

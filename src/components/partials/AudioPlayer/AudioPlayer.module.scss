@@ -4,7 +4,7 @@
 .player {
   background-color: var(--topbar-background);
   width: 100%;
-  padding: 0px 0 16px 0px;
+  padding: 0px 0 10px 0px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -132,11 +132,16 @@
           font-size: 40px;
           color: var(--text-primary);
           cursor: pointer;
+          transition: all 0.2s ease;
 
           &:hover {
             color: var(--text-secondary);
             transform: scale(1.1);
           }
+        }
+
+        .buffering {
+          animation: pulse 1.5s ease-in-out infinite;
         }
       }
 
@@ -169,35 +174,100 @@
       gap: 8px;
       margin-bottom: 8px;
       height: 5px;
+      padding: 8px 0;
 
       &__bar {
+        position: relative;
         width: 85%;
-        height: 100%;
+        height: 3px;
         background-color: var(--card-hover);
-        border-radius: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: height, background-color;
 
-        &:hover {
-          cursor: pointer;
+        &:hover,
+        &.dragging {
+          height: 5px;
+
+          .player__controls__progress__bar__progression {
+            height: 100%;
+            background-color: var(--accent-color);
+
+            &__handle {
+              opacity: 1;
+              transform: translate(50%, -50%) scale(1);
+              box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
+            }
+          }
         }
 
         &__progression {
+          position: relative;
           width: 50%;
           height: 100%;
-          background-color: white;
-          border-radius: 5px;
+          background-color: var(--text-primary);
+          border-radius: inherit;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: width, background-color;
 
           &:hover {
             background-color: var(--accent-color);
-            cursor: pointer;
           }
+
+          &__handle {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            border: 2px solid var(--background-primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translate(50%, -50%) scale(0.8);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity, box-shadow;
+            z-index: 2;
+
+            &.active {
+              opacity: 1;
+              transform: translate(50%, -50%) scale(1);
+              box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
+            }
+          }
+        }
+
+        &:focus {
+          outline: none;
+          height: 5px;
+          box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--accent-color);
+          outline-offset: 2px;
         }
       }
 
       span {
         font-size: 0.75em;
         text-align: center;
+        user-select: none;
+        min-width: 45px;
       }
     }
+  }
+
+  &__optionsContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-inline-end: 8px;
+    width: 30%;
   }
 
   &__options {
@@ -278,24 +348,78 @@
         }
       }
       &__volumeBar {
-        width: 100px;
-        height: 5px;
-        background-color: var(--card-hover);
-        border-radius: 5px;
         position: relative;
+        width: 100px;
+        height: 3px;
+        background-color: var(--card-hover);
+        border-radius: 4px;
         cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        margin: 0 4px;
+        will-change: height, background-color;
+
+        &:hover,
+        &.adjusting {
+          height: 5px;
+
+          .player__options__right__volumeBar__progress {
+            height: 100%;
+            background-color: var(--accent-color);
+
+            &__handle {
+              opacity: 1;
+              transform: translate(-50%, -50%) scale(1);
+              box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
+            }
+          }
+        }
 
         &__progress {
+          position: relative;
           width: 50%;
           height: 100%;
           background-color: var(--text-primary);
-          border-radius: 5px;
-          position: absolute;
-          cursor: pointer;
+          border-radius: inherit;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: width, background-color;
 
           &:hover {
             background-color: var(--accent-color);
           }
+
+          &__handle {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            border: 2px solid var(--background-primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity, box-shadow;
+            z-index: 2;
+
+            &.active {
+              opacity: 1;
+              transform: translate(-50%, -50%) scale(1);
+              box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
+            }
+          }
+        }
+
+        &:focus {
+          outline: none;
+          height: 5px;
+          box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--accent-color);
+          outline-offset: 2px;
         }
       }
       &__mini,
@@ -310,5 +434,28 @@
         }
       }
     }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
   }
 }
