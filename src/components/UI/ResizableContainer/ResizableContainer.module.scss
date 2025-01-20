@@ -1,0 +1,29 @@
+.resizable_layout {
+  display: flex;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  .resizable_panel {
+    background-color: vaf(--background-secondary);
+    overflow: auto;
+    transition: width 0.2s ease;
+  }
+
+  .resizable_divider {
+    width: 1px;
+    cursor: grab;
+    background-color: #ccc;
+    position: relative;
+  }
+
+  .resizable_divider:hover {
+    background-color: #aaa;
+  }
+
+  .content_panel {
+    flex: 1;
+    background-color: #fff;
+    overflow: auto;
+  }
+}

@@ -1,0 +1,107 @@
+@use '../../../styles/theme.scss' as *;
+@import '../../../styles/variables';
+
+.sidebar {
+  width: $right-sidebar-width;
+  background-color: var(--background-secondary);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    width: 100%;
+    background-color: transparent;
+    -webkit-transition:
+      background-color 0.5s ease,
+      -webkit-box-shadow 0.5s ease;
+    transition:
+      background-color 0.5s ease,
+      -webkit-box-shadow 0.5s ease;
+    transition:
+      background-color 0.5s ease,
+      box-shadow 0.5s ease;
+    transition:
+      background-color 0.5s ease,
+      box-shadow 0.5s ease,
+      -webkit-box-shadow 0.5s ease;
+    z-index: 2;
+
+    .header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding-inline: 16px;
+
+      &__title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+
+        &__text {
+          font-size: 20px;
+          color: var(--text-secondary);
+        }
+
+        span {
+          padding: 4px 8px;
+          font-size: 16px;
+          font-weight: 700;
+        }
+      }
+      .header_button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        font-weight: 700;
+        font-size: 18px;
+        gap: 10px;
+        cursor: pointer;
+
+        span {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 8px;
+          border-radius: 50%;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: var(--hover-background);
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+  }
+}
+
+/* Styles pour la scrollbar */
+.content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-primary);
+}

@@ -1,10 +1,14 @@
 import React from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import styles from './Home.module.scss';
-import HorizontalScroll from '../../components/HorizontalScroll/HorizontalScroll';
-import TrackCard from '../../components/Cards/TrackCard';
-import ArtistCard from '../../components/Cards/ArtistCard';
-import AlbumCard from '../../components/Cards/AlbumCard';
+
+// Components
+import HorizontalScroll from '../../components/UI/HorizontalScroll/HorizontalScroll';
+import TrackCard from '../../components/UI/Cards/TrackCard';
+import ArtistCard from '../../components/UI/Cards/ArtistCard';
+import AlbumCard from '../../components/UI/Cards/AlbumCard';
+import RecentSection from '../../components/UI/RecentSection/RecentSection';
+import Filter from '../../components/UI/Filter/Filter';
 
 // Données temporaires pour la démo
 const mockData = {
@@ -12,6 +16,7 @@ const mockData = {
     .fill(null)
     .map((_, i) => ({
       id: i,
+      type: 'track',
       title: `Top Track ${i + 1}`,
       artist: `Artist ${i + 1}`,
       coverUrl: `https://picsum.photos/200?random=${i}`,
@@ -20,6 +25,7 @@ const mockData = {
     .fill(null)
     .map((_, i) => ({
       id: i,
+      type: 'artist',
       name: `Popular Artist ${i + 1}`,
       followers: Math.floor(Math.random() * 1000000),
       imageUrl: `https://picsum.photos/200?random=${i + 20}`,
@@ -28,6 +34,7 @@ const mockData = {
     .fill(null)
     .map((_, i) => ({
       id: i,
+      type: 'Playlist',
       title: `New Album ${i + 1}`,
       artist: `Artist ${i + 1}`,
       year: 2023,
@@ -41,11 +48,13 @@ const Home = () => {
   return (
     <div className={styles.home}>
       <header className={styles.header}>
-        <h1>Bienvenue sur Spotify AYDT</h1>
-        <p className={styles.subtitle}>
-          Découvrez votre nouvelle expérience musicale
-        </p>
+        <Filter filterName="All" />
+        <Filter filterName="Tracks" />
+        <Filter filterName="Artists" />
+        <Filter filterName="Albums" />
       </header>
+
+      <RecentSection />
 
       <main className={styles.mainContent}>
         <HorizontalScroll title="Top 10 des derniers sons">

@@ -36,12 +36,6 @@ describe('App Component', () => {
     localStorageMock.getItem.mockReturnValue(null);
   });
 
-  test('renders welcome message', () => {
-    render(<App />);
-    const welcomeElement = screen.getByText(/Bienvenue sur Spotify AYDT/i);
-    expect(welcomeElement).toBeInTheDocument();
-  });
-
   test('initializes with light theme by default', () => {
     render(<App />);
     expect(document.documentElement.setAttribute).toHaveBeenCalledWith(
