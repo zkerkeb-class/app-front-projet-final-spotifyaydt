@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
@@ -34,7 +34,75 @@ const Controls = () => {
     toggleRepeat,
     isDragging,
     isBuffering,
+    playNextTrack,
+    playPreviousTrack,
+    audioRef,
   } = useAudioPlayer();
+
+  // Add last click time ref for double-click detection
+  const lastClickTimeRef = useRef(0);
+  const DOUBLE_CLICK_DELAY = 300; // milliseconds
+
+  // Handle double-click on previous track
+  const handlePreviousClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      const currentTime = Date.now();
+      const timeDiff = currentTime - lastClickTimeRef.current;
+
+      if (timeDiff < DOUBLE_CLICK_DELAY) {
+        // Double click - restart current track
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+        }
+      } else {
+        // Single click - play previous track
+        playPreviousTrack();
+      }
+
+      lastClickTimeRef.current = currentTime;
+    },
+    [playPreviousTrack, audioRef]
+  );
+
+  const handleNextClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      playNextTrack();
+    },
+    [playNextTrack]
+  );
+
+  // Add keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Only handle if not in an input/textarea
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
+        return;
+
+      switch (e.key) {
+        case 'MediaTrackNext':
+        case 'n':
+          if (e.ctrlKey) {
+            e.preventDefault();
+            playNextTrack();
+          }
+          break;
+        case 'MediaTrackPrevious':
+        case 'p':
+          if (e.ctrlKey) {
+            e.preventDefault();
+            handlePreviousClick();
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [playNextTrack, handlePreviousClick]);
 
   const getShuffleIcon = () => {
     if (shuffleOn)
@@ -171,7 +239,12 @@ const Controls = () => {
           >
             {getShuffleIcon()}
           </button>
-          <button className={style.controlsButton} aria-label="Previous track">
+          <button
+            className={style.controlsButton}
+            onClick={handlePreviousClick}
+            aria-label="Previous track (Ctrl+P). Double-click to restart current track"
+            title="Previous track (Ctrl+P). Double-click to restart current track"
+          >
             <IoPlaySkipBack
               className={style.player__controls__buttons__left__backward}
             />
@@ -180,8 +253,10 @@ const Controls = () => {
         <div className={style.player__controls__buttons__center}>
           <button
             onClick={togglePlayPause}
+            className={`${style.player__controls__buttons__center__play} ${
+              isBuffering ? style.buffering : ''
+            }`}
             aria-label={isPlaying ? 'Pause' : 'Play'}
-            className={isBuffering ? style.buffering : ''}
           >
             {isPlaying ? (
               <IoPauseCircle
@@ -195,7 +270,12 @@ const Controls = () => {
           </button>
         </div>
         <div className={style.player__controls__buttons__right}>
-          <button className={style.controlsButton} aria-label="Next track">
+          <button
+            className={style.controlsButton}
+            onClick={handleNextClick}
+            aria-label="Next track (Ctrl+N)"
+            title="Next track (Ctrl+N)"
+          >
             <IoPlaySkipForward
               className={style.player__controls__buttons__right__forward}
             />

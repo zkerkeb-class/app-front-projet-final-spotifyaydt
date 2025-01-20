@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 
 import { LuVolume, LuVolume1, LuVolume2, LuVolumeX } from 'react-icons/lu';
+import { mockTracks } from '../constant/mockData';
 
 const AudioPlayerContext = createContext();
 
@@ -19,6 +20,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const volumeBarRef = useRef(null);
   const seekTimeoutRef = useRef(null);
   const volumeTimeoutRef = useRef(null);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [previousVolume, setPreviousVolume] = useState(0.5);
@@ -40,12 +42,211 @@ export const AudioPlayerProvider = ({ children }) => {
   const [wasPlaying, setWasPlaying] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
   const [isAdjustingVolume, setIsAdjustingVolume] = useState(false);
+  const [shuffleQueue, setShuffleQueue] = useState([]);
+  const [shuffleQueueIndex, setShuffleQueueIndex] = useState(0);
+  const [shuffleHistory, setShuffleHistory] = useState([]);
+
+  const createShuffleQueue = useCallback(() => {
+    const indices = Array.from({ length: mockTracks.length }, (_, i) => i);
+    const currentIndex = indices.indexOf(currentTrackIndex);
+    if (currentIndex > -1) {
+      indices.splice(currentIndex, 1);
+    }
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    indices.unshift(currentTrackIndex);
+    setShuffleQueue(indices);
+    setShuffleQueueIndex(0);
+    setShuffleHistory([]);
+  }, [currentTrackIndex]);
+
+  const handleAudioEnd = useCallback(() => {
+    setIsPlaying(false);
+
+    if (repeatTrack) {
+      // Single track repeat - just restart the current track
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            audioRef.current.currentTime = 0;
+            setIsPlaying(true);
+          })
+          .catch((error) => console.error('Playback failed:', error));
+      }
+    } else if (shuffleOn) {
+      // Shuffle is on
+      if (shuffleQueueIndex >= shuffleQueue.length - 1) {
+        // Reached end of shuffle queue
+        if (repeatPlaylist) {
+          // Create new shuffle queue and continue playing
+          createShuffleQueue();
+          setCurrentTrackIndex(shuffleQueue[0]);
+          setIsPlaying(true);
+        }
+        // If repeat playlist is off, playback stops (current state)
+      } else {
+        // Continue with next track in shuffle queue
+        setShuffleQueueIndex((prev) => prev + 1);
+        setCurrentTrackIndex(shuffleQueue[shuffleQueueIndex + 1]);
+        setIsPlaying(true);
+      }
+    } else {
+      // Normal sequential play
+      const nextIndex = (currentTrackIndex + 1) % mockTracks.length;
+      if (nextIndex === 0 && !repeatPlaylist) {
+        // Reached end of playlist and repeat is off
+        return; // Stop playback
+      }
+      // Either repeat is on or we're not at the end yet
+      setCurrentTrackIndex(nextIndex);
+      setIsPlaying(true);
+    }
+  }, [
+    repeatTrack,
+    shuffleOn,
+    shuffleQueue,
+    shuffleQueueIndex,
+    repeatPlaylist,
+    currentTrackIndex,
+    createShuffleQueue,
+  ]);
+
+  const playNextTrack = useCallback(() => {
+    // If repeat track is on, switch to repeat playlist
+    if (repeatTrack) {
+      setRepeatTrack(false);
+      setRepeatPlaylist(true);
+      setClickCount(1); // Set to repeat playlist state
+    }
+
+    if (shuffleOn) {
+      if (shuffleQueueIndex >= shuffleQueue.length - 1) {
+        if (repeatPlaylist) {
+          // Add current track to history before creating new queue
+          setShuffleHistory((prev) => [...prev, currentTrackIndex]);
+          createShuffleQueue();
+          setCurrentTrackIndex(shuffleQueue[0]);
+          setIsPlaying(true);
+        } else {
+          return;
+        }
+      } else {
+        // Add current track to history before moving to next
+        setShuffleHistory((prev) => [...prev, currentTrackIndex]);
+        setShuffleQueueIndex((prev) => prev + 1);
+        setCurrentTrackIndex(shuffleQueue[shuffleQueueIndex + 1]);
+        setIsPlaying(true);
+      }
+    } else {
+      // Normal sequential play logic remains the same
+      if (currentTrackIndex === mockTracks.length - 1) {
+        if (repeatPlaylist) {
+          setCurrentTrackIndex(0);
+          setIsPlaying(true);
+        } else {
+          return;
+        }
+      } else {
+        setCurrentTrackIndex(currentTrackIndex + 1);
+        setIsPlaying(true);
+      }
+    }
+  }, [
+    currentTrackIndex,
+    shuffleOn,
+    shuffleQueue,
+    shuffleQueueIndex,
+    repeatPlaylist,
+    createShuffleQueue,
+    repeatTrack,
+  ]);
+
+  const playPreviousTrack = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // If repeat track is on, switch to repeat playlist
+    if (repeatTrack) {
+      setRepeatTrack(false);
+      setRepeatPlaylist(true);
+      setClickCount(1); // Set to repeat playlist state
+    }
+
+    if (shuffleOn) {
+      if (audio.currentTime <= 3) {
+        // Within first 3 seconds, try to go to previous track
+        if (shuffleHistory.length > 0) {
+          // Get the last track from history
+          const previousTrack = shuffleHistory[shuffleHistory.length - 1];
+          // Remove it from history
+          setShuffleHistory((prev) => prev.slice(0, -1));
+          // Play it
+          setCurrentTrackIndex(previousTrack);
+          setIsPlaying(true);
+        } else {
+          // If no history, restart current track
+          audio.currentTime = 0;
+          setIsPlaying(true);
+        }
+      } else {
+        // After 3 seconds, restart current track
+        audio.currentTime = 0;
+        setIsPlaying(true);
+      }
+    } else {
+      // Normal sequential play
+      if (audio.currentTime <= 3) {
+        if (currentTrackIndex === 0) {
+          if (repeatPlaylist) {
+            // Go to last track
+            setCurrentTrackIndex(mockTracks.length - 1);
+            setIsPlaying(true);
+          } else {
+            // At first track and no repeat - restart current track
+            audio.currentTime = 0;
+            setIsPlaying(true);
+          }
+        } else {
+          // Not at first track, go to previous
+          setCurrentTrackIndex(currentTrackIndex - 1);
+          setIsPlaying(true);
+        }
+      } else {
+        // After 3 seconds, restart current track
+        audio.currentTime = 0;
+        setIsPlaying(true);
+      }
+    }
+  }, [
+    currentTrackIndex,
+    shuffleOn,
+    shuffleHistory,
+    repeatPlaylist,
+    repeatTrack,
+  ]);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Set initial volume
+    audio.src = mockTracks[currentTrackIndex].audio;
+    audio.load();
+
+    if (isPlaying) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => console.error('Playback failed:', error));
+      }
+    }
+  }, [currentTrackIndex]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
     audio.volume = volume;
 
     const handleWaiting = () => setIsBuffering(true);
@@ -70,22 +271,13 @@ export const AudioPlayerProvider = ({ children }) => {
       audio.removeEventListener('pause', () => setIsPlaying(false));
       audio.removeEventListener('volumechange', handleVolumeChange);
     };
-  }, [volume]);
+  }, [volume, handleAudioEnd]);
 
-  const handleAudioEnd = useCallback(() => {
-    setIsPlaying(false);
-    if (repeatTrack) {
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            audioRef.current.currentTime = 0;
-            setIsPlaying(true);
-          })
-          .catch((error) => console.error('Playback failed:', error));
-      }
+  useEffect(() => {
+    if (shuffleOn) {
+      createShuffleQueue();
     }
-  }, [repeatTrack]);
+  }, [shuffleOn, createShuffleQueue]);
 
   const togglePlayPause = useCallback(() => {
     const audio = audioRef.current;
@@ -96,18 +288,6 @@ export const AudioPlayerProvider = ({ children }) => {
       playPromise.catch((error) => console.error('Playback failed:', error));
     }
   }, [isPlaying]);
-
-  const togglePrevious = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime -= 10;
-  };
-
-  const toggleNext = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime += 10;
-  };
 
   const getVolumeIcon = useCallback(() => {
     const currentVolume = previewVolume !== null ? previewVolume : volume;
@@ -120,7 +300,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const calculateVolume = useCallback((e, element) => {
     const rect = element.getBoundingClientRect();
     const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-    return Math.round((x / rect.width) * 100) / 100; // Round to 2 decimal places
+    return Math.round((x / rect.width) * 100) / 100;
   }, []);
 
   const handleVolumeClick = useCallback(
@@ -157,7 +337,7 @@ export const AudioPlayerProvider = ({ children }) => {
       if (!audioRef.current) return;
 
       let newVolume = volume;
-      const step = 0.05; // 5% volume change
+      const step = 0.05;
 
       switch (e.key) {
         case 'ArrowUp':
@@ -201,16 +381,14 @@ export const AudioPlayerProvider = ({ children }) => {
       const newVolume = calculateVolume(e, volumeBarRef.current);
       setPreviewVolume(newVolume);
 
-      // Clear existing timeout
       if (volumeTimeoutRef.current) {
         clearTimeout(volumeTimeoutRef.current);
       }
 
-      // Set new timeout for actual volume change
       volumeTimeoutRef.current = setTimeout(() => {
         setVolume(newVolume);
         audioRef.current.volume = newVolume;
-      }, 16); // Approximately 60fps
+      }, 16);
     },
     [calculateVolume]
   );
@@ -261,17 +439,15 @@ export const AudioPlayerProvider = ({ children }) => {
       const newTime = calculateSeekTime(e, progressBarRef.current);
       setPreviewTime(newTime);
 
-      // Clear existing timeout
       if (seekTimeoutRef.current) {
         clearTimeout(seekTimeoutRef.current);
       }
 
-      // Set new timeout for actual seek
       seekTimeoutRef.current = setTimeout(() => {
         if (isDragging) {
           setCurrentTime(newTime);
         }
-      }, 16); // Approximately 60fps
+      }, 16);
     },
     [calculateSeekTime, isDragging]
   );
@@ -328,22 +504,29 @@ export const AudioPlayerProvider = ({ children }) => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  const toggleShuffle = () => {
-    setShuffleOn(!shuffleOn);
-  };
+  const toggleShuffle = useCallback(() => {
+    setShuffleOn((prev) => !prev);
+  }, []);
 
   const toggleRepeat = () => {
     setClickCount((prevCount) => (prevCount + 1) % 3);
 
-    if (clickCount === 0) {
-      setRepeatTrack(false);
-      setRepeatPlaylist(true);
-    } else if (clickCount === 1) {
-      setRepeatTrack(true);
-      setRepeatPlaylist(false);
-    } else {
-      setRepeatTrack(false);
-      setRepeatPlaylist(false);
+    switch (clickCount) {
+      case 0:
+        setRepeatTrack(false);
+        setRepeatPlaylist(true);
+        break;
+      case 1:
+        setRepeatTrack(true);
+        setRepeatPlaylist(false);
+        break;
+      case 2:
+        setRepeatTrack(false);
+        setRepeatPlaylist(false);
+        break;
+      default:
+        setRepeatTrack(false);
+        setRepeatPlaylist(false);
     }
   };
 
@@ -413,6 +596,9 @@ export const AudioPlayerProvider = ({ children }) => {
         isAdjustingVolume,
         previewVolume,
         volumeTimeoutRef,
+        currentTrackIndex,
+        playNextTrack,
+        playPreviousTrack,
       }}
     >
       {children}

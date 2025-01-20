@@ -13,7 +13,8 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 import { mockTracks } from '../../../constant/mockData';
 
 const AudioPlayer = ({ onError }) => {
-  const { audioRef } = useAudioPlayer();
+  const { audioRef, currentTrackIndex } = useAudioPlayer();
+  const currentTrack = mockTracks[currentTrackIndex];
 
   const handleError = (error) => {
     console.error('Audio playback error:', error);
@@ -22,40 +23,38 @@ const AudioPlayer = ({ onError }) => {
 
   return (
     <div className={style.player} role="region" aria-label="Audio player">
-      {mockTracks.map((track) => (
-        <div
-          key={track.id}
-          className={style.player__music}
-          role="group"
-          aria-label={`Now playing: ${track.title} by ${track.artist}`}
-        >
-          <div className={style.player__music__cover}>
-            <img src={track.coverUrl} alt={`Album cover for ${track.title}`} />
-          </div>
-          <div className={style.player__music__info}>
-            <span
-              className={style.player__music__info__title}
-              role="heading"
-              aria-level="2"
-            >
-              {track.title}
-            </span>
-            <span className={style.player__music__info__artist}>
-              {track.artist}
-            </span>
-          </div>
-          <div className={style.player__music__add}>
-            <button
-              className={style.player__music__add__button}
-              aria-label={`Add ${track.title} to your library`}
-            >
-              <IoMdAddCircleOutline
-                className={style.player__music__add__icon}
-              />
-            </button>
-          </div>
+      <div
+        className={style.player__music}
+        role="group"
+        aria-label={`Now playing: ${currentTrack.title} by ${currentTrack.artist}`}
+      >
+        <div className={style.player__music__cover}>
+          <img
+            src={currentTrack.coverUrl}
+            alt={`Album cover for ${currentTrack.title}`}
+          />
         </div>
-      ))}
+        <div className={style.player__music__info}>
+          <span
+            className={style.player__music__info__title}
+            role="heading"
+            aria-level="2"
+          >
+            {currentTrack.title}
+          </span>
+          <span className={style.player__music__info__artist}>
+            {currentTrack.artist}
+          </span>
+        </div>
+        <div className={style.player__music__add}>
+          <button
+            className={style.player__music__add__button}
+            aria-label={`Add ${currentTrack.title} to your library`}
+          >
+            <IoMdAddCircleOutline className={style.player__music__add__icon} />
+          </button>
+        </div>
+      </div>
 
       <div
         className={style.player__controlsContainer}
@@ -74,7 +73,7 @@ const AudioPlayer = ({ onError }) => {
       </div>
 
       <audio
-        src={mockTracks[0].audio}
+        src={currentTrack.audio}
         ref={audioRef}
         onError={handleError}
         preload="metadata"

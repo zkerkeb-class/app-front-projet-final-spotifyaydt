@@ -91,7 +91,7 @@
       color: var(--accent-color);
       font-size: 10px;
       position: absolute;
-      bottom: 38px;
+      bottom: 40px;
     }
 
     &__buttons {
@@ -99,7 +99,6 @@
       flex-direction: row;
       align-items: center;
       margin: 0 auto;
-      margin-bottom: 8px;
       gap: 10px;
 
       &__left {
@@ -110,6 +109,16 @@
         gap: 10px;
 
         &__shuffle,
+        &__backward {
+          font-size: 20px;
+          color: var(--text-secondary);
+          cursor: pointer;
+
+          &:hover {
+            color: var(--text-primary);
+          }
+        }
+
         &__backward {
           font-size: 20px;
           color: var(--text-secondary);
@@ -135,7 +144,6 @@
           transition: all 0.2s ease;
 
           &:hover {
-            color: var(--text-secondary);
             transform: scale(1.1);
           }
         }
@@ -154,6 +162,16 @@
 
         &__forward,
         &__repeat {
+          font-size: 20px;
+          color: var(--text-secondary);
+          cursor: pointer;
+
+          &:hover {
+            color: var(--text-primary);
+          }
+        }
+
+        &__forward {
           font-size: 20px;
           color: var(--text-secondary);
           cursor: pointer;
