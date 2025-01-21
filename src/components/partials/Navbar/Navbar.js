@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import style from './Navbar.module.scss';
 import { useTheme } from '../../../contexts/ThemeContext';
 
@@ -14,12 +15,36 @@ import { FaGlobe } from 'react-icons/fa';
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
   const avatarUrl = `https://picsum.photos/200?random=1`;
 
   const [language, setLanguage] = useState('ENG');
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoForward, setCanGoForward] = useState(false);
+
+  useEffect(() => {
+    // Check if we can go back (not on home page and has history)
+    setCanGoBack(location.pathname !== '/' && window.history.length > 1);
+
+    // Check if we can go forward
+    setCanGoForward(window.history.state?.idx < window.history.length - 1);
+  }, [location]);
 
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
+  };
+
+  const handleGoBack = () => {
+    if (canGoBack) {
+      navigate(-1);
+    }
+  };
+
+  const handleGoForward = () => {
+    if (canGoForward) {
+      navigate(1);
+    }
   };
 
   return (
@@ -32,18 +57,28 @@ const Navbar = () => {
           <span>Spotify AYDT</span>
         </div>
         <div className={style.nav_button}>
-          <button className={style.nav_buttons}>
+          <button
+            className={`${style.nav_buttons} ${!canGoBack ? style.disabled : ''}`}
+            onClick={handleGoBack}
+            aria-label="Go back"
+            disabled={!canGoBack}
+          >
             <FaChevronLeft />
           </button>
-          <button className={style.nav_buttons}>
+          <button
+            className={`${style.nav_buttons} ${!canGoForward ? style.disabled : ''}`}
+            onClick={handleGoForward}
+            aria-label="Go forward"
+            disabled={!canGoForward}
+          >
             <FaChevronRight />
           </button>
         </div>
       </div>
       <div className={style.middle_cont}>
-        <div className={style.nav_large_button}>
+        <Link to="/" className={style.nav_large_button}>
           <GrHomeRounded className={style.middle_cont_icon} />
-        </div>
+        </Link>
         <div className={style.search_bar}>
           <div className={style.search_wrapper}>
             <span className={style.search_icon}>

@@ -8,6 +8,7 @@ import HorizontalScroll from '../../components/UI/HorizontalScroll/HorizontalScr
 import TrackCard from '../../components/UI/Cards/TrackCard';
 import ArtistCard from '../../components/UI/Cards/ArtistCard';
 import AlbumCard from '../../components/UI/Cards/AlbumCard';
+import PlaylistCard from '../../components/UI/Cards/PlaylistCard';
 import RecentSection from '../../components/UI/RecentSection/RecentSection';
 import Filter from '../../components/UI/Filter/Filter';
 
@@ -16,6 +17,7 @@ import {
   mockTracks,
   mockArtists,
   mockAlbums,
+  mockPlaylists,
   mockRecentlyPlayed,
 } from '../../constant/mockData';
 
@@ -56,6 +58,11 @@ const Home = () => {
           onFilter={handleFilterChange}
           isActive={activeFilter === 'Albums'}
         />
+        <Filter
+          filterName="Playlists"
+          onFilter={handleFilterChange}
+          isActive={activeFilter === 'Playlists'}
+        />
       </header>
 
       <ErrorBoundary>
@@ -68,7 +75,7 @@ const Home = () => {
         <main className={styles.mainContent}>
           {(activeFilter === 'All' || activeFilter === 'Tracks') && (
             <HorizontalScroll title="Popular Tracks">
-              {mockTracks.map((track) => (
+              {mockTracks.slice(0, 10).map((track) => (
                 <TrackCard key={track.id} track={track} onPlay={handlePlay} />
               ))}
             </HorizontalScroll>
@@ -90,6 +97,18 @@ const Home = () => {
             <HorizontalScroll title="Featured Albums">
               {mockAlbums.map((album) => (
                 <AlbumCard key={album.id} album={album} onPlay={handlePlay} />
+              ))}
+            </HorizontalScroll>
+          )}
+
+          {(activeFilter === 'All' || activeFilter === 'Playlists') && (
+            <HorizontalScroll title="Featured Playlists">
+              {mockPlaylists.map((playlist) => (
+                <PlaylistCard
+                  key={playlist.id}
+                  playlist={playlist}
+                  onPlay={handlePlay}
+                />
               ))}
             </HorizontalScroll>
           )}

@@ -56,6 +56,15 @@
         &:hover {
           color: var(--text-primary);
         }
+
+        &.disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+
+          &:hover {
+            background-color: transparent;
+          }
+        }
       }
     }
   }

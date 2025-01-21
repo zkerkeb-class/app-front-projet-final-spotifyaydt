@@ -118,7 +118,7 @@
         }
 
         &__item {
-          color: var(--text-secondary);
+          color: var(--text-primary);
           font-size: 0.875rem;
         }
       }
@@ -142,18 +142,37 @@
 
     &:hover {
       background-color: var(--card-hover);
+
+      .track__number {
+        display: none;
+      }
+
+      .track__play_icon {
+        display: flex;
+      }
     }
 
     &__info {
       display: flex;
       align-items: center;
       gap: 16px;
+      position: relative;
     }
 
     &__number {
-      color: var(--text-secondary);
       width: 24px;
-      text-align: right;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    &__play_icon {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      text-align: center;
+      color: var(--text-primary);
+      font-size: 14px;
     }
 
     &__details {
@@ -163,22 +182,23 @@
     }
 
     &__title {
+      color: var(--text-primary);
       font-weight: 500;
     }
 
     &__artist {
       color: var(--text-secondary);
-      font-size: 0.875rem;
+      font-size: 14px;
     }
 
     &__album {
       color: var(--text-secondary);
-      font-size: 0.875rem;
+      font-size: 14px;
     }
 
     &__duration {
       color: var(--text-secondary);
-      font-size: 0.875rem;
+      font-size: 14px;
       text-align: right;
     }
   }

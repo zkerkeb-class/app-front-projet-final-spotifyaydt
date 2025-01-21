@@ -2,7 +2,7 @@
 @import '../../../styles/variables';
 
 .sidebar {
-  width: $left-sidebar-width;
+  width: 100%;
   background-color: var(--background-secondary);
   border-radius: 10px;
   display: flex;

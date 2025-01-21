@@ -76,6 +76,9 @@ const Artist = () => {
                   >
                     <div className={style.track__info}>
                       <span className={style.track__number}>{index + 1}</span>
+                      <span className={style.track__play_icon}>
+                        <FaPlay />
+                      </span>
                       <img
                         src={track.coverUrl}
                         alt={track.title}

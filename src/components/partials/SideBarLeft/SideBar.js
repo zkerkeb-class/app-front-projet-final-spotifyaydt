@@ -3,48 +3,23 @@ import style from './Sidebar.module.scss';
 
 import Filter from '../../UI/Filter/Filter';
 import Playlist from '../../UI/SideItems/Playlist';
+import { mockPlaylists } from '../../../constant/mockData';
 
 //icons
 import { FaPlus } from 'react-icons/fa6';
 import { FiSearch } from 'react-icons/fi';
 import { FaListUl } from 'react-icons/fa6';
 
-// Données temporaires pour la démo
-const mockData = {
-  tracks: Array(10)
-    .fill(null)
-    .map((_, i) => ({
-      id: i,
-      type: 'track',
-      title: `Top Track ${i + 1}`,
-      artist: `Artist ${i + 1}`,
-      coverUrl: `https://picsum.photos/200?random=${i}`,
-    })),
-  artists: Array(10)
-    .fill(null)
-    .map((_, i) => ({
-      id: i,
-      type: 'artist',
-      name: `Popular Artist ${i + 1}`,
-      followers: Math.floor(Math.random() * 1000000),
-      imageUrl: `https://picsum.photos/200?random=${i + 20}`,
-    })),
-  albums: Array(10)
-    .fill(null)
-    .map((_, i) => ({
-      id: i,
-      type: 'Playlist',
-      title: `New Album ${i + 1}`,
-      artist: `Artist ${i + 1}`,
-      year: 2023,
-      coverUrl: `https://picsum.photos/200?random=${i + 40}`,
-    })),
-};
-
 const SideBar = () => {
   const [searchVisible, setSearchVisible] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('Playlist');
+
   const toggleSearch = () => {
     setSearchVisible(!searchVisible);
+  };
+
+  const handleFilterChange = (filterName) => {
+    setActiveFilter(filterName);
   };
 
   return (
@@ -77,9 +52,21 @@ const SideBar = () => {
         </div>
 
         <div className={style.filters}>
-          <Filter filterName="Playlist" />
-          <Filter filterName="Album" />
-          <Filter filterName="Artist" />
+          <Filter
+            filterName="Playlist"
+            isActive={activeFilter === 'Playlist'}
+            onFilter={handleFilterChange}
+          />
+          <Filter
+            filterName="Album"
+            isActive={activeFilter === 'Album'}
+            onFilter={handleFilterChange}
+          />
+          <Filter
+            filterName="Artist"
+            isActive={activeFilter === 'Artist'}
+            onFilter={handleFilterChange}
+          />
         </div>
       </header>
 
@@ -106,8 +93,12 @@ const SideBar = () => {
         </div>
 
         <div className={style.list}>
-          {mockData.albums.map((album) => (
-            <Playlist key={album.id} album={album} />
+          {mockPlaylists.map((playlist) => (
+            <Playlist
+              key={playlist.id}
+              playlist={playlist}
+              onClick={() => console.log('Playlist clicked:', playlist.title)}
+            />
           ))}
         </div>
       </div>

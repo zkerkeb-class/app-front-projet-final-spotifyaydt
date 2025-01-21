@@ -1,32 +1,110 @@
 .resizable_layout {
   display: flex;
   height: 100%;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
+  width: 100%;
+  gap: 0;
+  position: relative;
+}
 
-  .resizable_panel {
-    background-color: var(--background-secondary);
-    overflow: auto;
-    transition: width 0.2s ease;
-    min-width: 100px;
+.resizable_panel {
+  background-color: var(--background-secondary);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  transition: width 0.1s ease;
+  min-width: 100px;
+  border-radius: 10px;
+
+  &:hover {
+    overflow-y: auto;
   }
 
-  .resizable_divider {
-    width: 4px;
+  /* Hide scrollbar by default but show on hover */
+  &::-webkit-scrollbar {
+    width: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover::-webkit-scrollbar {
+    opacity: 1;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--text-secondary);
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--text-primary);
+  }
+
+  /* Make content take full width */
+  & > * {
+    width: 100%;
+    min-width: 0; /* Prevent content from forcing panel wider */
+  }
+}
+
+.resizable_divider {
+  width: 4px;
+  cursor: col-resize;
+  background-color: transparent;
+  position: relative;
+  margin: 0 2px;
+  transition: background-color 0.2s ease;
+
+  &:hover,
+  &:active {
+    background-color: var(--accent-color);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -4px;
+    right: -4px;
+    bottom: 0;
     cursor: col-resize;
-    background-color: var(--border-color);
-    position: relative;
-    transition: background-color 0.2s ease;
+  }
+}
 
-    &:hover,
-    &:active {
-      background-color: var(--accent-color);
-    }
+.content_panel {
+  flex: 1;
+  background-color: var(--background-secondary);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  min-width: 0; /* Prevent content from forcing panel wider */
+
+  &:hover {
+    overflow-y: auto;
   }
 
-  .content_panel {
-    flex: 1;
-    background-color: var(--background-primary);
-    overflow: auto;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--text-secondary);
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--text-primary);
+  }
+
+  /* Make content take full width */
+  & > * {
+    width: 100%;
+    min-width: 0;
   }
 }

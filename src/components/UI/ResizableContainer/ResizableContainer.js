@@ -1,47 +1,113 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import style from './ResizableContainer.module.scss';
+import React, { useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import styles from './ResizableContainer.module.scss';
 
-const ResizableLayout = ({ defaultWidth = 300, children }) => {
-  const [width, setWidth] = useState(defaultWidth);
+const ResizableContainer = ({
+  leftPanel,
+  rightPanel,
+  mainContent,
+  minLeftWidth = 200,
+  minRightWidth = 200,
+  maxLeftWidth = 400,
+  maxRightWidth = 400,
+  defaultLeftWidth = 350,
+  defaultRightWidth = 300,
+}) => {
+  const [leftWidth, setLeftWidth] = useState(defaultLeftWidth);
+  const [rightWidth, setRightWidth] = useState(defaultRightWidth);
+  const [isResizingLeft, setIsResizingLeft] = useState(false);
+  const [isResizingRight, setIsResizingRight] = useState(false);
 
-  const handleResize = useCallback((e) => {
-    const newWidth = e.clientX;
-    if (newWidth > 100 && newWidth < window.innerWidth - 100) {
-      setWidth(newWidth);
-    }
-  }, []);
+  const handleMouseDown = useCallback(
+    (side) => (e) => {
+      e.preventDefault();
+      if (side === 'left') {
+        setIsResizingLeft(true);
+      } else {
+        setIsResizingRight(true);
+      }
+    },
+    []
+  );
 
   const handleMouseUp = useCallback(() => {
-    document.removeEventListener('mousemove', handleResize);
-    document.removeEventListener('mouseup', handleMouseUp);
-  }, [handleResize]);
+    setIsResizingLeft(false);
+    setIsResizingRight(false);
+  }, []);
 
-  const handleMouseDown = useCallback(() => {
-    document.addEventListener('mousemove', handleResize);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [handleResize, handleMouseUp]);
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (!isResizingLeft && !isResizingRight) return;
 
-  useEffect(() => {
+      if (isResizingLeft) {
+        const newWidth = e.clientX;
+        if (newWidth >= minLeftWidth && newWidth <= maxLeftWidth) {
+          setLeftWidth(newWidth);
+        }
+      }
+
+      if (isResizingRight) {
+        const containerWidth =
+          document.querySelector('.app-container').clientWidth;
+        const newWidth = containerWidth - e.clientX;
+        if (newWidth >= minRightWidth && newWidth <= maxRightWidth) {
+          setRightWidth(newWidth);
+        }
+      }
+    },
+    [
+      isResizingLeft,
+      isResizingRight,
+      minLeftWidth,
+      maxLeftWidth,
+      minRightWidth,
+      maxRightWidth,
+    ]
+  );
+
+  React.useEffect(() => {
+    if (isResizingLeft || isResizingRight) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
     return () => {
-      document.removeEventListener('mousemove', handleResize);
+      document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [handleResize, handleMouseUp]);
+  }, [isResizingLeft, isResizingRight, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className={style.resizable_layout}>
-      <div className={style.resizable_panel} style={{ width: `${width}px` }}>
-        {children}
+    <div className={styles.resizable_layout}>
+      <div className={styles.resizable_panel} style={{ width: leftWidth }}>
+        {leftPanel}
       </div>
       <div
-        className={style.resizable_divider}
-        onMouseDown={handleMouseDown}
-      ></div>
-      <div className={style.content_panel}>
-        {/* The main content area remains for user-defined use */}
+        className={styles.resizable_divider}
+        onMouseDown={handleMouseDown('left')}
+      />
+      <div className={styles.content_panel}>{mainContent}</div>
+      <div
+        className={styles.resizable_divider}
+        onMouseDown={handleMouseDown('right')}
+      />
+      <div className={styles.resizable_panel} style={{ width: rightWidth }}>
+        {rightPanel}
       </div>
     </div>
   );
 };
 
-export default React.memo(ResizableLayout);
+ResizableContainer.propTypes = {
+  leftPanel: PropTypes.node.isRequired,
+  rightPanel: PropTypes.node.isRequired,
+  mainContent: PropTypes.node.isRequired,
+  minLeftWidth: PropTypes.number,
+  minRightWidth: PropTypes.number,
+  maxLeftWidth: PropTypes.number,
+  maxRightWidth: PropTypes.number,
+  defaultLeftWidth: PropTypes.number,
+  defaultRightWidth: PropTypes.number,
+};
+
+export default ResizableContainer;

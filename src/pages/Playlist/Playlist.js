@@ -1,18 +1,20 @@
 import React, { useCallback } from 'react';
-import style from './Album.module.scss';
 import { useParams } from 'react-router-dom';
+import style from './Playlist.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 
-import { FaSpotify, FaPlay, FaPause } from 'react-icons/fa';
+import { FaSpotify, FaPlay } from 'react-icons/fa';
 import { LuDot } from 'react-icons/lu';
 import { MdAccessTime } from 'react-icons/md';
 
-import { mockAlbums, mockTracks } from '../../constant/mockData';
+import { mockPlaylists, mockTracks } from '../../constant/mockData';
 
-const Album = () => {
+const Playlist = () => {
   const { id } = useParams();
-  const album = mockAlbums.find((a) => a.id === Number(id)) || mockAlbums[0];
-  const albumTracks = mockTracks.filter((track) => track.album === album.title);
+  const playlist = mockPlaylists.find((p) => p.id === Number(id));
+  const playlistTracks = playlist
+    ? mockTracks.filter((track) => playlist.tracks.includes(track.id))
+    : [];
 
   const handlePlay = useCallback((track) => {
     console.log('Playing track:', track);
@@ -24,6 +26,10 @@ const Album = () => {
     return `${minutes}:${seconds.padStart(2, '0')}`;
   };
 
+  if (!playlist) {
+    return <div>Playlist not found</div>;
+  }
+
   return (
     <ErrorBoundary>
       <div className={style.container}>
@@ -31,21 +37,24 @@ const Album = () => {
           <div className={style.header__container}>
             <img
               className={style.header__container__image}
-              src={album.coverUrl}
-              alt={`${album.title} Cover`}
+              src={playlist.coverUrl}
+              alt={`${playlist.title} Cover`}
               loading="lazy"
             />
           </div>
           <div className={style.header__info}>
-            <span>Album</span>
-            <h1 className={style.header__info__title}>{album.title}</h1>
-            <span>{album.artist}</span>
+            <span>Playlist</span>
+            <h1 className={style.header__info__title}>{playlist.title}</h1>
+            <p className={style.header__info__description}>
+              {playlist.description}
+            </p>
             <div className={style.header__info__more}>
               <FaSpotify className={style.header__info__more__logo} />
-              <span>Spotify</span>
+              <span>{playlist.owner}</span>
               <LuDot className={style.header__info__more__icon} />
               <span>
-                {albumTracks.length} tracks • {album.year}
+                {playlistTracks.length} tracks •{' '}
+                {new Intl.NumberFormat().format(playlist.followers)} likes
               </span>
             </div>
           </div>
@@ -56,8 +65,8 @@ const Album = () => {
             <div className={style.main__header__container}>
               <button
                 className={style.main__header__container__button}
-                onClick={() => handlePlay(album)}
-                aria-label={`Play ${album.title}`}
+                onClick={() => handlePlay(playlist)}
+                aria-label={`Play ${playlist.title}`}
               >
                 <FaPlay />
               </button>
@@ -82,7 +91,7 @@ const Album = () => {
           </div>
 
           <div className={style.tracks}>
-            {albumTracks.map((track, index) => (
+            {playlistTracks.map((track, index) => (
               <div
                 key={track.id}
                 className={style.track}
@@ -111,4 +120,4 @@ const Album = () => {
   );
 };
 
-export default Album;
+export default Playlist;

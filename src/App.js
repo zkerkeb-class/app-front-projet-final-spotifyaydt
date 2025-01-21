@@ -12,6 +12,7 @@ const Artist = lazy(() => import('./pages/Artist/Artist'));
 const Album = lazy(() => import('./pages/Album/Album'));
 const Track = lazy(() => import('./pages/Track/Track'));
 const Search = lazy(() => import('./pages/Search/Search'));
+const Playlist = lazy(() => import('./pages/Playlist/Playlist'));
 const NotFound = lazy(() => import('./pages/404/404'));
 const Navbar = lazy(() => import('./components/partials/Navbar/Navbar'));
 const SidebarLeft = lazy(
@@ -23,7 +24,10 @@ const SideBarRight = lazy(
 const AudioPlayer = lazy(
   () => import('./components/partials/AudioPlayer/AudioPlayerF')
 );
-const Footer = lazy(() => import('./components/partials/Footer/Footer'));
+const ResizableContainer = lazy(
+  () => import('./components/UI/ResizableContainer/ResizableContainer')
+);
+
 // Loading fallback component
 const LoadingFallback = () => (
   <div className="loading-spinner">
@@ -31,15 +35,39 @@ const LoadingFallback = () => (
   </div>
 );
 
+const MainContent = memo(() => (
+  <div className="content-wrapper">
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/artist/:id" element={<Artist />} />
+      <Route path="/album/:id" element={<Album />} />
+      <Route path="/track/:id" element={<Track />} />
+      <Route path="/search" element={<Search />} />
+      <Route path="/playlist/:id" element={<Playlist />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  </div>
+));
+
+MainContent.displayName = 'MainContent';
+
 const AppLayout = memo(({ children }) => (
   <div className="app-container">
     <Suspense fallback={<LoadingFallback />}>
       <Navbar />
       <div className="main-content">
         <Suspense fallback={<LoadingFallback />}>
-          <SidebarLeft />
-          {children}
-          <SideBarRight />
+          <ResizableContainer
+            leftPanel={<SidebarLeft />}
+            rightPanel={<SideBarRight />}
+            mainContent={<MainContent />}
+            minLeftWidth={200}
+            maxLeftWidth={350}
+            minRightWidth={200}
+            maxRightWidth={300}
+            defaultLeftWidth={350}
+            defaultRightWidth={300}
+          />
         </Suspense>
       </div>
       <AudioPlayer />
@@ -53,38 +81,18 @@ AppLayout.propTypes = {
 
 AppLayout.displayName = 'AppLayout';
 
-const MainContent = memo(() => (
-  <div className="content-wrapper">
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/artist/:id" element={<Artist />} />
-      <Route path="/album/:id" element={<Album />} />
-      <Route path="/track/:id" element={<Track />} />
-      <Route path="/search" element={<Search />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  </div>
-));
-
-MainContent.displayName = 'MainContent';
-
-const Main = ({ children }) => (
-  <div className="wrapper">
-    <MainContent />
-    <Footer />
-  </div>
-);
-
-const App = () => (
-  <ErrorBoundary>
-    <ThemeProvider>
-      <Router>
-        <AppLayout>
-          <Main />
-        </AppLayout>
-      </Router>
-    </ThemeProvider>
-  </ErrorBoundary>
-);
+const App = () => {
+  return (
+    <ErrorBoundary>
+      <ThemeProvider>
+        <Router>
+          <AppLayout>
+            <MainContent />
+          </AppLayout>
+        </Router>
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;

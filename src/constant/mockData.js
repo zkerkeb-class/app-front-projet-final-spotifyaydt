@@ -9,6 +9,19 @@ import Audio8 from '../assests/audio/stylish-deep.mp3';
 import Audio9 from '../assests/audio/tell-me-the-truth.mp3';
 import Audio10 from '../assests/audio/vlog.mp3';
 
+const audioFiles = [
+  Audio1,
+  Audio2,
+  Audio3,
+  Audio4,
+  Audio5,
+  Audio6,
+  Audio7,
+  Audio8,
+  Audio9,
+  Audio10,
+];
+
 export const mockArtists = [
   {
     id: 1,
@@ -46,258 +59,130 @@ export const mockArtists = [
     type: 'artist',
     genres: ['pop', 'country', 'folk'],
   },
-];
-
-export const mockTracks = [
-  // The Weeknd Tracks
-  {
-    id: 1,
-    title: 'Lazy Day',
-    artist: 'The Weeknd',
-    album: 'After Hours',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273ef017e899c0547766997d874',
-    audio: Audio1,
-    duration: '3:45',
-    type: 'track',
-    releaseYear: 2020,
-    genre: 'Pop',
-    isLiked: true,
-    plays: 3245678,
-    addedDate: '2020-03-20',
-    lyrics: true,
-    explicit: false,
-    mood: 'Relaxing',
-  },
-  {
-    id: 2,
-    title: 'Creative Technology',
-    artist: 'The Weeknd',
-    album: 'After Hours',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273ef017e899c0547766997d874',
-    audio: Audio2,
-    duration: '4:20',
-    type: 'track',
-    releaseYear: 2020,
-    genre: 'R&B',
-    isLiked: false,
-    plays: 2987654,
-    addedDate: '2020-03-20',
-    lyrics: true,
-    explicit: false,
-    mood: 'Energetic',
-  },
-  {
-    id: 3,
-    title: 'Lost in Dreams',
-    artist: 'The Weeknd',
-    album: 'After Hours',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273ef017e899c0547766997d874',
-    audio: Audio3,
-    duration: '3:15',
-    type: 'track',
-    releaseYear: 2020,
-    genre: 'Pop',
-    isLiked: true,
-    plays: 2134567,
-    addedDate: '2020-03-20',
-    lyrics: true,
-    explicit: false,
-    mood: 'Dreamy',
-  },
-
-  // Doja Cat Tracks
-  {
-    id: 4,
-    title: 'Nightfall',
-    artist: 'Doja Cat',
-    album: 'Planet Her',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273b0e4102646726ec6f7da755a',
-    audio: Audio4,
-    duration: '5:30',
-    type: 'track',
-    releaseYear: 2021,
-    genre: 'Pop',
-    isLiked: true,
-    plays: 1987654,
-    addedDate: '2021-04-09',
-    lyrics: true,
-    explicit: true,
-    mood: 'Atmospheric',
-  },
   {
     id: 5,
-    title: 'Showreel',
-    artist: 'Doja Cat',
-    album: 'Planet Her',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273b0e4102646726ec6f7da755a',
-    audio: Audio5,
-    duration: '4:10',
-    type: 'track',
-    releaseYear: 2021,
-    genre: 'Hip-Hop',
-    isLiked: false,
-    plays: 1876543,
-    addedDate: '2021-04-09',
-    lyrics: true,
-    explicit: true,
-    mood: 'Confident',
+    name: 'Ed Sheeran',
+    imageUrl:
+      'https://i.scdn.co/image/ab6761610000e5eb12a2ef08d00dd7451a6dbed6',
+    followers: 95432167,
+    type: 'artist',
+    genres: ['pop', 'folk', 'acoustic'],
   },
   {
     id: 6,
-    title: 'Soulsweeper',
-    artist: 'Doja Cat',
-    album: 'Planet Her',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273b0e4102646726ec6f7da755a',
-    audio: Audio6,
-    duration: '3:55',
-    type: 'track',
-    releaseYear: 2021,
-    genre: 'Pop',
-    isLiked: true,
-    plays: 1765432,
-    addedDate: '2021-04-09',
-    lyrics: true,
-    explicit: true,
-    mood: 'Fun',
+    name: 'Ariana Grande',
+    imageUrl:
+      'https://i.scdn.co/image/ab6761610000e5ebcdce7620dc940db079bf4952',
+    followers: 89765432,
+    type: 'artist',
+    genres: ['pop', 'r&b', 'trap-pop'],
   },
-
-  // Drake Tracks
   {
     id: 7,
-    title: 'Spinning Head',
-    artist: 'Drake',
-    album: 'Certified Lover Boy',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b2739416ed64daf84936d89e671c',
-    audio: Audio7,
-    duration: '6:15',
-    type: 'track',
-    releaseYear: 2021,
-    genre: 'Hip-Hop',
-    isLiked: false,
-    plays: 2345678,
-    addedDate: '2021-09-03',
-    lyrics: true,
-    explicit: true,
-    mood: 'Confident',
+    name: 'Post Malone',
+    imageUrl:
+      'https://i.scdn.co/image/ab6761610000e5eb6be070445b03e0b63147c2c1',
+    followers: 76543210,
+    type: 'artist',
+    genres: ['hip-hop', 'rap', 'pop-rap'],
   },
   {
     id: 8,
-    title: 'Stylish Deep',
-    artist: 'Drake',
-    album: 'Certified Lover Boy',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b2739416ed64daf84936d89e671c',
-    audio: Audio8,
-    duration: '4:45',
-    type: 'track',
-    releaseYear: 2021,
-    genre: 'Rap',
-    isLiked: true,
-    plays: 2234567,
-    addedDate: '2021-09-03',
-    lyrics: true,
-    explicit: true,
-    mood: 'Smooth',
+    name: 'Billie Eilish',
+    imageUrl:
+      'https://i.scdn.co/image/ab6761610000e5ebd8b9980db67272cb4d2c3daf',
+    followers: 82345678,
+    type: 'artist',
+    genres: ['pop', 'alternative', 'electropop'],
   },
   {
     id: 9,
-    title: 'Tell Me The Truth',
-    artist: 'Drake',
-    album: 'Certified Lover Boy',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b2739416ed64daf84936d89e671c',
-    audio: Audio9,
-    duration: '5:20',
-    type: 'track',
-    releaseYear: 2021,
-    genre: 'R&B',
-    isLiked: true,
-    plays: 2123456,
-    addedDate: '2021-09-03',
-    lyrics: true,
-    explicit: true,
-    mood: 'Emotional',
+    name: 'Bad Bunny',
+    imageUrl:
+      'https://i.scdn.co/image/ab6761610000e5eb8ee9a6f54dcbd4bc95126b14',
+    followers: 93456789,
+    type: 'artist',
+    genres: ['reggaeton', 'latin', 'trap-latino'],
   },
-
-  // Taylor Swift Tracks
   {
     id: 10,
-    title: 'Vlog Life',
-    artist: 'Taylor Swift',
-    album: 'Midnights',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273bb54dde68cd23e2a268ae0f5',
-    audio: Audio10,
-    duration: '3:30',
-    type: 'track',
-    releaseYear: 2022,
-    genre: 'Pop',
-    isLiked: false,
-    plays: 3456789,
-    addedDate: '2022-10-21',
-    lyrics: true,
-    explicit: false,
-    mood: 'Upbeat',
+    name: 'Justin Bieber',
+    imageUrl:
+      'https://i.scdn.co/image/ab6761610000e5eb8ae7f2aaa9817a704a87ea36',
+    followers: 88776655,
+    type: 'artist',
+    genres: ['pop', 'dance-pop', 'canadian-pop'],
   },
 ];
 
-export const mockAlbums = [
-  {
-    id: 1,
-    title: 'After Hours',
-    artist: 'The Weeknd',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273ef017e899c0547766997d874',
-    year: 2020,
-    type: 'album',
-    trackCount: 14,
-    duration: '56:23',
-    tracks: [1, 2, 3], // Track IDs
-  },
-  {
-    id: 2,
-    title: 'Planet Her',
-    artist: 'Doja Cat',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273b0e4102646726ec6f7da755a',
-    year: 2021,
-    type: 'album',
-    trackCount: 19,
-    duration: '1:08:43',
-    tracks: [4, 5, 6], // Track IDs
-  },
-  {
-    id: 3,
-    title: 'Certified Lover Boy',
-    artist: 'Drake',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b2739416ed64daf84936d89e671c',
-    year: 2021,
-    type: 'album',
-    trackCount: 21,
-    duration: '1:26:02',
-    tracks: [7, 8, 9], // Track IDs
-  },
-  {
-    id: 4,
-    title: 'Midnights',
-    artist: 'Taylor Swift',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273bb54dde68cd23e2a268ae0f5',
-    year: 2022,
-    type: 'album',
-    trackCount: 13,
-    duration: '44:09',
-    tracks: [10], // Track IDs
-  },
-];
+// Generate 3 albums for each artist
+export const mockAlbums = mockArtists.flatMap((artist, artistIndex) => {
+  const albumTitles = {
+    1: ['After Hours', 'Starboy', 'Dawn FM'],
+    2: ['Planet Her', 'Hot Pink', 'Amala'],
+    3: ['Certified Lover Boy', 'Scorpion', 'Views'],
+    4: ['Midnights', '1989', 'Red'],
+    5: ['÷ (Divide)', '× (Multiply)', '+ (Plus)'],
+    6: ['Positions', 'Thank U, Next', 'Sweetener'],
+    7: ["Hollywood's Bleeding", 'Beerbongs & Bentleys', 'Stoney'],
+    8: ['Happier Than Ever', 'When We All Fall Asleep', 'Dont Smile at Me'],
+    9: ['Un Verano Sin Ti', 'YHLQMDLG', 'X 100PRE'],
+    10: ['Justice', 'Changes', 'Purpose'],
+  };
+
+  const years = {
+    1: [2020, 2016, 2022],
+    2: [2021, 2019, 2018],
+    3: [2021, 2018, 2016],
+    4: [2022, 2014, 2012],
+    5: [2017, 2014, 2011],
+    6: [2020, 2019, 2018],
+    7: [2019, 2018, 2016],
+    8: [2021, 2019, 2017],
+    9: [2022, 2020, 2018],
+    10: [2021, 2020, 2015],
+  };
+
+  return Array(3)
+    .fill()
+    .map((_, i) => ({
+      id: artistIndex * 3 + i + 1,
+      title: albumTitles[artist.id][i],
+      artist: artist.name,
+      coverUrl: `https://picsum.photos/400?random=${artistIndex * 3 + i}`,
+      year: years[artist.id][i],
+      type: 'album',
+      trackCount: 10,
+      duration: '45:00',
+    }));
+});
+
+// Generate 10 tracks for each album
+export const mockTracks = mockAlbums.flatMap((album, albumIndex) => {
+  return Array(10)
+    .fill()
+    .map((_, i) => ({
+      id: albumIndex * 10 + i + 1,
+      title: `${album.title} - Track ${i + 1}`,
+      artist: album.artist,
+      album: album.title,
+      coverUrl: album.coverUrl,
+      audio: audioFiles[i % 10],
+      duration: '3:30',
+      type: 'track',
+      releaseYear: album.year,
+      genre: mockArtists.find((artist) => artist.name === album.artist)
+        .genres[0],
+      isLiked: Math.random() > 0.5,
+      plays: Math.floor(Math.random() * 5000000) + 1000000,
+      addedDate: `${album.year}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+      lyrics: true,
+      explicit: Math.random() > 0.7,
+      mood: ['Energetic', 'Chill', 'Happy', 'Sad', 'Party', 'Focus'][
+        Math.floor(Math.random() * 6)
+      ],
+    }));
+});
 
 export const mockPlaylists = [
   {
@@ -307,37 +192,43 @@ export const mockPlaylists = [
       'https://i.scdn.co/image/ab67706f000000027ea4d505212b9de1f72c5112',
     description: 'The hottest tracks in your region',
     type: 'playlist',
-    trackCount: 50,
+    trackCount: 10,
     followers: 32456789,
     owner: 'Spotify',
     isPublic: true,
-    tracks: [1, 4, 7, 10, 2], // Track IDs - mix of different artists
+    tracks: mockTracks.slice(0, 10).map((track) => track.id),
   },
   {
     id: 2,
     title: 'RapCaviar',
     coverUrl:
       'https://i.scdn.co/image/ab67706f00000002b1c181ae600398a6a94c8b37',
-    description: 'New music from Drake, Future and more',
+    description: "Hip-hop's heavy hitters and rising stars",
     type: 'playlist',
-    trackCount: 50,
+    trackCount: 10,
     followers: 15678932,
     owner: 'Spotify',
     isPublic: true,
-    tracks: [7, 8, 9, 5, 6], // Track IDs - focus on rap/hip-hop
+    tracks: mockTracks
+      .filter((track) => track.genre === 'rap')
+      .slice(0, 10)
+      .map((track) => track.id),
   },
   {
     id: 3,
-    title: 'All Out 2010s',
+    title: 'Pop Rising',
     coverUrl:
       'https://i.scdn.co/image/ab67706f00000002b0fe40a6e1692822f5a9d8f1',
-    description: 'The biggest songs of the 2010s',
+    description: 'The hits of tomorrow are on Spotify today',
     type: 'playlist',
-    trackCount: 100,
+    trackCount: 10,
     followers: 8765432,
     owner: 'Spotify',
     isPublic: true,
-    tracks: [1, 2, 3, 4, 5], // Track IDs - mix of popular tracks
+    tracks: mockTracks
+      .filter((track) => track.genre === 'pop')
+      .slice(0, 10)
+      .map((track) => track.id),
   },
   {
     id: 4,
@@ -346,47 +237,140 @@ export const mockPlaylists = [
       'https://i.scdn.co/image/ab67706f00000002bd0e19e810bb4b55ab164a95',
     description: "Get happy with today's dose of feel-good songs!",
     type: 'playlist',
-    trackCount: 75,
+    trackCount: 10,
     followers: 12345678,
     owner: 'Spotify',
     isPublic: true,
-    tracks: [10, 6, 2, 4, 8], // Track IDs - upbeat/positive tracks
+    tracks: mockTracks
+      .filter((track) => track.mood === 'Happy')
+      .slice(0, 10)
+      .map((track) => track.id),
+  },
+  {
+    id: 5,
+    title: 'Chill Hits',
+    coverUrl:
+      'https://i.scdn.co/image/ab67706f000000025ae7aa0454c9eafdd6505fda',
+    description: 'Kick back to the best new and recent chill hits',
+    type: 'playlist',
+    trackCount: 10,
+    followers: 9876543,
+    owner: 'Spotify',
+    isPublic: true,
+    tracks: mockTracks
+      .filter((track) => track.mood === 'Chill')
+      .slice(0, 10)
+      .map((track) => track.id),
+  },
+  {
+    id: 6,
+    title: 'Rock Classics',
+    coverUrl:
+      'https://i.scdn.co/image/ab67706f000000025d87659dcadef82dd0e73f56',
+    description:
+      'Rock legends & epic songs that continue to inspire generations',
+    type: 'playlist',
+    trackCount: 10,
+    followers: 7654321,
+    owner: 'Spotify',
+    isPublic: true,
+    tracks: mockTracks.slice(50, 60).map((track) => track.id),
+  },
+  {
+    id: 7,
+    title: 'All Out 2010s',
+    coverUrl:
+      'https://i.scdn.co/image/ab67706f00000002b0fe40a6e1692822f5a9d8f1',
+    description: 'The biggest songs of the 2010s',
+    type: 'playlist',
+    trackCount: 10,
+    followers: 6543210,
+    owner: 'Spotify',
+    isPublic: true,
+    tracks: mockTracks
+      .filter((track) => track.releaseYear >= 2010 && track.releaseYear < 2020)
+      .slice(0, 10)
+      .map((track) => track.id),
+  },
+  {
+    id: 8,
+    title: 'Focus Flow',
+    coverUrl:
+      'https://i.scdn.co/image/ab67706f00000002ca5a7517156021292e5663a6',
+    description: 'Uptempo instrumental hip hop beats',
+    type: 'playlist',
+    trackCount: 10,
+    followers: 5432109,
+    owner: 'Spotify',
+    isPublic: true,
+    tracks: mockTracks
+      .filter((track) => track.mood === 'Focus')
+      .slice(0, 10)
+      .map((track) => track.id),
+  },
+  {
+    id: 9,
+    title: 'Viral Hits',
+    coverUrl:
+      'https://i.scdn.co/image/ab67706f000000025f0ff9251e3cfe641160dc31',
+    description: 'Viral, trending and taking off',
+    type: 'playlist',
+    trackCount: 10,
+    followers: 4321098,
+    owner: 'Spotify',
+    isPublic: true,
+    tracks: mockTracks
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10)
+      .map((track) => track.id),
+  },
+  {
+    id: 10,
+    title: 'Party Mix',
+    coverUrl:
+      'https://i.scdn.co/image/ab67706f00000002748f70a7a09fd6a5b6865665',
+    description: 'Move your feet to these dance hits',
+    type: 'playlist',
+    trackCount: 10,
+    followers: 3210987,
+    owner: 'Spotify',
+    isPublic: true,
+    tracks: mockTracks
+      .filter((track) => track.mood === 'Party')
+      .slice(0, 10)
+      .map((track) => track.id),
   },
 ];
 
 export const mockRecentlyPlayed = [
   {
     id: 1,
-    title: 'Lazy Day',
-    artist: 'The Weeknd',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273ef017e899c0547766997d874',
+    title: mockTracks[0].title,
+    artist: mockTracks[0].artist,
+    coverUrl: mockTracks[0].coverUrl,
     type: 'track',
-    audio: Audio1,
+    audio: mockTracks[0].audio,
     playedAt: '2024-01-20T10:30:00Z',
   },
   {
     id: 2,
-    title: "Today's Top Hits",
-    coverUrl:
-      'https://i.scdn.co/image/ab67706f000000027ea4d505212b9de1f72c5112',
+    title: mockPlaylists[0].title,
+    coverUrl: mockPlaylists[0].coverUrl,
     type: 'playlist',
     playedAt: '2024-01-20T09:15:00Z',
   },
   {
     id: 3,
-    name: 'Drake',
-    imageUrl:
-      'https://i.scdn.co/image/ab6761610000e5eb4293385d324db8558179afd9',
+    name: mockArtists[2].name,
+    imageUrl: mockArtists[2].imageUrl,
     type: 'artist',
     playedAt: '2024-01-20T08:45:00Z',
   },
   {
     id: 4,
-    title: 'Midnights',
-    artist: 'Taylor Swift',
-    coverUrl:
-      'https://i.scdn.co/image/ab67616d0000b273bb54dde68cd23e2a268ae0f5',
+    title: mockAlbums[3].title,
+    artist: mockAlbums[3].artist,
+    coverUrl: mockAlbums[3].coverUrl,
     type: 'album',
     playedAt: '2024-01-20T07:20:00Z',
   },
