@@ -590,3 +590,40 @@
     transform: translate(-50%, 0);
   }
 }
+
+.progressBar,
+.volumeBar {
+  position: relative;
+  cursor: pointer;
+  z-index: 1;
+
+  &:hover {
+    .progressHandle,
+    .volumeBarHandle {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+.progressHandle,
+.volumeBarHandle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: var(--text-primary);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.8) translate(-50%, -50%);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  z-index: 2;
+
+  &.active {
+    opacity: 1;
+    transform: scale(1) translate(-50%, -50%);
+  }
+}

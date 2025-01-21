@@ -3,11 +3,17 @@ import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import styles from './FullscreenView.module.scss';
 import { mockTracks } from '../../../constant/mockData';
 import { IoShuffle } from 'react-icons/io5';
-import { IoPlaySkipBack, IoPlaySkipForward } from 'react-icons/io5';
+import {
+  IoPlayCircle,
+  IoPauseCircle,
+  IoPlaySkipBack,
+  IoPlaySkipForward,
+} from 'react-icons/io5';
+import { IoMdAddCircleOutline } from 'react-icons/io';
 import { TbRepeat, TbRepeatOnce } from 'react-icons/tb';
 import { HiMiniSpeakerWave, HiMiniSpeakerXMark } from 'react-icons/hi2';
-import { VscChromeMinimize } from 'react-icons/vsc';
-
+import { LuMinimize2 } from 'react-icons/lu';
+import { FaSpotify } from 'react-icons/fa';
 const FullscreenView = () => {
   const {
     currentTrackIndex,
@@ -291,23 +297,31 @@ const FullscreenView = () => {
       />
 
       <div className={styles.content}>
-        <div className={styles.artwork}>
-          <picture>
-            <source srcSet={currentTrack.coverUrl} type="image/webp" />
-            <source srcSet={currentTrack.coverUrl} type="image/jpeg" />
-            <img
-              src={currentTrack.coverUrl}
-              alt={`${currentTrack.title} artwork`}
-            />
-          </picture>
+        <div className={styles.logo}>
+          <div className={styles.logo_icon}>
+            <FaSpotify />
+          </div>
+          <span>Lecture with Spotify AYDT</span>
         </div>
+        <div className={styles.artworkContainer}>
+          <div className={styles.artwork}>
+            <picture>
+              <source srcSet={currentTrack.coverUrl} type="image/webp" />
+              <source srcSet={currentTrack.coverUrl} type="image/jpeg" />
+              <img
+                src={currentTrack.coverUrl}
+                alt={`${currentTrack.title} artwork`}
+              />
+            </picture>
+          </div>
 
-        <div className={styles.metadata}>
-          <h1>{currentTrack.title}</h1>
-          <h2>{currentTrack.artist}</h2>
-          <p className={styles.album}>
-            {currentTrack.album} • {currentTrack.releaseYear}
-          </p>
+          <div className={styles.metadata}>
+            <h1>{currentTrack.title}</h1>
+            <h2>{currentTrack.artist}</h2>
+            <p className={styles.album}>
+              {currentTrack.album} • {currentTrack.releaseYear}
+            </p>
+          </div>
         </div>
 
         <div className={styles.visualization}>
@@ -346,100 +360,107 @@ const FullscreenView = () => {
             </div>
             <span>{formatTime(duration)}</span>
           </div>
-
-          <div className={styles.mainControls}>
-            <button
-              className={`${styles.controlButton} ${shuffleOn ? styles.active : ''}`}
-              onClick={toggleShuffle}
-              aria-label={`Shuffle ${shuffleOn ? 'on' : 'off'}`}
-            >
-              <IoShuffle />
-            </button>
-
-            <button
-              className={styles.controlButton}
-              onClick={playPreviousTrack}
-              aria-label="Previous track"
-            >
-              <IoPlaySkipBack />
-            </button>
-
-            <button
-              className={styles.playButton}
-              onClick={togglePlayPause}
-              aria-label={isPlaying ? 'Pause' : 'Play'}
-            >
-              {isPlaying ? '❚❚' : '▶'}
-            </button>
-
-            <button
-              className={styles.controlButton}
-              onClick={playNextTrack}
-              aria-label="Next track"
-            >
-              <IoPlaySkipForward />
-            </button>
-
-            <button
-              className={`${styles.controlButton} ${repeatTrack || repeatPlaylist ? styles.active : ''}`}
-              onClick={toggleRepeat}
-              aria-label={`Repeat ${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`}
-            >
-              {repeatTrack ? <TbRepeatOnce /> : <TbRepeat />}
-            </button>
-          </div>
-
-          <div className={styles.volumeControls}>
-            <button
-              className={styles.controlButton}
-              onClick={toggleMute}
-              aria-label={volume === 0 ? 'Unmute' : 'Mute'}
-            >
-              {volume === 0 ? <HiMiniSpeakerXMark /> : <HiMiniSpeakerWave />}
-            </button>
-
-            <div
-              ref={volumeBarRef}
-              className={`${styles.volumeBar} ${isAdjustingVolume ? styles.adjusting : ''}`}
-              onClick={handleVolumeClick}
-              onMouseDown={initializeVolumeAdjust}
-              onKeyDown={handleVolumeKeyDown}
-              role="slider"
-              aria-label="Volume"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuenow={volumePercentage}
-              aria-valuetext={`Volume ${volumePercentage}%${volume === 0 ? ' (muted)' : ''}`}
-              tabIndex="0"
-            >
-              <div
-                className={styles.volumeBarProgress}
-                style={{ width: `${volumePercentage}%` }}
+          <div className={styles.allControls}>
+            <div className={styles.leftControls}>
+              <button className={styles.controlButton}>
+                <IoMdAddCircleOutline />
+              </button>
+            </div>
+            <div className={styles.mainControls}>
+              <button
+                className={`${styles.controlButton} ${shuffleOn ? styles.active : ''}`}
+                onClick={toggleShuffle}
+                aria-label={`Shuffle ${shuffleOn ? 'on' : 'off'}`}
+                title={`Shuffle ${shuffleOn ? 'on' : 'off'}`}
               >
-                <div
-                  className={`${styles.volumeBarHandle} ${isAdjustingVolume ? styles.active : ''}`}
-                />
-              </div>
+                <IoShuffle />
+              </button>
+
+              <button
+                className={styles.controlButton}
+                onClick={playPreviousTrack}
+                aria-label="Previous track"
+                title="Previous track"
+              >
+                <IoPlaySkipBack />
+              </button>
+
+              <button
+                className={styles.playButton}
+                onClick={togglePlayPause}
+                aria-label={isPlaying ? 'Pause' : 'Play'}
+                title={isPlaying ? 'Pause' : 'Play'}
+              >
+                {isPlaying ? (
+                  <IoPauseCircle className={styles.playButton} />
+                ) : (
+                  <IoPlayCircle className={styles.playButton} />
+                )}
+              </button>
+
+              <button
+                className={styles.controlButton}
+                onClick={playNextTrack}
+                aria-label="Next track"
+                title="Next track"
+              >
+                <IoPlaySkipForward />
+              </button>
+
+              <button
+                className={`${styles.controlButton} ${repeatTrack || repeatPlaylist ? styles.active : ''}`}
+                onClick={toggleRepeat}
+                aria-label={`Repeat ${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`}
+                title={`Repeat ${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`}
+              >
+                {repeatTrack ? <TbRepeatOnce /> : <TbRepeat />}
+              </button>
             </div>
 
-            <button
-              className={styles.minimizeButton}
-              onClick={handleClose}
-              aria-label="Exit fullscreen"
-            >
-              <VscChromeMinimize />
-            </button>
-          </div>
-        </div>
+            <div className={styles.volumeControls}>
+              <button
+                className={styles.controlButton}
+                onClick={toggleMute}
+                aria-label={volume === 0 ? 'Unmute' : 'Mute'}
+                title={`${volume === 0 ? 'Unmute' : 'Mute'}`}
+              >
+                {volume === 0 ? <HiMiniSpeakerXMark /> : <HiMiniSpeakerWave />}
+              </button>
 
-        <div className={styles.additionalInfo}>
-          {currentTrack.explicit && (
-            <span className={styles.explicit}>Explicit</span>
-          )}
-          <span className={styles.genre}>{currentTrack.genre}</span>
-          <span className={styles.plays}>
-            {currentTrack.plays.toLocaleString()} plays
-          </span>
+              <div
+                ref={volumeBarRef}
+                className={`${styles.volumeBar} ${isAdjustingVolume ? styles.adjusting : ''}`}
+                onClick={handleVolumeClick}
+                onMouseDown={initializeVolumeAdjust}
+                onKeyDown={handleVolumeKeyDown}
+                role="slider"
+                aria-label="Volume"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow={volumePercentage}
+                aria-valuetext={`Volume ${volumePercentage}%${volume === 0 ? ' (muted)' : ''}`}
+                tabIndex="0"
+              >
+                <div
+                  className={styles.volumeBarProgress}
+                  style={{ width: `${volumePercentage}%` }}
+                >
+                  <div
+                    className={`${styles.volumeBarHandle} ${isAdjustingVolume ? styles.active : ''}`}
+                  />
+                </div>
+              </div>
+
+              <button
+                className={styles.minimizeButton}
+                onClick={handleClose}
+                aria-label="Exit fullscreen"
+                title="Exit fullscreen"
+              >
+                <LuMinimize2 />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

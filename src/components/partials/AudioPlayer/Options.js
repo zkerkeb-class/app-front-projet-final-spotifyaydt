@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
-import FullscreenView from './FullscreenView';
+import FullscreenView from '../FullscreenMode/FullscreenView';
 
 import { BsFilePlay } from 'react-icons/bs';
 import { TbMicrophone2 } from 'react-icons/tb';
@@ -239,8 +239,8 @@ const Options = () => {
           <button
             className={style.controlsButton}
             onClick={toggleFullscreen}
-            aria-label="Toggle fullscreen view"
-            title="Toggle fullscreen view"
+            aria-label="Fullscreen view"
+            title="Fullscreen view"
           >
             <LuMaximize2 className={style.player__options__right__max} />
           </button>
