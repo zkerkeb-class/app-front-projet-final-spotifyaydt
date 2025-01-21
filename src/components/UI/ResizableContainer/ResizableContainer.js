@@ -1,26 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import style from './ResizableContainer.module.scss';
 
 const ResizableLayout = ({ defaultWidth = 300, children }) => {
-  const [width, setWidth] = useState(defaultWidth); // Local state for resizing
+  const [width, setWidth] = useState(defaultWidth);
 
-  const handleResize = (e) => {
+  const handleResize = useCallback((e) => {
     const newWidth = e.clientX;
     if (newWidth > 100 && newWidth < window.innerWidth - 100) {
-      // Prevent too small or too large widths
       setWidth(newWidth);
     }
-  };
+  }, []);
 
-  const handleMouseDown = () => {
-    document.addEventListener('mousemove', handleResize);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
-
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     document.removeEventListener('mousemove', handleResize);
     document.removeEventListener('mouseup', handleMouseUp);
-  };
+  }, [handleResize]);
+
+  const handleMouseDown = useCallback(() => {
+    document.addEventListener('mousemove', handleResize);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [handleResize, handleMouseUp]);
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleResize);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [handleResize, handleMouseUp]);
 
   return (
     <div className={style.resizable_layout}>
@@ -38,4 +44,4 @@ const ResizableLayout = ({ defaultWidth = 300, children }) => {
   );
 };
 
-export default ResizableLayout;
+export default React.memo(ResizableLayout);

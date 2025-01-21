@@ -43,6 +43,31 @@
   background: var(--text-primary);
 }
 
+.wrapper {
+  width: 100%;
+  overflow-y: auto;
+  background-color: var(--background-secondary);
+  border-radius: 10px;
+}
+
+/* Styles pour la scrollbar */
+.wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.wrapper::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border-radius: 4px;
+}
+
+.wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--text-primary);
+}
+
 .loading-spinner {
   display: flex;
   justify-content: center;
@@ -69,10 +94,10 @@
 }
 
 /* Accessibility improvements */
-:focus {
+/*:focus {
   outline: 2px solid #1db954;
   outline-offset: 2px;
-}
+}*/
 
 [role='button'],
 button {

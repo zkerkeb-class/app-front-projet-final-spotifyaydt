@@ -1,29 +1,32 @@
 .resizable_layout {
   display: flex;
   height: 100%;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
 
   .resizable_panel {
-    background-color: vaf(--background-secondary);
+    background-color: var(--background-secondary);
     overflow: auto;
     transition: width 0.2s ease;
+    min-width: 100px;
   }
 
   .resizable_divider {
-    width: 1px;
-    cursor: grab;
-    background-color: #ccc;
+    width: 4px;
+    cursor: col-resize;
+    background-color: var(--border-color);
     position: relative;
-  }
+    transition: background-color 0.2s ease;
 
-  .resizable_divider:hover {
-    background-color: #aaa;
+    &:hover,
+    &:active {
+      background-color: var(--accent-color);
+    }
   }
 
   .content_panel {
     flex: 1;
-    background-color: #fff;
+    background-color: var(--background-primary);
     overflow: auto;
   }
 }

@@ -6,7 +6,6 @@ import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import Controls from './Controls';
 import Options from './Options';
 
-// Importing icons
 import { IoMdAddCircleOutline } from 'react-icons/io';
 
 // Move mock data to a separate file
