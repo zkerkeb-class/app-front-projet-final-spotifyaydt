@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 
 import { LuVolume, LuVolume1, LuVolume2, LuVolumeX } from 'react-icons/lu';
-import { mockTracks } from '../constant/mockData';
 
 const AudioPlayerContext = createContext();
 
@@ -21,6 +20,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const seekTimeoutRef = useRef(null);
   const volumeTimeoutRef = useRef(null);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [currentTracks, setCurrentTracks] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [previousVolume, setPreviousVolume] = useState(0.5);
@@ -46,9 +46,11 @@ export const AudioPlayerProvider = ({ children }) => {
   const [shuffleQueueIndex, setShuffleQueueIndex] = useState(0);
   const [shuffleHistory, setShuffleHistory] = useState([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [activeCardId, setActiveCardId] = useState(null);
+  const [currentTrack, setCurrentTrack] = useState(null);
 
   const createShuffleQueue = useCallback(() => {
-    const indices = Array.from({ length: mockTracks.length }, (_, i) => i);
+    const indices = Array.from({ length: currentTracks.length }, (_, i) => i);
     const currentIndex = indices.indexOf(currentTrackIndex);
     if (currentIndex > -1) {
       indices.splice(currentIndex, 1);
@@ -61,188 +63,185 @@ export const AudioPlayerProvider = ({ children }) => {
     setShuffleQueue(indices);
     setShuffleQueueIndex(0);
     setShuffleHistory([]);
-  }, [currentTrackIndex]);
+  }, [currentTrackIndex, currentTracks.length]);
 
   const handleAudioEnd = useCallback(() => {
     setIsPlaying(false);
-
     if (repeatTrack) {
-      // Single track repeat - just restart the current track
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            audioRef.current.currentTime = 0;
-            setIsPlaying(true);
-          })
-          .catch((error) => console.error('Playback failed:', error));
+      const audio = audioRef.current;
+      if (audio) {
+        audio.currentTime = 0;
+        setIsPlaying(true);
       }
     } else if (shuffleOn) {
-      // Shuffle is on
-      if (shuffleQueueIndex >= shuffleQueue.length - 1) {
-        // Reached end of shuffle queue
-        if (repeatPlaylist) {
-          // Create new shuffle queue and continue playing
-          createShuffleQueue();
-          setCurrentTrackIndex(shuffleQueue[0]);
-          setIsPlaying(true);
-        }
-        // If repeat playlist is off, playback stops (current state)
-      } else {
-        // Continue with next track in shuffle queue
-        setShuffleQueueIndex((prev) => prev + 1);
+      if (shuffleQueueIndex < shuffleQueue.length - 1) {
+        setShuffleHistory([...shuffleHistory, currentTrackIndex]);
+        setShuffleQueueIndex(shuffleQueueIndex + 1);
         setCurrentTrackIndex(shuffleQueue[shuffleQueueIndex + 1]);
+        setIsPlaying(true);
+      } else if (repeatPlaylist) {
+        createShuffleQueue();
         setIsPlaying(true);
       }
     } else {
-      // Normal sequential play
-      const nextIndex = (currentTrackIndex + 1) % mockTracks.length;
-      if (nextIndex === 0 && !repeatPlaylist) {
-        // Reached end of playlist and repeat is off
-        return; // Stop playback
+      if (currentTrackIndex < currentTracks.length - 1) {
+        setCurrentTrackIndex(currentTrackIndex + 1);
+        setIsPlaying(true);
+      } else if (repeatPlaylist) {
+        setCurrentTrackIndex(0);
+        setIsPlaying(true);
       }
-      // Either repeat is on or we're not at the end yet
-      setCurrentTrackIndex(nextIndex);
-      setIsPlaying(true);
     }
   }, [
-    repeatTrack,
+    currentTrackIndex,
     shuffleOn,
     shuffleQueue,
     shuffleQueueIndex,
+    shuffleHistory,
     repeatPlaylist,
-    currentTrackIndex,
+    repeatTrack,
+    currentTracks.length,
     createShuffleQueue,
   ]);
 
   const playNextTrack = useCallback(() => {
-    // If repeat track is on, switch to repeat playlist
-    if (repeatTrack) {
-      setRepeatTrack(false);
-      setRepeatPlaylist(true);
-      setClickCount(1); // Set to repeat playlist state
-    }
+    if (!currentTracks.length) return;
+
+    let nextIndex;
+    let nextTrack;
 
     if (shuffleOn) {
-      if (shuffleQueueIndex >= shuffleQueue.length - 1) {
-        if (repeatPlaylist) {
-          // Add current track to history before creating new queue
-          setShuffleHistory((prev) => [...prev, currentTrackIndex]);
-          createShuffleQueue();
-          setCurrentTrackIndex(shuffleQueue[0]);
-          setIsPlaying(true);
-        } else {
-          return;
-        }
+      if (shuffleQueueIndex < shuffleQueue.length - 1) {
+        nextIndex = shuffleQueue[shuffleQueueIndex + 1];
+        setShuffleQueueIndex(shuffleQueueIndex + 1);
+        setShuffleHistory([...shuffleHistory, currentTrackIndex]);
+      } else if (repeatPlaylist) {
+        createShuffleQueue();
+        nextIndex = shuffleQueue[0];
+        setShuffleQueueIndex(0);
       } else {
-        // Add current track to history before moving to next
-        setShuffleHistory((prev) => [...prev, currentTrackIndex]);
-        setShuffleQueueIndex((prev) => prev + 1);
-        setCurrentTrackIndex(shuffleQueue[shuffleQueueIndex + 1]);
-        setIsPlaying(true);
+        return;
       }
     } else {
-      // Normal sequential play logic remains the same
-      if (currentTrackIndex === mockTracks.length - 1) {
+      nextIndex = currentTrackIndex + 1;
+      if (nextIndex >= currentTracks.length) {
         if (repeatPlaylist) {
-          setCurrentTrackIndex(0);
-          setIsPlaying(true);
+          nextIndex = 0;
         } else {
           return;
         }
-      } else {
-        setCurrentTrackIndex(currentTrackIndex + 1);
-        setIsPlaying(true);
       }
+    }
+
+    nextTrack = currentTracks[nextIndex];
+    setCurrentTrackIndex(nextIndex);
+    setCurrentTrack(nextTrack);
+    setActiveCardId(nextTrack.id);
+
+    const audio = audioRef.current;
+    if (audio) {
+      audio.src = nextTrack.audio;
+      audio.load();
+      audio.play().catch((error) => {
+        console.error('Playback failed:', error);
+        setIsPlaying(false);
+      });
+      setIsPlaying(true);
     }
   }, [
     currentTrackIndex,
+    currentTracks,
     shuffleOn,
     shuffleQueue,
     shuffleQueueIndex,
+    shuffleHistory,
     repeatPlaylist,
     createShuffleQueue,
-    repeatTrack,
   ]);
 
   const playPreviousTrack = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !currentTracks.length) return;
 
-    // If repeat track is on, switch to repeat playlist
-    if (repeatTrack) {
-      setRepeatTrack(false);
-      setRepeatPlaylist(true);
-      setClickCount(1); // Set to repeat playlist state
+    if (audio.currentTime > 3) {
+      audio.currentTime = 0;
+      audio.play().catch((error) => {
+        console.error('Playback failed:', error);
+        setIsPlaying(false);
+      });
+      setIsPlaying(true);
+      return;
     }
+
+    let prevIndex;
+    let prevTrack;
 
     if (shuffleOn) {
-      if (audio.currentTime <= 3) {
-        // Within first 3 seconds, try to go to previous track
-        if (shuffleHistory.length > 0) {
-          // Get the last track from history
-          const previousTrack = shuffleHistory[shuffleHistory.length - 1];
-          // Remove it from history
-          setShuffleHistory((prev) => prev.slice(0, -1));
-          // Play it
-          setCurrentTrackIndex(previousTrack);
-          setIsPlaying(true);
-        } else {
-          // If no history, restart current track
-          audio.currentTime = 0;
-          setIsPlaying(true);
-        }
+      if (shuffleHistory.length > 0) {
+        prevIndex = shuffleHistory[shuffleHistory.length - 1];
+        setShuffleHistory(shuffleHistory.slice(0, -1));
+        setShuffleQueueIndex(shuffleQueueIndex - 1);
+      } else if (repeatPlaylist) {
+        createShuffleQueue();
+        prevIndex = shuffleQueue[shuffleQueue.length - 1];
+        setShuffleQueueIndex(shuffleQueue.length - 1);
       } else {
-        // After 3 seconds, restart current track
-        audio.currentTime = 0;
-        setIsPlaying(true);
+        return;
       }
     } else {
-      // Normal sequential play
-      if (audio.currentTime <= 3) {
-        if (currentTrackIndex === 0) {
-          if (repeatPlaylist) {
-            // Go to last track
-            setCurrentTrackIndex(mockTracks.length - 1);
-            setIsPlaying(true);
-          } else {
-            // At first track and no repeat - restart current track
-            audio.currentTime = 0;
-            setIsPlaying(true);
-          }
+      prevIndex = currentTrackIndex - 1;
+      if (prevIndex < 0) {
+        if (repeatPlaylist) {
+          prevIndex = currentTracks.length - 1;
         } else {
-          // Not at first track, go to previous
-          setCurrentTrackIndex(currentTrackIndex - 1);
-          setIsPlaying(true);
+          return;
         }
-      } else {
-        // After 3 seconds, restart current track
-        audio.currentTime = 0;
-        setIsPlaying(true);
       }
     }
+
+    prevTrack = currentTracks[prevIndex];
+    setCurrentTrackIndex(prevIndex);
+    setCurrentTrack(prevTrack);
+    setActiveCardId(prevTrack.id);
+
+    audio.src = prevTrack.audio;
+    audio.load();
+    audio.play().catch((error) => {
+      console.error('Playback failed:', error);
+      setIsPlaying(false);
+    });
+    setIsPlaying(true);
   }, [
     currentTrackIndex,
+    currentTracks,
     shuffleOn,
     shuffleHistory,
+    shuffleQueueIndex,
     repeatPlaylist,
-    repeatTrack,
+    createShuffleQueue,
+    shuffleQueue,
   ]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || currentTracks.length === 0) return;
 
-    audio.src = mockTracks[currentTrackIndex].audio;
-    audio.load();
-
-    if (isPlaying) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => console.error('Playback failed:', error));
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+      if (isPlaying) {
+        audio.play().catch((error) => {
+          console.error('Playback failed:', error);
+          setIsPlaying(false);
+        });
       }
-    }
-  }, [currentTrackIndex]);
+    };
+
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
+  }, [currentTrackIndex, currentTracks, isPlaying]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -265,6 +264,9 @@ export const AudioPlayerProvider = ({ children }) => {
 
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', () =>
+        setDuration(audio.duration)
+      );
       audio.removeEventListener('ended', handleAudioEnd);
       audio.removeEventListener('waiting', handleWaiting);
       audio.removeEventListener('playing', handlePlaying);
@@ -282,13 +284,45 @@ export const AudioPlayerProvider = ({ children }) => {
 
   const togglePlayPause = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || currentTracks.length === 0) return;
 
-    const playPromise = isPlaying ? audio.pause() : audio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch((error) => console.error('Playback failed:', error));
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      // Resume from current position
+      audio.play().catch((error) => {
+        console.error('Playback failed:', error);
+        setIsPlaying(false);
+      });
+      setIsPlaying(true);
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentTracks.length]);
+
+  const handlePlay = useCallback(({ track, tracks, action = 'play' }) => {
+    if (!track || !tracks.length) return;
+
+    const trackIndex = tracks.findIndex((t) => t.id === track.id);
+    if (trackIndex === -1) return;
+
+    setCurrentTracks(tracks);
+    setCurrentTrackIndex(trackIndex);
+    setCurrentTrack(track);
+    setActiveCardId(track.id);
+
+    if (action === 'play') {
+      setIsPlaying(true);
+      if (audioRef.current) {
+        audioRef.current.src = track.audio;
+        audioRef.current.play();
+      }
+    } else {
+      setIsPlaying(false);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    }
+  }, []);
 
   const getVolumeIcon = useCallback(() => {
     const currentVolume = previewVolume !== null ? previewVolume : volume;
@@ -421,83 +455,62 @@ export const AudioPlayerProvider = ({ children }) => {
     [duration]
   );
 
-  const handleSeekStart = useCallback(
-    (e) => {
-      if (!audioRef.current) return;
-      setIsDragging(true);
-      setWasPlaying(isPlaying);
-      if (isPlaying) {
-        audioRef.current.pause();
-      }
-      handleSeekUpdate(e);
-    },
-    [isPlaying]
-  );
-
-  const handleSeekUpdate = useCallback(
-    (e) => {
-      if (!progressBarRef.current) return;
-      const newTime = calculateSeekTime(e, progressBarRef.current);
-      setPreviewTime(newTime);
-
-      if (seekTimeoutRef.current) {
-        clearTimeout(seekTimeoutRef.current);
-      }
-
-      seekTimeoutRef.current = setTimeout(() => {
-        if (isDragging) {
-          setCurrentTime(newTime);
-        }
-      }, 16);
-    },
-    [calculateSeekTime, isDragging]
-  );
-
-  const handleSeekEnd = useCallback(
-    (e) => {
-      if (!audioRef.current || !progressBarRef.current) return;
-
-      const newTime = calculateSeekTime(e, progressBarRef.current);
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
-      setPreviewTime(null);
-      setIsDragging(false);
-
-      if (wasPlaying) {
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch((error) =>
-            console.error('Playback failed:', error)
-          );
-        }
-        setIsPlaying(true);
-      }
-    },
-    [calculateSeekTime, wasPlaying]
-  );
+  const handleSeekStart = useCallback(() => {
+    setIsDragging(true);
+    if (isPlaying) {
+      audioRef.current?.pause();
+    }
+  }, [isPlaying]);
 
   const handleSeek = useCallback(
-    (e) => {
-      if (!audioRef.current || !progressBarRef.current) return;
+    (newTime) => {
+      if (!isFinite(newTime) || newTime < 0) return;
 
-      const newTime = calculateSeekTime(e, progressBarRef.current);
-      const wasPlayingBeforeSeek = !audioRef.current.paused;
-
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
-      setPreviewTime(null);
-
-      if (wasPlayingBeforeSeek) {
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch((error) =>
-            console.error('Playback failed:', error)
-          );
+      if (isDragging) {
+        setPreviewTime(newTime);
+      } else {
+        if (audioRef.current) {
+          try {
+            audioRef.current.currentTime = Math.min(
+              newTime,
+              audioRef.current.duration || 0
+            );
+          } catch (error) {
+            console.error('Error setting currentTime:', error);
+          }
         }
+        setCurrentTime(newTime);
       }
     },
-    [calculateSeekTime]
+    [isDragging]
   );
+
+  const handleSeekEnd = useCallback(() => {
+    setIsDragging(false);
+    if (
+      audioRef.current &&
+      previewTime !== null &&
+      isFinite(previewTime) &&
+      previewTime >= 0
+    ) {
+      try {
+        audioRef.current.currentTime = Math.min(
+          previewTime,
+          audioRef.current.duration || 0
+        );
+        setCurrentTime(previewTime);
+      } catch (error) {
+        console.error('Error setting currentTime:', error);
+      }
+      setPreviewTime(null);
+    }
+    if (isPlaying) {
+      audioRef.current?.play().catch((error) => {
+        console.error('Playback failed:', error);
+        setIsPlaying(false);
+      });
+    }
+  }, [isPlaying, previewTime]);
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -584,7 +597,6 @@ export const AudioPlayerProvider = ({ children }) => {
         duration,
         handleSeek,
         handleSeekStart,
-        handleSeekUpdate,
         handleSeekEnd,
         isDragging,
         isBuffering,
@@ -618,11 +630,16 @@ export const AudioPlayerProvider = ({ children }) => {
         previewVolume,
         volumeTimeoutRef,
         currentTrackIndex,
+        currentTracks,
         playNextTrack,
         playPreviousTrack,
         isFullscreen,
         toggleFullscreen,
         closeFullscreen,
+        handlePlay,
+        activeCardId,
+        currentTrack,
+        setCurrentTrack,
       }}
     >
       {children}

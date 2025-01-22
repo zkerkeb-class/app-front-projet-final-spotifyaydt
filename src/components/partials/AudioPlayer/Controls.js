@@ -197,10 +197,24 @@ const Controls = () => {
 
   const handleMouseMove = useCallback(
     (e) => {
+      if (!isDragging) return;
       e.preventDefault();
-      handleSeekUpdate(e);
+      const progressBar = progressBarRef.current;
+      if (!progressBar || !duration || !isFinite(duration)) return;
+
+      const rect = progressBar.getBoundingClientRect();
+      const x = Math.max(rect.left, Math.min(e.clientX, rect.right));
+      const width = rect.width;
+      if (width === 0) return;
+
+      const percentage = ((x - rect.left) / width) * 100;
+      const newTime = (duration * percentage) / 100;
+
+      if (handleSeek && isFinite(newTime) && newTime >= 0) {
+        handleSeek(newTime);
+      }
     },
-    [handleSeekUpdate]
+    [isDragging, duration, handleSeek]
   );
 
   const handleMouseUp = useCallback(
@@ -208,7 +222,9 @@ const Controls = () => {
       e.preventDefault();
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-      handleSeekEnd(e);
+      if (handleSeekEnd) {
+        handleSeekEnd();
+      }
     },
     [handleSeekEnd, handleMouseMove]
   );
@@ -216,11 +232,29 @@ const Controls = () => {
   const initializeSeek = useCallback(
     (e) => {
       e.preventDefault();
-      handleSeekStart(e);
+      const progressBar = progressBarRef.current;
+      if (!progressBar || !duration || !isFinite(duration)) return;
+
+      const rect = progressBar.getBoundingClientRect();
+      const x = Math.max(rect.left, Math.min(e.clientX, rect.right));
+      const width = rect.width;
+      if (width === 0) return;
+
+      const percentage = ((x - rect.left) / width) * 100;
+      const newTime = (duration * percentage) / 100;
+
+      if (!isFinite(newTime) || newTime < 0) return;
+
+      if (handleSeekStart) {
+        handleSeekStart();
+      }
+      if (handleSeek) {
+        handleSeek(newTime);
+      }
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     },
-    [handleSeekStart, handleMouseMove, handleMouseUp]
+    [handleSeekStart, handleSeek, handleMouseMove, handleMouseUp, duration]
   );
 
   return (

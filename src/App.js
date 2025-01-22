@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import './styles/theme.scss';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
 import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy loaded components
@@ -85,11 +86,13 @@ const App = () => {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <Router>
-          <AppLayout>
-            <MainContent />
-          </AppLayout>
-        </Router>
+        <AudioPlayerProvider>
+          <Router>
+            <AppLayout>
+              <MainContent />
+            </AppLayout>
+          </Router>
+        </AudioPlayerProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

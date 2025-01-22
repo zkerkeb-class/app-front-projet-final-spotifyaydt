@@ -10,14 +10,17 @@
     align-items: center;
     justify-content: center;
     background-color: #ffffff1a;
-  }
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-  &:hover {
-    background-color: #ffffff1a;
-  }
+    &:hover {
+      background-color: #ffffff33;
+    }
 
-  &.active {
-    background-color: var(--accent-color);
-    color: var(--text-inverse);
+    &.active {
+      background-color: var(--text-primary);
+      color: var(--background-primary);
+    }
   }
 }

@@ -1,0 +1,42 @@
+.waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 16px;
+  width: 20px;
+
+  &__bar {
+    width: 2px;
+    background-color: var(--accent-color);
+    border-radius: 1px;
+    animation: wave 0.5s ease-in-out infinite;
+
+    &:nth-child(1) {
+      animation-delay: 0.1s;
+      height: 8px;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+      height: 12px;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+      height: 16px;
+    }
+    &:nth-child(4) {
+      animation-delay: 0.4s;
+      height: 10px;
+    }
+  }
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}

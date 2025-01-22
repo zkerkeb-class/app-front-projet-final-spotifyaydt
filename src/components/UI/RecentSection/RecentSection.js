@@ -1,14 +1,28 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import style from './RecentSection.module.scss';
 import RecentCardSkeleton from '../../skeleton/RecentCardSkeleton/RecentCardSkeletonSkeleton';
-import { FaPlay } from 'react-icons/fa6';
+import { FaPlay, FaPause } from 'react-icons/fa';
+import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
+import WaveformAnimation from '../WaveformAnimation/WaveformAnimation';
 
-const RecentTrackItem = memo(({ track, onPlay }) => {
-  const handlePlay = (e) => {
-    e.stopPropagation();
-    if (onPlay) onPlay(track);
-  };
+const RecentTrackItem = memo(({ track }) => {
+  const { handlePlay, isPlaying, currentTrack } = useAudioPlayer();
+
+  // Check if this specific track is currently playing
+  const isThisPlaying = isPlaying && currentTrack?.id === track.id;
+
+  const handlePlayClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+      handlePlay({
+        track,
+        tracks: [track], // Single track mode
+        action: isThisPlaying ? 'pause' : 'play',
+      });
+    },
+    [track, handlePlay, isThisPlaying]
+  );
 
   return (
     <div className={style.recent__grid__item}>
@@ -19,15 +33,26 @@ const RecentTrackItem = memo(({ track, onPlay }) => {
         loading="lazy"
       />
       <div className={style.recent__grid__item__content}>
-        <div className={style.recent__grid__item__content__title}>
+        <div
+          className={`${style.recent__grid__item__content__title} ${isThisPlaying ? style.green : ''}`}
+        >
           {track.title}
         </div>
         <button
-          className={style.recent__grid__item__content__play}
-          onClick={handlePlay}
-          aria-label={`Play ${track.title}`}
+          className={`${style.recent__grid__item__content__play} ${isThisPlaying ? style.visible : ''}`}
+          onClick={handlePlayClick}
+          aria-label={
+            isThisPlaying ? `Pause ${track.title}` : `Play ${track.title}`
+          }
         >
-          <FaPlay />
+          {isThisPlaying ? (
+            <>
+              <WaveformAnimation className={style.waveform} />
+              <FaPause className={style.pause_icon} />
+            </>
+          ) : (
+            <FaPlay />
+          )}
         </button>
       </div>
     </div>
@@ -40,10 +65,9 @@ RecentTrackItem.propTypes = {
     title: PropTypes.string.isRequired,
     coverUrl: PropTypes.string.isRequired,
   }).isRequired,
-  onPlay: PropTypes.func,
 };
 
-const RecentSection = ({ tracks, isLoading, onPlay }) => {
+const RecentSection = ({ tracks, isLoading }) => {
   if (isLoading) {
     return <RecentCardSkeleton />;
   }
@@ -55,7 +79,7 @@ const RecentSection = ({ tracks, isLoading, onPlay }) => {
       </div>
       <div className={style.recent__grid}>
         {tracks?.map((track) => (
-          <RecentTrackItem key={track.id} track={track} onPlay={onPlay} />
+          <RecentTrackItem key={track.id} track={track} />
         ))}
       </div>
     </div>
@@ -71,7 +95,6 @@ RecentSection.propTypes = {
     })
   ),
   isLoading: PropTypes.bool,
-  onPlay: PropTypes.func,
 };
 
 RecentSection.defaultProps = {

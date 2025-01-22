@@ -44,7 +44,6 @@ const FullscreenView = () => {
     toggleMute,
     getVolumeIcon,
     handleSeekStart,
-    handleSeekUpdate,
     handleSeekEnd,
     isAdjustingProgress,
     progressBarRef,
@@ -256,32 +255,72 @@ const FullscreenView = () => {
     [handleVolumeStart, handleMouseMove, handleMouseUp]
   );
 
-  const handleProgressMouseMove = useCallback(
+  const handleProgressMove = useCallback(
     (e) => {
+      if (!isAdjustingProgress) return;
       e.preventDefault();
-      handleSeekUpdate(e);
+      const progressBar = progressBarRef.current;
+      if (!progressBar || !duration || !isFinite(duration)) return;
+
+      const rect = progressBar.getBoundingClientRect();
+      const x = Math.max(rect.left, Math.min(e.clientX, rect.right));
+      const width = rect.width;
+      if (width === 0) return;
+
+      const percentage = ((x - rect.left) / width) * 100;
+      const newTime = (duration * percentage) / 100;
+
+      if (handleSeek && isFinite(newTime) && newTime >= 0) {
+        handleSeek(newTime);
+      }
     },
-    [handleSeekUpdate]
+    [isAdjustingProgress, duration, handleSeek]
   );
 
-  const handleProgressMouseUp = useCallback(
+  const handleProgressUp = useCallback(
     (e) => {
       e.preventDefault();
-      document.removeEventListener('mousemove', handleProgressMouseMove);
-      document.removeEventListener('mouseup', handleProgressMouseUp);
-      handleSeekEnd(e);
+      document.removeEventListener('mousemove', handleProgressMove);
+      document.removeEventListener('mouseup', handleProgressUp);
+      if (handleSeekEnd) {
+        handleSeekEnd();
+      }
     },
-    [handleSeekEnd, handleProgressMouseMove]
+    [handleSeekEnd, handleProgressMove]
   );
 
   const initializeProgressAdjust = useCallback(
     (e) => {
       e.preventDefault();
-      handleSeekStart(e);
-      document.addEventListener('mousemove', handleProgressMouseMove);
-      document.addEventListener('mouseup', handleProgressMouseUp);
+      const progressBar = progressBarRef.current;
+      if (!progressBar || !duration || !isFinite(duration)) return;
+
+      const rect = progressBar.getBoundingClientRect();
+      const x = Math.max(rect.left, Math.min(e.clientX, rect.right));
+      const width = rect.width;
+      if (width === 0) return;
+
+      const percentage = ((x - rect.left) / width) * 100;
+      const newTime = (duration * percentage) / 100;
+
+      if (!isFinite(newTime) || newTime < 0) return;
+
+      if (handleSeekStart) {
+        handleSeekStart();
+      }
+      if (handleSeek) {
+        handleSeek(newTime);
+      }
+      document.addEventListener('mousemove', handleProgressMove);
+      document.addEventListener('mouseup', handleProgressUp);
     },
-    [handleSeekStart, handleProgressMouseMove, handleProgressMouseUp]
+    [
+      handleSeekStart,
+      handleSeek,
+      handleProgressMove,
+      handleProgressUp,
+      duration,
+    ]
   );
 
   const displayVolume = previewVolume !== null ? previewVolume : volume;
