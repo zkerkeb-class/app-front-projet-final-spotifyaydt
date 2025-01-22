@@ -16,7 +16,21 @@
     text-align: center;
     gap: 24px;
     padding: 32px 24px 8px 24px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
+    background: transparent;
+    position: relative;
+    z-index: 1;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
 
     &__container {
       display: flex;
@@ -113,6 +127,16 @@
           &:hover {
             transform: scale(1.05);
           }
+
+          &.shuffle_button {
+            background-color: transparent;
+            color: var(--text-primary);
+            font-size: 32px;
+
+            &:hover {
+              color: var(--accent-color);
+            }
+          }
         }
       }
 
@@ -154,6 +178,14 @@
 
     &:hover {
       background-color: var(--card-hover);
+
+      .track__number {
+        display: none;
+      }
+
+      .track__play_icon {
+        display: flex;
+      }
     }
 
     &__info {
@@ -176,6 +208,36 @@
       text-align: center;
       color: var(--text-primary);
       font-size: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+
+      &.visible {
+        display: flex;
+        position: relative;
+
+        .waveform {
+          position: absolute;
+        }
+
+        .pause_icon {
+          display: none;
+          position: absolute;
+        }
+
+        &:hover {
+          .waveform {
+            display: none;
+            opacity: 0;
+          }
+
+          .pause_icon {
+            display: flex;
+            opacity: 1;
+          }
+        }
+      }
     }
 
     &__details {
@@ -186,6 +248,10 @@
 
     &__title {
       font-weight: 500;
+
+      &.green {
+        color: var(--accent-color);
+      }
     }
 
     &__artist {

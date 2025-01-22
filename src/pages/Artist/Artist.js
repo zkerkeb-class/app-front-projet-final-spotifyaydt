@@ -3,16 +3,21 @@ import { useParams } from 'react-router-dom';
 import style from './Artist.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import HorizontalScroll from '../../components/UI/HorizontalScroll/HorizontalScroll';
-import TrackCard from '../../components/UI/Cards/TrackCard';
 import AlbumCard from '../../components/UI/Cards/AlbumCard';
+import WaveformAnimation from '../../components/UI/WaveformAnimation/WaveformAnimation';
+import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
+import { generateGradient } from '../../utils/colorUtils';
 
 // Icons
 import { FaPlay, FaPause } from 'react-icons/fa';
+import { PiShuffleBold } from 'react-icons/pi';
 
 import { mockArtists, mockTracks, mockAlbums } from '../../constant/mockData';
 
 const Artist = () => {
   const { id } = useParams();
+  const { handlePlay, isPlaying, currentTrack } = useAudioPlayer();
+
   const artist = mockArtists.find((a) => a.id === Number(id)) || mockArtists[0];
   const artistTracks = mockTracks.filter((track) =>
     track.artist.includes(artist.name)
@@ -21,19 +26,63 @@ const Artist = () => {
     (album) => album.artist === artist.name
   );
 
-  const handlePlay = useCallback((item) => {
-    console.log('Playing:', item);
-    // Implement your play logic here
-  }, []);
+  // Generate unique gradient for this artist
+  const headerStyle = generateGradient(artist.name);
+
+  // Check if this artist's tracks are currently playing
+  const isThisPlaying =
+    isPlaying && currentTrack && artistTracks.includes(currentTrack);
+
+  const handlePlayClick = useCallback(() => {
+    if (!artist || artistTracks.length === 0) {
+      console.warn(`No tracks found for artist: ${artist?.name}`);
+      return;
+    }
+
+    handlePlay({
+      track: artistTracks[0],
+      tracks: artistTracks,
+      action: isThisPlaying ? 'pause' : 'play',
+    });
+  }, [artist, artistTracks, handlePlay, isThisPlaying]);
+
+  const handleTrackPlay = useCallback(
+    (track) => {
+      if (!artist) return;
+      handlePlay({
+        track,
+        tracks: artistTracks,
+        action: isPlaying && currentTrack?.id === track.id ? 'pause' : 'play',
+      });
+    },
+    [artist, artistTracks, handlePlay, isPlaying, currentTrack]
+  );
+
+  const handleShuffle = useCallback(() => {
+    if (!artist || artistTracks.length === 0) return;
+
+    const shuffledTracks = [...artistTracks].sort(() => Math.random() - 0.5);
+
+    handlePlay({
+      track: shuffledTracks[0],
+      tracks: shuffledTracks,
+      action: 'play',
+    });
+  }, [artist, artistTracks, handlePlay]);
 
   const formatNumber = (num) => {
     return new Intl.NumberFormat().format(num);
   };
 
+  const formatDuration = (duration) => {
+    const [minutes, seconds] = duration.split(':');
+    return `${minutes}:${seconds.padStart(2, '0')}`;
+  };
+
   return (
     <ErrorBoundary>
       <div className={style.container}>
-        <header className={style.header}>
+        <header className={style.header} style={headerStyle}>
           <div className={style.header__container}>
             <img
               className={style.header__container__image}
@@ -56,10 +105,21 @@ const Artist = () => {
             <div className={style.main__header__container}>
               <button
                 className={style.main__header__container__button}
-                onClick={() => handlePlay(artist)}
-                aria-label={`Play ${artist.name}'s popular tracks`}
+                onClick={handlePlayClick}
+                aria-label={
+                  isThisPlaying
+                    ? `Pause ${artist.name}'s popular tracks`
+                    : `Play ${artist.name}'s popular tracks`
+                }
               >
-                <FaPlay />
+                {isThisPlaying ? <FaPause /> : <FaPlay />}
+              </button>
+              <button
+                className={`${style.main__header__container__button} ${style.shuffle_button}`}
+                onClick={handleShuffle}
+                aria-label={`Shuffle ${artist.name}'s tracks`}
+              >
+                <PiShuffleBold />
               </button>
             </div>
           </div>
@@ -72,25 +132,70 @@ const Artist = () => {
                   <div
                     key={track.id}
                     className={style.track}
-                    onClick={() => handlePlay(track)}
+                    onClick={() => handleTrackPlay(track)}
                   >
                     <div className={style.track__info}>
-                      <span className={style.track__number}>{index + 1}</span>
-                      <span className={style.track__play_icon}>
-                        <FaPlay />
-                      </span>
+                      {isPlaying &&
+                      currentTrack &&
+                      currentTrack.id === track.id ? (
+                        <button
+                          className={`${style.track__play_icon} ${style.visible}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTrackPlay(track);
+                          }}
+                          aria-label={
+                            isPlaying && currentTrack.id === track.id
+                              ? 'Pause track'
+                              : 'Play track'
+                          }
+                        >
+                          <WaveformAnimation className={style.waveform} />
+                          <FaPause className={style.pause_icon} />
+                        </button>
+                      ) : (
+                        <>
+                          <span className={style.track__number}>
+                            {index + 1}
+                          </span>
+                          <button
+                            className={style.track__play_icon}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTrackPlay(track);
+                            }}
+                            aria-label="Play track"
+                          >
+                            <FaPlay />
+                          </button>
+                        </>
+                      )}
                       <img
                         src={track.coverUrl}
                         alt={track.title}
                         className={style.track__image}
                       />
-                      <span className={style.track__title}>{track.title}</span>
+                      <div className={style.track__details}>
+                        {isPlaying &&
+                        currentTrack &&
+                        currentTrack.id === track.id ? (
+                          <span
+                            className={`${style.track__title} ${style.green}`}
+                          >
+                            {track.title}
+                          </span>
+                        ) : (
+                          <span className={style.track__title}>
+                            {track.title}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <span className={style.track__plays}>
                       {formatNumber(track.plays || 0)} plays
                     </span>
                     <span className={style.track__duration}>
-                      {track.duration}
+                      {formatDuration(track.duration)}
                     </span>
                   </div>
                 ))}
@@ -100,7 +205,11 @@ const Artist = () => {
             <section className={style.discography}>
               <HorizontalScroll title="Albums">
                 {artistAlbums.map((album) => (
-                  <AlbumCard key={album.id} album={album} onPlay={handlePlay} />
+                  <AlbumCard
+                    key={album.id}
+                    album={album}
+                    onPlay={handleTrackPlay}
+                  />
                 ))}
               </HorizontalScroll>
             </section>

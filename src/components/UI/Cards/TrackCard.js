@@ -1,23 +1,38 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import styles from './Cards.module.scss';
-
-// Icons
+import { useNavigate } from 'react-router-dom';
 import { FaPlay, FaPause } from 'react-icons/fa';
+import styles from './Cards.module.scss';
+import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
-const TrackCard = ({ track, onPlay }) => {
+const TrackCard = ({ track }) => {
   const navigate = useNavigate();
+  const {
+    handlePlay,
+    currentTracks,
+    currentTrackIndex,
+    isPlaying,
+    activeCardId,
+  } = useAudioPlayer();
 
-  const handleClick = (e) => {
-    e.preventDefault();
+  // Check if this track is currently playing
+  const isThisPlaying = isPlaying && activeCardId === track.id;
+
+  const handleClick = useCallback(() => {
     navigate(`/track/${track.id}`);
-  };
+  }, [navigate, track.id]);
 
-  const handlePlayClick = (e) => {
-    e.stopPropagation();
-    onPlay(track);
-  };
+  const handlePlayClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+      handlePlay({
+        track,
+        tracks: [track],
+        action: isThisPlaying ? 'pause' : 'play',
+      });
+    },
+    [track, handlePlay, isThisPlaying]
+  );
 
   return (
     <div className={styles.card} onClick={handleClick}>
@@ -29,11 +44,13 @@ const TrackCard = ({ track, onPlay }) => {
           loading="lazy"
         />
         <button
-          className={styles.playButton}
+          className={`${styles.playButton} ${isThisPlaying ? styles.visible : ''}`}
           onClick={handlePlayClick}
-          aria-label={`Play ${track.title}`}
+          aria-label={
+            isThisPlaying ? `Pause ${track.title}` : `Play ${track.title}`
+          }
         >
-          <FaPlay />
+          {isThisPlaying ? <FaPause /> : <FaPlay />}
         </button>
       </div>
       <div className={styles.content}>
@@ -50,8 +67,8 @@ TrackCard.propTypes = {
     title: PropTypes.string.isRequired,
     artist: PropTypes.string.isRequired,
     coverUrl: PropTypes.string.isRequired,
+    audio: PropTypes.string.isRequired,
   }).isRequired,
-  onPlay: PropTypes.func.isRequired,
 };
 
 export default TrackCard;

@@ -1,23 +1,49 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
-
-// Icons
 import { FaPlay, FaPause } from 'react-icons/fa';
+import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
+import { mockTracks } from '../../../constant/mockData';
 
-const AlbumCard = ({ album, onPlay }) => {
+const AlbumCard = ({ album }) => {
   const navigate = useNavigate();
+  const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    navigate(`/album/${album.id}`);
-  };
+  // Check if this specific album is the active source of playback
+  const isThisPlaying = isPlaying && activeCardId === album.id;
 
-  const handlePlayClick = (e) => {
-    e.stopPropagation();
-    onPlay(album);
-  };
+  const handleClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      navigate(`/album/${album.id}`);
+    },
+    [navigate, album.id]
+  );
+
+  const handlePlayClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+
+      // Get all tracks from this album in order
+      const albumTracks = mockTracks
+        .filter((track) => track.album === album.title)
+        .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0));
+
+      if (albumTracks.length === 0) {
+        console.warn(`No tracks found for album: ${album.title}`);
+        return;
+      }
+
+      // Play the first track but include all album tracks in the playlist
+      handlePlay({
+        track: albumTracks[0],
+        tracks: albumTracks,
+        action: isThisPlaying ? 'pause' : 'play',
+      });
+    },
+    [album, handlePlay, isThisPlaying]
+  );
 
   return (
     <div className={styles.card} onClick={handleClick}>
@@ -29,11 +55,15 @@ const AlbumCard = ({ album, onPlay }) => {
           loading="lazy"
         />
         <button
-          className={styles.playButton}
+          className={`${styles.playButton} ${isThisPlaying ? styles.visible : ''}`}
           onClick={handlePlayClick}
-          aria-label={`Play ${album.title}`}
+          aria-label={
+            isThisPlaying
+              ? `Pause album: ${album.title}`
+              : `Play album: ${album.title}`
+          }
         >
-          <FaPlay />
+          {isThisPlaying ? <FaPause /> : <FaPlay />}
         </button>
       </div>
       <div className={styles.content}>
@@ -53,7 +83,6 @@ AlbumCard.propTypes = {
     coverUrl: PropTypes.string.isRequired,
     year: PropTypes.number.isRequired,
   }).isRequired,
-  onPlay: PropTypes.func.isRequired,
 };
 
 export default AlbumCard;
