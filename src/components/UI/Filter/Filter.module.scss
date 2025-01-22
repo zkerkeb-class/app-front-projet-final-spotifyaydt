@@ -11,4 +11,13 @@
     justify-content: center;
     background-color: #ffffff1a;
   }
+
+  &:hover {
+    background-color: #ffffff1a;
+  }
+
+  &.active {
+    background-color: var(--accent-color);
+    color: var(--text-inverse);
+  }
 }

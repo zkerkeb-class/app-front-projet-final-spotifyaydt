@@ -1,11 +1,126 @@
 .container {
   min-height: 100%;
-  padding: 8px 24px;
+  padding: 24px;
   background-color: var(--background-secondary);
   color: var(--text-primary);
   overflow-x: hidden;
 
   @media (max-width: 768px) {
-    padding: 1rem 0;
+    padding: 16px;
+  }
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--background-secondary);
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.search_bar {
+  position: relative;
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+
+  .search_icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+  }
+
+  .search_input {
+    width: 100%;
+    padding: 14px 14px 14px 48px;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      background-color: var(--background-elevated);
+      box-shadow: 0 0 0 2px var(--accent-color);
+    }
+
+    &::placeholder {
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 16px;
+}
+
+.results {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.section {
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+}
+
+.empty_state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px 0;
+  color: var(--text-secondary);
+  text-align: center;
+
+  .empty_icon {
+    font-size: 48px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 1.125rem;
+  }
+}
+
+.no_results {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--text-secondary);
+
+  p {
+    margin: 8px 0;
+
+    &:first-child {
+      font-size: 1.125rem;
+      color: var(--text-primary);
+    }
   }
 }

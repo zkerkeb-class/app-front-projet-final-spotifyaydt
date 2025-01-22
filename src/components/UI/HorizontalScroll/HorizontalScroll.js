@@ -1,17 +1,30 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback, memo } from 'react';
 import styles from './HorizontalScroll.module.scss';
 
 const HorizontalScroll = ({ title, children }) => {
   const scrollContainerRef = useRef(null);
 
-  const scroll = (direction) => {
+  const scroll = useCallback((direction) => {
     const container = scrollContainerRef.current;
+    if (!container) return;
+
     const scrollAmount = container.clientWidth * 0.8;
-    container.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
+    const targetScroll =
+      container.scrollLeft +
+      (direction === 'left' ? -scrollAmount : scrollAmount);
+
+    container.scrollTo({
+      left: targetScroll,
       behavior: 'smooth',
     });
-  };
+  }, []);
+
+  const handleScroll = useCallback(
+    (direction) => {
+      requestAnimationFrame(() => scroll(direction));
+    },
+    [scroll]
+  );
 
   return (
     <div className={styles.scrollSection}>
@@ -19,26 +32,31 @@ const HorizontalScroll = ({ title, children }) => {
         <h2>{title}</h2>
         <div className={styles.controls}>
           <button
-            onClick={() => scroll('left')}
+            onClick={() => handleScroll('left')}
             className={styles.controlButton}
-            aria-label="Défiler à gauche"
+            aria-label="Scroll left"
           >
             ◀
           </button>
           <button
-            onClick={() => scroll('right')}
+            onClick={() => handleScroll('right')}
             className={styles.controlButton}
-            aria-label="Défiler à droite"
+            aria-label="Scroll right"
           >
             ▶
           </button>
         </div>
       </div>
-      <div className={styles.scrollContainer} ref={scrollContainerRef}>
+      <div
+        className={styles.scrollContainer}
+        ref={scrollContainerRef}
+        role="region"
+        aria-label="Scrollable content"
+      >
         {children}
       </div>
     </div>
   );
 };
 
-export default HorizontalScroll;
+export default memo(HorizontalScroll);

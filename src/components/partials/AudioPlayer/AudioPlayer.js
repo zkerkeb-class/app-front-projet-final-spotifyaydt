@@ -1,62 +1,89 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
 import Controls from './Controls';
 import Options from './Options';
 
-// Importing icons
 import { IoMdAddCircleOutline } from 'react-icons/io';
 
-import Audio from '../../../assests/audio/lazy-day.mp3';
+// Move mock data to a separate file
+import { mockTracks } from '../../../constant/mockData';
 
-// Données temporaires pour la démo
-const mockData = {
-  tracks: Array(1)
-    .fill(null)
-    .map((_, i) => ({
-      id: i,
-      title: `Top Track ${i + 1}`,
-      artist: `Artist ${i + 1}`,
-      coverUrl: `https://picsum.photos/200?random=${i}`,
-      audio: Audio,
-    })),
-};
+const AudioPlayer = ({ onError }) => {
+  const { audioRef, currentTrackIndex } = useAudioPlayer();
+  const currentTrack = mockTracks[currentTrackIndex];
 
-const AudioPlayer = ({ track }) => {
+  const handleError = (error) => {
+    console.error('Audio playback error:', error);
+    onError?.(error);
+  };
+
   return (
-    //Artist and track info
-    <div className={style.player}>
-      {mockData.tracks.map((track) => (
-        <div className={style.player__music}>
-          <div className={style.player__music__cover}>
-            <img src={track.coverUrl} alt={track.title} />
-          </div>
-          <div className={style.player__music__info}>
-            <span className={style.player__music__info__title}>
-              {track.title}
-            </span>
-            <span className={style.player__music__info__artist}>
-              {track.artist}
-            </span>
-          </div>
-          <div className={style.player__music__add}>
-            <IoMdAddCircleOutline className={style.player__music__add__icon} />
-          </div>
+    <div className={style.player} role="region" aria-label="Audio player">
+      <div
+        className={style.player__music}
+        role="group"
+        aria-label={`Now playing: ${currentTrack.title} by ${currentTrack.artist}`}
+      >
+        <div className={style.player__music__cover}>
+          <img
+            src={currentTrack.coverUrl}
+            alt={`Album cover for ${currentTrack.title}`}
+          />
         </div>
-      ))}
+        <div className={style.player__music__info}>
+          <span
+            className={style.player__music__info__title}
+            role="heading"
+            aria-level="2"
+          >
+            {currentTrack.title}
+          </span>
+          <span className={style.player__music__info__artist}>
+            {currentTrack.artist}
+          </span>
+        </div>
+        <div className={style.player__music__add}>
+          <button
+            className={style.player__music__add__button}
+            aria-label={`Add ${currentTrack.title} to your library`}
+          >
+            <IoMdAddCircleOutline className={style.player__music__add__icon} />
+          </button>
+        </div>
+      </div>
 
-      {/*Player controls*/}
-      <div className={style.player__controlsContainer}>
+      <div
+        className={style.player__controlsContainer}
+        role="group"
+        aria-label="Playback controls"
+      >
         <Controls />
       </div>
 
-      {/*Other controls*/}
-      <Options />
+      <div
+        role="group"
+        aria-label="Additional controls"
+        className={style.player__optionsContainer}
+      >
+        <Options />
+      </div>
 
-      <audio src={Audio} ref={useAudioPlayer().audioRef} preload="metadata" />
+      <audio
+        src={currentTrack.audio}
+        ref={audioRef}
+        onError={handleError}
+        preload="metadata"
+        aria-hidden="true"
+      />
     </div>
   );
+};
+
+AudioPlayer.propTypes = {
+  onError: PropTypes.func,
 };
 
 export default AudioPlayer;

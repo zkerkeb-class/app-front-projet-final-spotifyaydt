@@ -6,52 +6,52 @@ import styles from './Cards.module.scss';
 // Icons
 import { FaPlay, FaPause } from 'react-icons/fa';
 
-const TrackCard = ({ track, onPlay }) => {
+const PlaylistCard = ({ playlist, onPlay }) => {
   const navigate = useNavigate();
 
   const handleClick = (e) => {
     e.preventDefault();
-    navigate(`/track/${track.id}`);
+    navigate(`/playlist/${playlist.id}`);
   };
 
   const handlePlayClick = (e) => {
     e.stopPropagation();
-    onPlay(track);
+    onPlay(playlist);
   };
 
   return (
     <div className={styles.card} onClick={handleClick}>
       <div className={styles.imageContainer}>
         <img
-          src={track.coverUrl}
-          alt={track.title}
+          src={playlist.coverUrl}
+          alt={playlist.title}
           className={styles.image}
           loading="lazy"
         />
         <button
           className={styles.playButton}
           onClick={handlePlayClick}
-          aria-label={`Play ${track.title}`}
+          aria-label={`Play ${playlist.title}`}
         >
           <FaPlay />
         </button>
       </div>
       <div className={styles.content}>
-        <span className={styles.title}>{track.title}</span>
-        <p className={styles.artist}>{track.artist}</p>
+        <span className={styles.title}>{playlist.title}</span>
       </div>
     </div>
   );
 };
 
-TrackCard.propTypes = {
-  track: PropTypes.shape({
+PlaylistCard.propTypes = {
+  playlist: PropTypes.shape({
     id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
-    artist: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
     coverUrl: PropTypes.string.isRequired,
+    followers: PropTypes.number.isRequired,
   }).isRequired,
   onPlay: PropTypes.func.isRequired,
 };
 
-export default TrackCard;
+export default PlaylistCard;
