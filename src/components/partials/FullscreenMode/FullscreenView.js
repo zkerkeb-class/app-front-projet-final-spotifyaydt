@@ -463,7 +463,7 @@ const FullscreenView = () => {
                 aria-label={volume === 0 ? 'Unmute' : 'Mute'}
                 title={`${volume === 0 ? 'Unmute' : 'Mute'}`}
               >
-                {volume === 0 ? <HiMiniSpeakerXMark /> : <HiMiniSpeakerWave />}
+                {getVolumeIcon()}
               </button>
 
               <div

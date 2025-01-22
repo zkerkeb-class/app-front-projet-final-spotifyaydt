@@ -47,7 +47,6 @@ const RecentTrackItem = memo(({ track }) => {
         >
           {isThisPlaying ? (
             <>
-              <WaveformAnimation className={style.waveform} />
               <FaPause className={style.pause_icon} />
             </>
           ) : (
