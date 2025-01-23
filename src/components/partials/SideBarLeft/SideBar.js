@@ -4,7 +4,7 @@ import style from './Sidebar.module.scss';
 import Filter from '../../UI/Filter/Filter';
 import Playlist from '../../UI/SideItems/Playlist';
 import { mockPlaylists } from '../../../constant/mockData';
-
+import EmptyStateMessage from '../../UI/EmptySidebar/EmptyStateMessage';
 //icons
 import { FaPlus } from 'react-icons/fa6';
 import { FiSearch } from 'react-icons/fi';
@@ -93,13 +93,19 @@ const SideBar = () => {
         </div>
 
         <div className={style.list}>
-          {mockPlaylists.map((playlist) => (
-            <Playlist
-              key={playlist.id}
+          <EmptyStateMessage />
+          {/* 
+          {mockPlaylists.length === 0 ? (
+            <EmptyStateMessage />
+          ) : (
+            mockPlaylists.map((playlist) => (
+              <Playlist
+                key={playlist.id}
               playlist={playlist}
               onClick={() => console.log('Playlist clicked:', playlist.title)}
             />
-          ))}
+          )))}
+          */}
         </div>
       </div>
     </div>
