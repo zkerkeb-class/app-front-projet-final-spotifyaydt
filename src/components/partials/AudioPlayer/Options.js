@@ -228,7 +228,7 @@ const Options = () => {
             </div>
           </div>
           <button
-            className={style.controlsButton}
+            className={`${style.controlsButton} ${style.disable}`}
             onClick={toggleMini}
             aria-label={`Mini player ${displayMini ? 'on' : 'off'}`}
             aria-pressed={displayMini}

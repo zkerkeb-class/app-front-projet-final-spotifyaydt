@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import styles from './Home.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 
@@ -23,16 +24,12 @@ import {
 
 const Home = () => {
   const { isDarkMode } = useTheme();
+  const { handlePlay, lastPlays, mostListenedTo } = useAudioPlayer();
   const [activeFilter, setActiveFilter] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFilterChange = useCallback((filterName) => {
     setActiveFilter(filterName);
-  }, []);
-
-  const handlePlay = useCallback((item) => {
-    console.log('Playing:', item);
-    // Implement your play logic here
   }, []);
 
   return (
@@ -63,11 +60,16 @@ const Home = () => {
           onFilter={handleFilterChange}
           isActive={activeFilter === 'Playlists'}
         />
+        <Filter
+          filterName="Most Listened To"
+          onFilter={handleFilterChange}
+          isActive={activeFilter === 'Most Listened To'}
+        />
       </header>
 
       <ErrorBoundary>
         <RecentSection
-          tracks={mockRecentlyPlayed}
+          tracks={lastPlays}
           isLoading={isLoading}
           onPlay={handlePlay}
         />
@@ -80,6 +82,24 @@ const Home = () => {
               ))}
             </HorizontalScroll>
           )}
+
+          {(activeFilter === 'All' || activeFilter === 'Last Plays') &&
+            lastPlays.length > 0 && (
+              <HorizontalScroll title="Last Plays">
+                {lastPlays.map((track) => (
+                  <TrackCard key={track.id} track={track} onPlay={handlePlay} />
+                ))}
+              </HorizontalScroll>
+            )}
+
+          {(activeFilter === 'All' || activeFilter === 'Most Listened To') &&
+            mostListenedTo.length > 0 && (
+              <HorizontalScroll title="Most Listened To">
+                {mostListenedTo.map((track) => (
+                  <TrackCard key={track.id} track={track} onPlay={handlePlay} />
+                ))}
+              </HorizontalScroll>
+            )}
 
           {(activeFilter === 'All' || activeFilter === 'Artists') && (
             <HorizontalScroll title="Popular Artists">

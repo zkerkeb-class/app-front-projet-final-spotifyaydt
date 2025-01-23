@@ -1,23 +1,49 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
+import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
+import { mockTracks } from '../../../constant/mockData';
 
 // Icons
 import { FaPlay, FaPause } from 'react-icons/fa';
 
 const ArtistCard = ({ artist, onPlay }) => {
   const navigate = useNavigate();
+  const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    navigate(`/artist/${artist.id}`);
-  };
+  // Check if this specific artist is the active source of playback
+  const isThisPlaying = isPlaying && activeCardId === artist.id;
 
-  const handlePlayClick = (e) => {
-    e.stopPropagation();
-    onPlay(artist);
-  };
+  const handleClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      navigate(`/artist/${artist.id}`);
+    },
+    [navigate, artist.id]
+  );
+
+  const handlePlayClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+
+      const artistTracks = mockTracks
+        .filter((track) => track.artist === artist.name)
+        .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0));
+
+      if (artistTracks.length === 0) {
+        console.warn(`No tracks found for artist: ${artist.name}`);
+        return;
+      }
+
+      handlePlay({
+        track: artistTracks[0],
+        tracks: artistTracks,
+        action: isThisPlaying ? 'pause' : 'play',
+      });
+    },
+    [artist, handlePlay, isThisPlaying]
+  );
 
   const formatFollowers = (count) => {
     if (count >= 1000000) {
@@ -43,9 +69,13 @@ const ArtistCard = ({ artist, onPlay }) => {
         <button
           className={styles.playButton}
           onClick={handlePlayClick}
-          aria-label={`Play ${artist.name}'s top tracks`}
+          aria-label={
+            isThisPlaying
+              ? `Pause ${artist.name}'s top tracks`
+              : `Play ${artist.name}'s top tracks`
+          }
         >
-          <FaPlay />
+          {isThisPlaying ? <FaPause /> : <FaPlay />}
         </button>
       </div>
       <div className={styles.content}>
