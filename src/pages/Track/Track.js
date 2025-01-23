@@ -5,16 +5,22 @@ import ErrorBoundary from '../../components/ErrorBoundary';
 
 import { FaPlay, FaPause, FaHeart } from 'react-icons/fa';
 import { mockTracks, mockAlbums } from '../../constant/mockData';
+import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 
 const Track = () => {
   const { id } = useParams();
   const track = mockTracks.find((t) => t.id === Number(id)) || mockTracks[0];
   const album = mockAlbums.find((a) => a.title === track.album);
 
+  const { handlePlay: playTrack, isPlaying, currentTrack } = useAudioPlayer();
+
   const handlePlay = useCallback(() => {
-    console.log('Playing track:', track);
-    // Implement your play logic here
-  }, [track]);
+    playTrack({
+      track,
+      tracks: [track], // Single track mode
+      action: isPlaying && currentTrack?.id === track.id ? 'pause' : 'play',
+    });
+  }, [track, playTrack, isPlaying, currentTrack]);
 
   const handleLike = useCallback(() => {
     console.log('Toggle like for track:', track);
@@ -40,9 +46,17 @@ const Track = () => {
               <button
                 className={style.play_button}
                 onClick={handlePlay}
-                aria-label={`Play ${track.title}`}
+                aria-label={
+                  isPlaying && currentTrack?.id === track.id
+                    ? `Pause ${track.title}`
+                    : `Play ${track.title}`
+                }
               >
-                <FaPlay />
+                {isPlaying && currentTrack?.id === track.id ? (
+                  <FaPause />
+                ) : (
+                  <FaPlay />
+                )}
               </button>
             </div>
 

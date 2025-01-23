@@ -48,6 +48,8 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeCardId, setActiveCardId] = useState(null);
   const [currentTrack, setCurrentTrack] = useState(null);
+  const [lastPlays, setLastPlays] = useState([]);
+  const [playCounts, setPlayCounts] = useState({});
 
   const createShuffleQueue = useCallback(() => {
     const indices = Array.from({ length: currentTracks.length }, (_, i) => i);
@@ -322,6 +324,16 @@ export const AudioPlayerProvider = ({ children }) => {
         audioRef.current.pause();
       }
     }
+
+    setLastPlays((prev) => {
+      const updatedPlays = [track, ...prev.filter((t) => t.id !== track.id)];
+      return updatedPlays.slice(0, 20); // Keep only the last 20 plays
+    });
+
+    setPlayCounts((prevCounts) => {
+      const newCount = (prevCounts[track.id] || 0) + 1;
+      return { ...prevCounts, [track.id]: newCount };
+    });
   }, []);
 
   const getVolumeIcon = useCallback(() => {
@@ -584,6 +596,12 @@ export const AudioPlayerProvider = ({ children }) => {
     setIsFullscreen(false);
   }, []);
 
+  const mostListenedTo = Object.entries(playCounts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 20)
+    .map(([id]) => lastPlays.find((track) => track.id === id))
+    .filter(Boolean);
+
   return (
     <AudioPlayerContext.Provider
       value={{
@@ -640,9 +658,13 @@ export const AudioPlayerProvider = ({ children }) => {
         activeCardId,
         currentTrack,
         setCurrentTrack,
+        lastPlays,
+        mostListenedTo,
       }}
     >
       {children}
     </AudioPlayerContext.Provider>
   );
 };
+
+export default AudioPlayerContext;

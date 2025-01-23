@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import style from './RecentSection.module.scss';
 import RecentCardSkeleton from '../../skeleton/RecentCardSkeleton/RecentCardSkeletonSkeleton';
@@ -66,9 +66,19 @@ RecentTrackItem.propTypes = {
   }).isRequired,
 };
 
-const RecentSection = ({ tracks, isLoading }) => {
+const RecentSection = ({ tracks, isLoading, onPlay }) => {
+  const [recentTracks, setRecentTracks] = useState([]);
+
+  useEffect(() => {
+    setRecentTracks(tracks.slice(0, 8)); // Keep only the last 8 tracks
+  }, [tracks]);
+
   if (isLoading) {
     return <RecentCardSkeleton />;
+  }
+
+  if (recentTracks.length === 0) {
+    return null; // Do not render anything if there are no recent tracks
   }
 
   return (
@@ -77,7 +87,7 @@ const RecentSection = ({ tracks, isLoading }) => {
         <h2 className={style.recent__header__title}>Recently Played</h2>
       </div>
       <div className={style.recent__grid}>
-        {tracks?.map((track) => (
+        {recentTracks.map((track) => (
           <RecentTrackItem key={track.id} track={track} />
         ))}
       </div>
@@ -94,11 +104,13 @@ RecentSection.propTypes = {
     })
   ),
   isLoading: PropTypes.bool,
+  onPlay: PropTypes.func,
 };
 
 RecentSection.defaultProps = {
   tracks: [],
   isLoading: false,
+  onPlay: () => {},
 };
 
 export default memo(RecentSection);
