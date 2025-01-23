@@ -49,7 +49,7 @@ const PlaylistCard = ({ playlist }) => {
   return (
     <Link
       to={`/playlist/${playlist.id}`}
-      className={`${styles.card} ${styles.playlistCard}`}
+      className={styles.card}
       onClick={handleClick}
     >
       <div className={styles.imageContainer}>

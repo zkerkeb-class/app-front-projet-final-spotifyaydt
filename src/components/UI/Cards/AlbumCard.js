@@ -49,7 +49,7 @@ const AlbumCard = ({ album }) => {
   return (
     <Link
       to={`/album/${album.id}`}
-      className={`${styles.card} ${styles.albumCard}`}
+      className={styles.card}
       onClick={handleClick}
     >
       <div className={styles.imageContainer}>
