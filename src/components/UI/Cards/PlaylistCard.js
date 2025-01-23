@@ -47,7 +47,11 @@ const PlaylistCard = ({ playlist }) => {
   );
 
   return (
-    <div className={styles.card} onClick={handleClick}>
+    <Link
+      to={`/playlist/${playlist.id}`}
+      className={`${styles.card} ${styles.playlistCard}`}
+      onClick={handleClick}
+    >
       <div className={styles.imageContainer}>
         {playlist.coverUrl ? (
           <img
@@ -74,7 +78,7 @@ const PlaylistCard = ({ playlist }) => {
       <div className={styles.content}>
         <span className={styles.title}>{playlist.title}</span>
       </div>
-    </div>
+    </Link>
   );
 };
 

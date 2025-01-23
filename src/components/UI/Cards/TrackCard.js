@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import styles from './Cards.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
@@ -41,7 +41,11 @@ const TrackCard = ({ track }) => {
   };
 
   return (
-    <div className={styles.card} onClick={handleClick}>
+    <Link
+      to={`/track/${track.id}`}
+      className={styles.card}
+      onClick={handleClick}
+    >
       <div className={styles.imageContainer}>
         {track.coverUrl ? (
           <img
@@ -68,7 +72,7 @@ const TrackCard = ({ track }) => {
         <p className={styles.artist}>{track.artist}</p>
         <p className={styles.duration}>{formatDuration(track.duration)}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
@@ -47,7 +47,11 @@ const AlbumCard = ({ album }) => {
   );
 
   return (
-    <div className={styles.card} onClick={handleClick}>
+    <Link
+      to={`/album/${album.id}`}
+      className={`${styles.card} ${styles.albumCard}`}
+      onClick={handleClick}
+    >
       <div className={styles.imageContainer}>
         {album.coverUrl ? (
           <img
@@ -76,7 +80,7 @@ const AlbumCard = ({ album }) => {
         <p className={styles.artist}>{album.artist}</p>
         <p className={styles.year}>{album.year}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 
