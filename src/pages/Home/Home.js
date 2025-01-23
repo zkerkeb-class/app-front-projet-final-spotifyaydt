@@ -28,6 +28,8 @@ const Home = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
 
+  const INITIAL_LIMIT = 20;
+
   const handleFilterChange = useCallback((filterName) => {
     setActiveFilter(filterName);
   }, []);
@@ -60,11 +62,6 @@ const Home = () => {
           onFilter={handleFilterChange}
           isActive={activeFilter === 'Playlists'}
         />
-        <Filter
-          filterName="Most Listened To"
-          onFilter={handleFilterChange}
-          isActive={activeFilter === 'Most Listened To'}
-        />
       </header>
 
       <ErrorBoundary>
@@ -76,8 +73,14 @@ const Home = () => {
 
         <main className={styles.mainContent}>
           {(activeFilter === 'All' || activeFilter === 'Tracks') && (
-            <HorizontalScroll title="Popular Tracks">
-              {mockTracks.slice(0, 10).map((track) => (
+            <HorizontalScroll
+              title="Popular Tracks"
+              showShowMore={mockTracks.length > INITIAL_LIMIT}
+              moreLink="/tracks"
+              itemCount={mockTracks.length}
+              maxItems={INITIAL_LIMIT}
+            >
+              {mockTracks.slice(0, INITIAL_LIMIT).map((track) => (
                 <TrackCard key={track.id} track={track} onPlay={handlePlay} />
               ))}
             </HorizontalScroll>
@@ -85,8 +88,14 @@ const Home = () => {
 
           {(activeFilter === 'All' || activeFilter === 'Last Plays') &&
             lastPlays.length > 0 && (
-              <HorizontalScroll title="Last Plays">
-                {lastPlays.map((track) => (
+              <HorizontalScroll
+                title="Last Plays"
+                showShowMore={lastPlays.length > INITIAL_LIMIT}
+                moreLink="/history"
+                itemCount={lastPlays.length}
+                maxItems={INITIAL_LIMIT}
+              >
+                {lastPlays.slice(0, INITIAL_LIMIT).map((track) => (
                   <TrackCard key={track.id} track={track} onPlay={handlePlay} />
                 ))}
               </HorizontalScroll>
@@ -94,16 +103,28 @@ const Home = () => {
 
           {(activeFilter === 'All' || activeFilter === 'Most Listened To') &&
             mostListenedTo.length > 0 && (
-              <HorizontalScroll title="Most Listened To">
-                {mostListenedTo.map((track) => (
+              <HorizontalScroll
+                title="Most Listened To"
+                showShowMore={mostListenedTo.length > INITIAL_LIMIT}
+                moreLink="/most-played"
+                itemCount={mostListenedTo.length}
+                maxItems={INITIAL_LIMIT}
+              >
+                {mostListenedTo.slice(0, INITIAL_LIMIT).map((track) => (
                   <TrackCard key={track.id} track={track} onPlay={handlePlay} />
                 ))}
               </HorizontalScroll>
             )}
 
           {(activeFilter === 'All' || activeFilter === 'Artists') && (
-            <HorizontalScroll title="Popular Artists">
-              {mockArtists.map((artist) => (
+            <HorizontalScroll
+              title="Popular Artists"
+              showShowMore={mockArtists.length > INITIAL_LIMIT}
+              moreLink="/artists"
+              itemCount={mockArtists.length}
+              maxItems={INITIAL_LIMIT}
+            >
+              {mockArtists.slice(0, INITIAL_LIMIT).map((artist) => (
                 <ArtistCard
                   key={artist.id}
                   artist={artist}
@@ -114,16 +135,28 @@ const Home = () => {
           )}
 
           {(activeFilter === 'All' || activeFilter === 'Albums') && (
-            <HorizontalScroll title="Featured Albums">
-              {mockAlbums.map((album) => (
+            <HorizontalScroll
+              title="Featured Albums"
+              showShowMore={mockAlbums.length > INITIAL_LIMIT}
+              moreLink="/albums"
+              itemCount={mockAlbums.length}
+              maxItems={INITIAL_LIMIT}
+            >
+              {mockAlbums.slice(0, INITIAL_LIMIT).map((album) => (
                 <AlbumCard key={album.id} album={album} onPlay={handlePlay} />
               ))}
             </HorizontalScroll>
           )}
 
           {(activeFilter === 'All' || activeFilter === 'Playlists') && (
-            <HorizontalScroll title="Featured Playlists">
-              {mockPlaylists.map((playlist) => (
+            <HorizontalScroll
+              title="Featured Playlists"
+              showShowMore={mockPlaylists.length > INITIAL_LIMIT}
+              moreLink="/playlists"
+              itemCount={mockPlaylists.length}
+              maxItems={INITIAL_LIMIT}
+            >
+              {mockPlaylists.slice(0, INITIAL_LIMIT).map((playlist) => (
                 <PlaylistCard
                   key={playlist.id}
                   playlist={playlist}
