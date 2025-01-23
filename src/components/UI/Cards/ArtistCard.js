@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { mockTracks } from '../../../constant/mockData';
+import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 // Icons
 import { FaPlay, FaPause } from 'react-icons/fa';
@@ -55,17 +56,21 @@ const ArtistCard = ({ artist, onPlay }) => {
   };
 
   return (
-    <div
+    <Link
+      to={`/artist/${artist.id}`}
       className={`${styles.card} ${styles.artistCard}`}
-      onClick={handleClick}
     >
       <div className={styles.artistImageContainer}>
-        <img
-          src={artist.imageUrl}
-          alt={artist.name}
-          className={`${styles.image} ${styles.artistImage}`}
-          loading="lazy"
-        />
+        {artist.imageUrl ? (
+          <img
+            src={artist.imageUrl}
+            alt={artist.name}
+            className={`${styles.image} ${styles.artistImage}`}
+            loading="lazy"
+          />
+        ) : (
+          <CardFallbackIcon type="artist" />
+        )}
         <button
           className={styles.playButton}
           onClick={handlePlayClick}
@@ -84,7 +89,7 @@ const ArtistCard = ({ artist, onPlay }) => {
           {new Intl.NumberFormat().format(artist.followers)} followers
         </p>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -92,10 +97,10 @@ ArtistCard.propTypes = {
   artist: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    imageUrl: PropTypes.string.isRequired,
+    imageUrl: PropTypes.string,
     followers: PropTypes.number.isRequired,
   }).isRequired,
-  onPlay: PropTypes.func.isRequired,
+  onPlay: PropTypes.func,
 };
 
 export default ArtistCard;

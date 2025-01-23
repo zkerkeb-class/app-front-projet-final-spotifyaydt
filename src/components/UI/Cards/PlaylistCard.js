@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { mockTracks } from '../../../constant/mockData';
+import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 const PlaylistCard = ({ playlist }) => {
   const navigate = useNavigate();
@@ -48,12 +49,16 @@ const PlaylistCard = ({ playlist }) => {
   return (
     <div className={styles.card} onClick={handleClick}>
       <div className={styles.imageContainer}>
-        <img
-          src={playlist.coverUrl}
-          alt={playlist.title}
-          className={styles.image}
-          loading="lazy"
-        />
+        {playlist.coverUrl ? (
+          <img
+            src={playlist.coverUrl}
+            alt={playlist.title}
+            className={styles.image}
+            loading="lazy"
+          />
+        ) : (
+          <CardFallbackIcon type="playlist" />
+        )}
         <button
           className={`${styles.playButton} ${isThisPlaying ? styles.visible : ''}`}
           onClick={handlePlayClick}
@@ -78,8 +83,8 @@ PlaylistCard.propTypes = {
     id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    coverUrl: PropTypes.string.isRequired,
-    followers: PropTypes.number.isRequired,
+    coverUrl: PropTypes.string,
+    owner: PropTypes.string.isRequired,
     tracks: PropTypes.arrayOf(PropTypes.number).isRequired,
   }).isRequired,
 };

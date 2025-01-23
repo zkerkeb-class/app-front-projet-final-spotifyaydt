@@ -5,6 +5,7 @@ import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { mockTracks } from '../../../constant/mockData';
+import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 const AlbumCard = ({ album }) => {
   const navigate = useNavigate();
@@ -48,12 +49,16 @@ const AlbumCard = ({ album }) => {
   return (
     <div className={styles.card} onClick={handleClick}>
       <div className={styles.imageContainer}>
-        <img
-          src={album.coverUrl}
-          alt={album.title}
-          className={styles.image}
-          loading="lazy"
-        />
+        {album.coverUrl ? (
+          <img
+            src={album.coverUrl}
+            alt={album.title}
+            className={styles.image}
+            loading="lazy"
+          />
+        ) : (
+          <CardFallbackIcon type="album" />
+        )}
         <button
           className={`${styles.playButton} ${isThisPlaying ? styles.visible : ''}`}
           onClick={handlePlayClick}
@@ -80,7 +85,7 @@ AlbumCard.propTypes = {
     id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     artist: PropTypes.string.isRequired,
-    coverUrl: PropTypes.string.isRequired,
+    coverUrl: PropTypes.string,
     year: PropTypes.number.isRequired,
   }).isRequired,
 };

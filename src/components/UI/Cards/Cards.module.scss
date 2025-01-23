@@ -6,6 +6,7 @@
   flex-shrink: 0;
   transition: background-color 0.3s ease;
   position: relative;
+  text-decoration: none;
 
   &:hover {
     background-color: var(--card-hover);
@@ -136,4 +137,8 @@
   font-size: 0.75rem;
   font-weight: 700;
   z-index: 1;
+}
+
+.duration {
+  font-size: 0.875rem;
 }
