@@ -35,8 +35,7 @@ export const mockArtists = [
   {
     id: 2,
     name: 'Doja Cat',
-    imageUrl:
-      'https://i.scdn.co/image/ab6761610000e5eb7dd9647a6512e6f6978b5a86',
+    imageUrl: '',
     followers: 54321789,
     type: 'artist',
     genres: ['pop', 'hip-hop', 'rap'],
@@ -201,8 +200,7 @@ export const mockPlaylists = [
   {
     id: 2,
     title: 'RapCaviar',
-    coverUrl:
-      'https://i.scdn.co/image/ab67706f00000002b1c181ae600398a6a94c8b37',
+    coverUrl: '',
     description: "Hip-hop's heavy hitters and rising stars",
     type: 'playlist',
     trackCount: 10,
@@ -327,8 +325,7 @@ export const mockPlaylists = [
   {
     id: 10,
     title: 'Party Mix',
-    coverUrl:
-      'https://i.scdn.co/image/ab67706f00000002748f70a7a09fd6a5b6865665',
+    coverUrl: '',
     description: 'Move your feet to these dance hits',
     type: 'playlist',
     trackCount: 10,

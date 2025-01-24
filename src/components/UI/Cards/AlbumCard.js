@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { mockTracks } from '../../../constant/mockData';
+import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 const AlbumCard = ({ album }) => {
   const navigate = useNavigate();
@@ -46,14 +47,22 @@ const AlbumCard = ({ album }) => {
   );
 
   return (
-    <div className={styles.card} onClick={handleClick}>
+    <Link
+      to={`/album/${album.id}`}
+      className={styles.card}
+      onClick={handleClick}
+    >
       <div className={styles.imageContainer}>
-        <img
-          src={album.coverUrl}
-          alt={album.title}
-          className={styles.image}
-          loading="lazy"
-        />
+        {album.coverUrl ? (
+          <img
+            src={album.coverUrl}
+            alt={album.title}
+            className={styles.image}
+            loading="lazy"
+          />
+        ) : (
+          <CardFallbackIcon type="album" />
+        )}
         <button
           className={`${styles.playButton} ${isThisPlaying ? styles.visible : ''}`}
           onClick={handlePlayClick}
@@ -71,7 +80,7 @@ const AlbumCard = ({ album }) => {
         <p className={styles.artist}>{album.artist}</p>
         <p className={styles.year}>{album.year}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -80,7 +89,7 @@ AlbumCard.propTypes = {
     id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     artist: PropTypes.string.isRequired,
-    coverUrl: PropTypes.string.isRequired,
+    coverUrl: PropTypes.string,
     year: PropTypes.number.isRequired,
   }).isRequired,
 };

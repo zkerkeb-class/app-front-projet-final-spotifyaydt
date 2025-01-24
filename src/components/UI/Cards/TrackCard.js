@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import styles from './Cards.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
+import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 const TrackCard = ({ track }) => {
   const navigate = useNavigate();
@@ -34,15 +35,28 @@ const TrackCard = ({ track }) => {
     [track, handlePlay, isThisPlaying]
   );
 
+  const formatDuration = (duration) => {
+    const [minutes, seconds] = duration.split(':');
+    return `${minutes}:${seconds.padStart(2, '0')}`;
+  };
+
   return (
-    <div className={styles.card} onClick={handleClick}>
+    <Link
+      to={`/track/${track.id}`}
+      className={styles.card}
+      onClick={handleClick}
+    >
       <div className={styles.imageContainer}>
-        <img
-          src={track.coverUrl}
-          alt={track.title}
-          className={styles.image}
-          loading="lazy"
-        />
+        {track.coverUrl ? (
+          <img
+            src={track.coverUrl}
+            alt={track.title}
+            className={styles.image}
+            loading="lazy"
+          />
+        ) : (
+          <CardFallbackIcon type="track" />
+        )}
         <button
           className={`${styles.playButton} ${isThisPlaying ? styles.visible : ''}`}
           onClick={handlePlayClick}
@@ -56,8 +70,9 @@ const TrackCard = ({ track }) => {
       <div className={styles.content}>
         <span className={styles.title}>{track.title}</span>
         <p className={styles.artist}>{track.artist}</p>
+        <p className={styles.duration}>{formatDuration(track.duration)}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -66,8 +81,8 @@ TrackCard.propTypes = {
     id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     artist: PropTypes.string.isRequired,
-    coverUrl: PropTypes.string.isRequired,
-    audio: PropTypes.string.isRequired,
+    coverUrl: PropTypes.string,
+    duration: PropTypes.string.isRequired,
   }).isRequired,
 };
 

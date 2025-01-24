@@ -1,6 +1,6 @@
-.scrollSection {
+.container {
   margin: 2rem 0;
-  padding: 0 1rem;
+  padding: 0 16px;
 
   @media (max-width: 768px) {
     padding: 0 0.5rem;
@@ -9,48 +9,35 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 0 16px;
 
   h2 {
+    font-size: 24px;
+    font-weight: 700;
     color: var(--text-primary);
-    font-size: 22px;
-    margin: 0;
+  }
+
+  .right_element {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
   }
 }
 
-.controls {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.controlButton {
-  background-color: var(--card-background);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.scroll_wrapper {
+  position: relative;
 
   &:hover {
-    background-color: var(--hover-background);
-    transform: scale(1.1);
-  }
-
-  @media (max-width: 768px) {
-    width: 2rem;
-    height: 2rem;
-    font-size: 0.8rem;
+    .control_button {
+      opacity: 1;
+    }
   }
 }
 
-.scrollContainer {
+.scroll_container {
   display: flex;
   gap: 1rem;
   overflow-x: auto;
@@ -65,5 +52,58 @@
 
   & > * {
     scroll-snap-align: start;
+  }
+}
+
+.control_button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  z-index: 10;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &.left {
+    left: 8px;
+  }
+
+  &.right {
+    right: 8px;
+  }
+
+  @media (max-width: 768px) {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+}
+.show_more {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px 16px;
+  border-radius: 4px;
+
+  &:hover {
+    color: var(--accent-color);
+    background-color: rgba(255, 255, 255, 0.1);
   }
 }

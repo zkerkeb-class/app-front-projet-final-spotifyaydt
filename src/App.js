@@ -6,6 +6,7 @@ import './styles/theme.scss';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
 import ErrorBoundary from './components/ErrorBoundary';
+import Footer from './components/partials/Footer/Footer';
 
 // Lazy loaded components
 const Home = lazy(() => import('./pages/Home/Home'));
@@ -52,6 +53,13 @@ const MainContent = memo(() => (
 
 MainContent.displayName = 'MainContent';
 
+const MainContentWrapper = memo(() => (
+  <div className="main-content-wrapper">
+    <MainContent />
+    <Footer />
+  </div>
+));
+
 const AppLayout = memo(({ children }) => (
   <div className="app-container">
     <Suspense fallback={<LoadingFallback />}>
@@ -61,7 +69,7 @@ const AppLayout = memo(({ children }) => (
           <ResizableContainer
             leftPanel={<SidebarLeft />}
             rightPanel={<SideBarRight />}
-            mainContent={<MainContent />}
+            mainContent={<MainContentWrapper />}
             minLeftWidth={200}
             maxLeftWidth={350}
             minRightWidth={200}
@@ -89,7 +97,7 @@ const App = () => {
         <AudioPlayerProvider>
           <Router>
             <AppLayout>
-              <MainContent />
+              <MainContentWrapper />
             </AppLayout>
           </Router>
         </AudioPlayerProvider>
