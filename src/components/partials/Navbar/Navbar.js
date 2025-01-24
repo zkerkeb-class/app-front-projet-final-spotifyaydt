@@ -120,13 +120,6 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Update search results as user types
-  useEffect(() => {
-    if (searchQuery) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
-    }
-  }, [searchQuery, navigate]);
-
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
   };
@@ -195,6 +188,8 @@ const Navbar = () => {
     // Save to localStorage
     localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
 
+    // Navigate to search page with query
+    navigate(`/search?query=${encodeURIComponent(query)}`);
     setShowResults(false);
   };
 
@@ -212,7 +207,7 @@ const Navbar = () => {
 
   const handleSearchItemClick = (query) => {
     setSearchQuery(query);
-    navigate(`/search?query=${encodeURIComponent(query)}`);
+    handleSearch(query); // Use handleSearch instead of direct navigation
     setShowResults(false);
   };
 
