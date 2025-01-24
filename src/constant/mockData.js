@@ -325,8 +325,7 @@ export const mockPlaylists = [
   {
     id: 10,
     title: 'Party Mix',
-    coverUrl:
-      'https://i.scdn.co/image/ab67706f00000002748f70a7a09fd6a5b6865665',
+    coverUrl: '',
     description: 'Move your feet to these dance hits',
     type: 'playlist',
     trackCount: 10,

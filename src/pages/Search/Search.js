@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import style from './Search.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import TrackCard from '../../components/UI/Cards/TrackCard';
@@ -7,6 +7,7 @@ import AlbumCard from '../../components/UI/Cards/AlbumCard';
 import ArtistCard from '../../components/UI/Cards/ArtistCard';
 import PlaylistCard from '../../components/UI/Cards/PlaylistCard';
 import Filter from '../../components/UI/Filter/Filter';
+import FilterMenu from '../../components/UI/FilterMenu/FilterMenu';
 import HorizontalScroll from '../../components/UI/HorizontalScroll/HorizontalScroll';
 import { FaSearch } from 'react-icons/fa';
 import {
@@ -21,6 +22,7 @@ import {
 } from '../../utils/searchUtils';
 
 const Search = () => {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState({
@@ -29,6 +31,13 @@ const Search = () => {
     artists: [],
     playlists: [],
   });
+  const [filteredResults, setFilteredResults] = useState({
+    tracks: [],
+    albums: [],
+    artists: [],
+    playlists: [],
+  });
+  const [bestResult, setBestResult] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -38,47 +47,103 @@ const Search = () => {
 
   const INITIAL_LIMIT = 6;
 
-  const handleSearch = useCallback((searchQuery) => {
-    if (!searchQuery.trim()) {
-      setResults({ tracks: [], albums: [], artists: [], playlists: [] });
-      return;
+  const findBestResult = (searchResults) => {
+    // Priority order: Artist > Album > Track > Playlist
+    const typeScores = {
+      artist: 4,
+      album: 3,
+      track: 2,
+      playlist: 1,
+    };
+
+    let bestMatch = null;
+    let highestScore = -1;
+
+    // Check artists first (exact name match gets highest priority)
+    const artistMatch = searchResults.artists.find(
+      (artist) => artist.name.toLowerCase() === query.toLowerCase()
+    );
+    if (artistMatch) {
+      return { type: 'artist', item: artistMatch };
     }
 
-    setIsLoading(true);
+    // Calculate scores for all results
+    Object.entries(searchResults).forEach(([type, items]) => {
+      if (items.length > 0) {
+        const baseTypeScore = typeScores[type.slice(0, -1)] || 0;
+        items.forEach((item) => {
+          let score = baseTypeScore;
 
-    // Simulate API call with mock data
-    setTimeout(() => {
-      // Use intelligent search for each category
-      const filteredTracks = intelligentSearch(mockTracks, searchQuery, {
-        fields: ['title', 'artist'],
-        usePhonetic: false,
-      });
+          // Add relevance factors
+          const name = item.name || item.title;
+          if (name.toLowerCase() === query.toLowerCase()) score += 5;
+          else if (name.toLowerCase().startsWith(query.toLowerCase()))
+            score += 3;
+          else if (name.toLowerCase().includes(query.toLowerCase())) score += 1;
 
-      const filteredAlbums = intelligentSearch(mockAlbums, searchQuery, {
-        fields: ['title', 'artist'],
-        usePhonetic: false,
-      });
+          if (score > highestScore) {
+            highestScore = score;
+            bestMatch = { type: type.slice(0, -1), item };
+          }
+        });
+      }
+    });
 
-      const filteredArtists = intelligentSearch(mockArtists, searchQuery, {
-        fields: ['name'],
-        usePhonetic: true, // Enable phonetic matching for artists
-        similarityThreshold: 0.3, // More lenient for artist names
-      });
+    return bestMatch;
+  };
 
-      const filteredPlaylists = intelligentSearch(mockPlaylists, searchQuery, {
-        fields: ['title'],
-        usePhonetic: false,
-      });
+  const handleSearch = useCallback(
+    (searchQuery) => {
+      if (!searchQuery.trim()) {
+        setResults({ tracks: [], albums: [], artists: [], playlists: [] });
+        setBestResult(null);
+        return;
+      }
 
-      setResults({
-        tracks: filteredTracks,
-        albums: filteredAlbums,
-        artists: filteredArtists,
-        playlists: filteredPlaylists,
-      });
-      setIsLoading(false);
-    }, 500);
-  }, []);
+      setIsLoading(true);
+
+      // Simulate API call with mock data
+      setTimeout(() => {
+        // Use intelligent search for each category
+        const filteredTracks = intelligentSearch(mockTracks, searchQuery, {
+          fields: ['title', 'artist'],
+          usePhonetic: false,
+        });
+
+        const filteredAlbums = intelligentSearch(mockAlbums, searchQuery, {
+          fields: ['title', 'artist'],
+          usePhonetic: false,
+        });
+
+        const filteredArtists = intelligentSearch(mockArtists, searchQuery, {
+          fields: ['name'],
+          usePhonetic: true, // Enable phonetic matching for artists
+          similarityThreshold: 0.3, // More lenient for artist names
+        });
+
+        const filteredPlaylists = intelligentSearch(
+          mockPlaylists,
+          searchQuery,
+          {
+            fields: ['title'],
+            usePhonetic: false,
+          }
+        );
+
+        const searchResults = {
+          tracks: filteredTracks,
+          albums: filteredAlbums,
+          artists: filteredArtists,
+          playlists: filteredPlaylists,
+        };
+
+        setResults(searchResults);
+        setBestResult(findBestResult(searchResults));
+        setIsLoading(false);
+      }, 500);
+    },
+    [query]
+  );
 
   // Handle autocomplete suggestions
   const updateSuggestions = useCallback((searchQuery) => {
@@ -114,13 +179,145 @@ const Search = () => {
     updateSuggestions(query);
   }, [query, handleSearch, updateSuggestions]);
 
-  const handleFilterChange = useCallback((filterName) => {
-    setActiveFilter(filterName);
+  const applyFilters = useCallback((filters, items) => {
+    return items.filter((item) => {
+      const matchesArtist =
+        !filters.artist ||
+        (item.artist || item.name || '')
+          .toLowerCase()
+          .includes(filters.artist.toLowerCase());
+
+      const matchesAlbum =
+        !filters.album ||
+        (item.album || item.title || '')
+          .toLowerCase()
+          .includes(filters.album.toLowerCase());
+
+      const matchesGenre =
+        !filters.genre ||
+        (item.genre || '').toLowerCase().includes(filters.genre.toLowerCase());
+
+      const matchesYear =
+        !filters.year ||
+        (item.releaseYear || item.year || '').toString() === filters.year;
+
+      const getDurationInSeconds = (duration) => {
+        if (!duration) return 0;
+        const [minutes, seconds] = duration.split(':').map(Number);
+        return minutes * 60 + seconds;
+      };
+
+      const itemDuration = getDurationInSeconds(item.duration);
+      const matchesDuration =
+        !filters.duration ||
+        (filters.duration === 'short' && itemDuration < 180) ||
+        (filters.duration === 'medium' &&
+          itemDuration >= 180 &&
+          itemDuration <= 300) ||
+        (filters.duration === 'long' && itemDuration > 300);
+
+      const matchesPopularity =
+        !filters.popularity ||
+        (filters.popularity === 'high' && item.plays > 1000000) ||
+        (filters.popularity === 'medium' &&
+          item.plays > 100000 &&
+          item.plays <= 1000000) ||
+        (filters.popularity === 'low' && item.plays <= 100000);
+
+      return (
+        matchesArtist &&
+        matchesAlbum &&
+        matchesGenre &&
+        matchesYear &&
+        matchesDuration &&
+        matchesPopularity
+      );
+    });
   }, []);
+
+  const applySorting = useCallback((sortBy, items) => {
+    return [...items].sort((a, b) => {
+      switch (sortBy) {
+        case 'duration':
+          const getDurationInSeconds = (duration) => {
+            if (!duration) return 0;
+            const [minutes, seconds] = duration.split(':').map(Number);
+            return minutes * 60 + seconds;
+          };
+          return (
+            getDurationInSeconds(a.duration) - getDurationInSeconds(b.duration)
+          );
+
+        case 'releaseDate':
+          return (
+            (b.releaseYear || b.year || 0) - (a.releaseYear || a.year || 0)
+          );
+
+        case 'alphabetical':
+          return (a.title || a.name || '').localeCompare(
+            b.title || b.name || ''
+          );
+
+        case 'popularity':
+          return (b.plays || 0) - (a.plays || 0);
+
+        case 'plays':
+          return (b.plays || 0) - (a.plays || 0);
+
+        default:
+          return 0;
+      }
+    });
+  }, []);
+
+  const handleFilterChange = useCallback(
+    (filters) => {
+      setFilteredResults({
+        tracks: applyFilters(filters, results.tracks),
+        albums: applyFilters(filters, results.albums),
+        artists: applyFilters(filters, results.artists),
+        playlists: applyFilters(filters, results.playlists),
+      });
+    },
+    [results, applyFilters]
+  );
+
+  const handleSortChange = useCallback(
+    (sortBy) => {
+      setFilteredResults((prev) => ({
+        tracks: applySorting(sortBy, prev.tracks),
+        albums: applySorting(sortBy, prev.albums),
+        artists: applySorting(sortBy, prev.artists),
+        playlists: applySorting(sortBy, prev.playlists),
+      }));
+    },
+    [applySorting]
+  );
+
+  useEffect(() => {
+    setFilteredResults(results);
+  }, [results]);
 
   const handlePlay = useCallback((item) => {
     console.log('Playing:', item);
   }, []);
+
+  const renderBestResult = () => {
+    if (!bestResult) return null;
+
+    const { type, item } = bestResult;
+    return (
+      <div className={style.best_result}>
+        <h2>Best Result</h2>
+        <div className={style.best_result__content}>
+          {type === 'artist' && <ArtistCard artist={item} />}
+          {type === 'album' && <AlbumCard album={item} />}
+          {type === 'track' && <TrackCard track={item} />}
+          {type === 'playlist' && <PlaylistCard playlist={item} />}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <ErrorBoundary>
@@ -148,6 +345,10 @@ const Search = () => {
               isActive={activeFilter === 'Artists'}
             />
           </div>
+          <FilterMenu
+            onFilterChange={handleFilterChange}
+            onSortChange={handleSortChange}
+          />
         </header>
 
         <main className={style.results}>
@@ -172,61 +373,73 @@ const Search = () => {
                 </div>
               )}
 
+              {bestResult && renderBestResult()}
+
               {(activeFilter === 'All' || activeFilter === 'Tracks') &&
-                results.tracks.length > 0 && (
+                filteredResults.tracks.length > 0 && (
                   <HorizontalScroll
-                    title={`Tracks (${results.tracks.length})`}
-                    showShowMore={results.tracks.length > INITIAL_LIMIT}
+                    title={`Tracks (${filteredResults.tracks.length})`}
+                    showShowMore={filteredResults.tracks.length > INITIAL_LIMIT}
                     moreLink={`/search/tracks?query=${encodeURIComponent(query)}`}
-                    itemCount={results.tracks.length}
+                    itemCount={filteredResults.tracks.length}
                     maxItems={INITIAL_LIMIT}
                   >
-                    {results.tracks.slice(0, INITIAL_LIMIT).map((track) => (
-                      <TrackCard key={track.id} track={track} />
-                    ))}
+                    {filteredResults.tracks
+                      .slice(0, INITIAL_LIMIT)
+                      .map((track) => (
+                        <TrackCard key={track.id} track={track} />
+                      ))}
                   </HorizontalScroll>
                 )}
 
               {(activeFilter === 'All' || activeFilter === 'Albums') &&
-                results.albums.length > 0 && (
+                filteredResults.albums.length > 0 && (
                   <HorizontalScroll
-                    title={`Albums (${results.albums.length})`}
-                    showShowMore={results.albums.length > INITIAL_LIMIT}
+                    title={`Albums (${filteredResults.albums.length})`}
+                    showShowMore={filteredResults.albums.length > INITIAL_LIMIT}
                     moreLink={`/search/albums?query=${encodeURIComponent(query)}`}
-                    itemCount={results.albums.length}
+                    itemCount={filteredResults.albums.length}
                     maxItems={INITIAL_LIMIT}
                   >
-                    {results.albums.slice(0, INITIAL_LIMIT).map((album) => (
-                      <AlbumCard key={album.id} album={album} />
-                    ))}
+                    {filteredResults.albums
+                      .slice(0, INITIAL_LIMIT)
+                      .map((album) => (
+                        <AlbumCard key={album.id} album={album} />
+                      ))}
                   </HorizontalScroll>
                 )}
 
               {(activeFilter === 'All' || activeFilter === 'Artists') &&
-                results.artists.length > 0 && (
+                filteredResults.artists.length > 0 && (
                   <HorizontalScroll
-                    title={`Artists (${results.artists.length})`}
-                    showShowMore={results.artists.length > INITIAL_LIMIT}
+                    title={`Artists (${filteredResults.artists.length})`}
+                    showShowMore={
+                      filteredResults.artists.length > INITIAL_LIMIT
+                    }
                     moreLink={`/search/artists?query=${encodeURIComponent(query)}`}
-                    itemCount={results.artists.length}
+                    itemCount={filteredResults.artists.length}
                     maxItems={INITIAL_LIMIT}
                   >
-                    {results.artists.slice(0, INITIAL_LIMIT).map((artist) => (
-                      <ArtistCard key={artist.id} artist={artist} />
-                    ))}
+                    {filteredResults.artists
+                      .slice(0, INITIAL_LIMIT)
+                      .map((artist) => (
+                        <ArtistCard key={artist.id} artist={artist} />
+                      ))}
                   </HorizontalScroll>
                 )}
 
               {(activeFilter === 'All' || activeFilter === 'Playlists') &&
-                results.playlists.length > 0 && (
+                filteredResults.playlists.length > 0 && (
                   <HorizontalScroll
-                    title={`Playlists (${results.playlists.length})`}
-                    showShowMore={results.playlists.length > INITIAL_LIMIT}
+                    title={`Playlists (${filteredResults.playlists.length})`}
+                    showShowMore={
+                      filteredResults.playlists.length > INITIAL_LIMIT
+                    }
                     moreLink={`/search/playlists?query=${encodeURIComponent(query)}`}
-                    itemCount={results.playlists.length}
+                    itemCount={filteredResults.playlists.length}
                     maxItems={INITIAL_LIMIT}
                   >
-                    {results.playlists
+                    {filteredResults.playlists
                       .slice(0, INITIAL_LIMIT)
                       .map((playlist) => (
                         <PlaylistCard
@@ -238,7 +451,9 @@ const Search = () => {
                   </HorizontalScroll>
                 )}
 
-              {Object.values(results).every((arr) => arr.length === 0) && (
+              {Object.values(filteredResults).every(
+                (arr) => arr.length === 0
+              ) && (
                 <div className={style.no_results}>
                   <p>No results found for "{query}"</p>
                   <p>Try searching for something else</p>
