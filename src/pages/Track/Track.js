@@ -5,31 +5,33 @@ import ErrorBoundary from '../../components/ErrorBoundary';
 import { mockTracks, mockAlbums } from '../../constant/mockData';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import { FaPlay, FaPause, FaHeart } from 'react-icons/fa';
-import { formatDuration } from '../../utils/formatters';
-import WaveformAnimation from '../../components/UI/WaveformAnimation/WaveformAnimation';
 
 const Track = () => {
   const { id } = useParams();
   const { handlePlay, isPlaying, currentTrack, handlePause } = useAudioPlayer();
   const track = mockTracks.find((t) => t.id === id);
-  const album = mockAlbums.find((a) => a.title === track.album);
+  const album = mockAlbums.find((a) => a.title === track?.album);
+
+  const handlePlayClick = useCallback(() => {
+    if (track) {
+      if (isPlaying && currentTrack?.id === track.id) {
+        handlePause();
+      } else {
+        handlePlay(track);
+      }
+    }
+  }, [track, isPlaying, currentTrack, handlePlay, handlePause]);
+
+  const handleLike = useCallback(() => {
+    if (track) {
+      console.log('Toggle like for track:', track);
+      // Implement your like logic here
+    }
+  }, [track]);
 
   if (!track) {
     return <div>Track not found</div>;
   }
-
-  const handlePlayClick = () => {
-    if (isPlaying && currentTrack?.id === track.id) {
-      handlePause();
-    } else {
-      handlePlay(track);
-    }
-  };
-
-  const handleLike = useCallback(() => {
-    console.log('Toggle like for track:', track);
-    // Implement your like logic here
-  }, [track]);
 
   const formatNumber = (num) => {
     return new Intl.NumberFormat().format(num);

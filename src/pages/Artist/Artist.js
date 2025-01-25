@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import styles from './Artist.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';

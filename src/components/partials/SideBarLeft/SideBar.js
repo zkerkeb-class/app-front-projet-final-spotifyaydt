@@ -31,7 +31,7 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const renderPlaylists = () => {
-    if (mockPlaylists.length === 0) {
+    if (mockPlaylists.length !== 0) {
       return !isCollapsed && <EmptyStateMessage />;
     }
 
