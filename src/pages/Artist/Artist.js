@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import style from './Artist.module.scss';
+import styles from './Artist.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import HorizontalScroll from '../../components/UI/HorizontalScroll/HorizontalScroll';
 import AlbumCard from '../../components/UI/Cards/AlbumCard';
@@ -81,30 +81,30 @@ const Artist = () => {
 
   return (
     <ErrorBoundary>
-      <div className={style.container}>
-        <header className={style.header} style={headerStyle}>
-          <div className={style.header__container}>
+      <div className={styles.container}>
+        <header className={styles.header} style={headerStyle}>
+          <div className={styles.header__container}>
             <img
-              className={style.header__container__image}
+              className={styles.header__container__image}
               src={artist.imageUrl}
               alt={artist.name}
               loading="lazy"
             />
           </div>
-          <div className={style.header__info}>
+          <div className={styles.header__info}>
             <span>Artist</span>
-            <h1 className={style.header__info__title}>{artist.name}</h1>
-            <div className={style.header__info__more}>
+            <h1 className={styles.header__info__title}>{artist.name}</h1>
+            <div className={styles.header__info__more}>
               <span>{formatNumber(artist.followers)} followers</span>
             </div>
           </div>
         </header>
 
-        <main className={style.main}>
-          <div className={style.main__header}>
-            <div className={style.main__header__container}>
+        <main className={styles.main}>
+          <div className={styles.main__header}>
+            <div className={styles.main__header__container}>
               <button
-                className={style.main__header__container__button}
+                className={styles.main__header__container__button}
                 onClick={handlePlayClick}
                 aria-label={
                   isThisPlaying
@@ -115,7 +115,7 @@ const Artist = () => {
                 {isThisPlaying ? <FaPause /> : <FaPlay />}
               </button>
               <button
-                className={`${style.main__header__container__button} ${style.shuffle_button}`}
+                className={`${styles.main__header__container__button} ${styles.shuffle_button}`}
                 onClick={handleShuffle}
                 aria-label={`Shuffle ${artist.name}'s tracks`}
               >
@@ -124,22 +124,22 @@ const Artist = () => {
             </div>
           </div>
 
-          <div className={style.main__content}>
-            <section className={style.popular}>
+          <div className={styles.main__content}>
+            <section className={styles.popular}>
               <h2>Popular Tracks</h2>
-              <div className={style.tracks}>
+              <div className={styles.tracks}>
                 {artistTracks.slice(0, 5).map((track, index) => (
                   <div
                     key={track.id}
-                    className={style.track}
+                    className={styles.track}
                     onClick={() => handleTrackPlay(track)}
                   >
-                    <div className={style.track__info}>
+                    <div className={styles.track__info}>
                       {isPlaying &&
                       currentTrack &&
                       currentTrack.id === track.id ? (
                         <button
-                          className={`${style.track__play_icon} ${style.visible}`}
+                          className={`${styles.track__play_icon} ${styles.visible}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleTrackPlay(track);
@@ -150,16 +150,16 @@ const Artist = () => {
                               : 'Play track'
                           }
                         >
-                          <WaveformAnimation className={style.waveform} />
-                          <FaPause className={style.pause_icon} />
+                          <WaveformAnimation className={styles.waveform} />
+                          <FaPause className={styles.pause_icon} />
                         </button>
                       ) : (
                         <>
-                          <span className={style.track__number}>
+                          <span className={styles.track__number}>
                             {index + 1}
                           </span>
                           <button
-                            className={style.track__play_icon}
+                            className={styles.track__play_icon}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleTrackPlay(track);
@@ -173,28 +173,28 @@ const Artist = () => {
                       <img
                         src={track.coverUrl}
                         alt={track.title}
-                        className={style.track__image}
+                        className={styles.track__image}
                       />
-                      <div className={style.track__details}>
+                      <div className={styles.track__details}>
                         {isPlaying &&
                         currentTrack &&
                         currentTrack.id === track.id ? (
                           <span
-                            className={`${style.track__title} ${style.green}`}
+                            className={`${styles.track__title} ${styles.green}`}
                           >
                             {track.title}
                           </span>
                         ) : (
-                          <span className={style.track__title}>
+                          <span className={styles.track__title}>
                             {track.title}
                           </span>
                         )}
                       </div>
                     </div>
-                    <span className={style.track__plays}>
+                    <span className={styles.track__plays}>
                       {formatNumber(track.plays || 0)} plays
                     </span>
-                    <span className={style.track__duration}>
+                    <span className={styles.track__duration}>
                       {formatDuration(track.duration)}
                     </span>
                   </div>
@@ -202,7 +202,7 @@ const Artist = () => {
               </div>
             </section>
 
-            <section className={style.discography}>
+            <section className={styles.discography}>
               <HorizontalScroll title="Albums">
                 {artistAlbums.map((album) => (
                   <AlbumCard

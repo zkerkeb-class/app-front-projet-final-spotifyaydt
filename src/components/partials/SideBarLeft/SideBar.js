@@ -30,6 +30,21 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
     }
   };
 
+  const renderPlaylists = () => {
+    if (mockPlaylists.length === 0) {
+      return !isCollapsed && <EmptyStateMessage />;
+    }
+
+    return mockPlaylists.map((playlist) => (
+      <Playlist
+        key={playlist.id}
+        playlist={playlist}
+        onClick={() => console.log('Playlist clicked:', playlist.title)}
+        isCollapsed={isCollapsed}
+      />
+    ));
+  };
+
   return (
     <div className={`${style.sidebar} ${isCollapsed ? style.collapsed : ''}`}>
       {/* Header de la sidebar */}
@@ -111,21 +126,7 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
           </div>
         )}
 
-        <div className={style.list}>
-          {!isCollapsed && <EmptyStateMessage />}
-          {/* 
-          {mockPlaylists.length === 0 ? (
-            <EmptyStateMessage />
-          ) : (
-            mockPlaylists.map((playlist) => (
-              <Playlist
-                key={playlist.id}
-              playlist={playlist}
-              onClick={() => console.log('Playlist clicked:', playlist.title)}
-            />
-          )))}
-          */}
-        </div>
+        <div className={style.list}>{renderPlaylists()}</div>
       </div>
     </div>
   );

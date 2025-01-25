@@ -257,6 +257,40 @@ const Controls = () => {
     [handleSeekStart, handleSeek, handleMouseMove, handleMouseUp, duration]
   );
 
+  const handleProgressBarClick = useCallback(
+    (e) => {
+      if (!audioRef.current || !progressBarRef.current) return;
+
+      const progressBar = progressBarRef.current;
+      const rect = progressBar.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const progressBarWidth = progressBar.offsetWidth;
+      const percentage = (offsetX / progressBarWidth) * 100;
+      const newTime = (audioRef.current.duration * percentage) / 100;
+
+      if (audioRef.current.duration) {
+        audioRef.current.currentTime = newTime;
+        handleSeek(newTime);
+      }
+    },
+    [audioRef, handleSeek]
+  );
+
+  useEffect(() => {
+    if (progressBarRef.current) {
+      progressBarRef.current.addEventListener('click', handleProgressBarClick);
+    }
+
+    return () => {
+      if (progressBarRef.current) {
+        progressBarRef.current.removeEventListener(
+          'click',
+          handleProgressBarClick
+        );
+      }
+    };
+  }, [handleProgressBarClick, progressBarRef]);
+
   return (
     <div
       className={style.player__controls}

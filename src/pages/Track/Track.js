@@ -2,25 +2,29 @@ import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import style from './Track.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
-
-import { FaPlay, FaPause, FaHeart } from 'react-icons/fa';
 import { mockTracks, mockAlbums } from '../../constant/mockData';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
+import { FaPlay, FaPause, FaHeart } from 'react-icons/fa';
+import { formatDuration } from '../../utils/formatters';
+import WaveformAnimation from '../../components/UI/WaveformAnimation/WaveformAnimation';
 
 const Track = () => {
   const { id } = useParams();
-  const track = mockTracks.find((t) => t.id === Number(id)) || mockTracks[0];
+  const { handlePlay, isPlaying, currentTrack, handlePause } = useAudioPlayer();
+  const track = mockTracks.find((t) => t.id === id);
   const album = mockAlbums.find((a) => a.title === track.album);
 
-  const { handlePlay: playTrack, isPlaying, currentTrack } = useAudioPlayer();
+  if (!track) {
+    return <div>Track not found</div>;
+  }
 
-  const handlePlay = useCallback(() => {
-    playTrack({
-      track,
-      tracks: [track], // Single track mode
-      action: isPlaying && currentTrack?.id === track.id ? 'pause' : 'play',
-    });
-  }, [track, playTrack, isPlaying, currentTrack]);
+  const handlePlayClick = () => {
+    if (isPlaying && currentTrack?.id === track.id) {
+      handlePause();
+    } else {
+      handlePlay(track);
+    }
+  };
 
   const handleLike = useCallback(() => {
     console.log('Toggle like for track:', track);
@@ -45,7 +49,7 @@ const Track = () => {
               />
               <button
                 className={style.play_button}
-                onClick={handlePlay}
+                onClick={handlePlayClick}
                 aria-label={
                   isPlaying && currentTrack?.id === track.id
                     ? `Pause ${track.title}`

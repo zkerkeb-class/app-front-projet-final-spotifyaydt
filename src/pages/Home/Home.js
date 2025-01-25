@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import styles from './Home.module.scss';
@@ -19,20 +19,18 @@ import {
   mockArtists,
   mockAlbums,
   mockPlaylists,
-  mockRecentlyPlayed,
 } from '../../constant/mockData';
 
 const Home = () => {
-  const { isDarkMode } = useTheme();
   const { handlePlay, lastPlays, mostListenedTo } = useAudioPlayer();
   const [activeFilter, setActiveFilter] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
 
   const INITIAL_LIMIT = 20;
 
-  const handleFilterChange = useCallback((filterName) => {
+  const handleFilterChange = (filterName) => {
     setActiveFilter(filterName);
-  }, []);
+  };
 
   return (
     <div className={styles.home}>
