@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import style from './Navbar.module.scss';
 import { useTheme } from '../../../contexts/ThemeContext';
+import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import {
   mockTracks,
   mockAlbums,
@@ -21,6 +22,7 @@ import { BsInboxes, BsInboxesFill } from 'react-icons/bs';
 
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
+  const { toggleJam } = useAudioPlayer();
   const navigate = useNavigate();
   const location = useLocation();
   const avatarUrl = `https://picsum.photos/200?random=1`;
@@ -349,8 +351,12 @@ const Navbar = () => {
             <PiMoonFill className={style.toggle_icon} />
           )}
         </button>
-        <button className={style.user_button}>
-          <HiMiniUserGroup className={style.user_icon} title="User" />
+        <button
+          className={style.user_button}
+          onClick={toggleJam}
+          title="Start a Jam Session"
+        >
+          <HiMiniUserGroup className={style.user_icon} />
         </button>
         <div className={style.language_selector}>
           <FaGlobe aria-hidden="true" />

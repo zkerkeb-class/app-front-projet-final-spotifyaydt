@@ -73,9 +73,9 @@ const AppLayout = memo(({ children }) => (
             minLeftWidth={260}
             maxLeftWidth={350}
             minRightWidth={200}
-            maxRightWidth={300}
+            maxRightWidth={310}
             defaultLeftWidth={350}
-            defaultRightWidth={300}
+            defaultRightWidth={310}
           />
         </Suspense>
       </div>

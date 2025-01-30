@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styles from './ResizableContainer.module.scss';
+import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
 const ResizableContainer = ({
   leftPanel,
@@ -18,6 +19,7 @@ const ResizableContainer = ({
   const [isResizingLeft, setIsResizingLeft] = useState(false);
   const [isResizingRight, setIsResizingRight] = useState(false);
   const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
+  const { isRightSidebarVisible } = useAudioPlayer();
   const COLLAPSED_WIDTH = 100;
 
   const handleMouseDown = useCallback(
@@ -121,14 +123,25 @@ const ResizableContainer = ({
         className={`${styles.resizable_divider} ${isLeftCollapsed ? styles.collapsed : ''}`}
         onMouseDown={handleMouseDown('left')}
       />
-      <div className={styles.content_panel}>{mainContent}</div>
       <div
-        className={styles.resizable_divider}
-        onMouseDown={handleMouseDown('right')}
-      />
-      <div className={styles.resizable_panel} style={{ width: rightWidth }}>
-        {rightPanel}
+        className={styles.content_panel}
+        style={{
+          marginRight: isRightSidebarVisible ? undefined : '0',
+        }}
+      >
+        {mainContent}
       </div>
+      {isRightSidebarVisible && (
+        <>
+          <div
+            className={styles.resizable_divider}
+            onMouseDown={handleMouseDown('right')}
+          />
+          <div className={styles.resizable_panel} style={{ width: rightWidth }}>
+            {rightPanel}
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -14,18 +14,6 @@
   &__disabled {
     opacity: 0.5;
     pointer-events: none;
-
-    .player__music__cover__placeholder {
-      width: 56px;
-      height: 56px;
-      background-color: var(--background-secondary);
-      border-radius: 5px;
-    }
-
-    .player__music__info__title {
-      color: var(--text-secondary);
-      font-style: italic;
-    }
   }
 
   &__music {
@@ -36,6 +24,20 @@
     padding-inline-start: 16px;
     gap: 10px;
     width: 30%;
+
+    &.player__disabled {
+      .player__music__cover__placeholder {
+        width: 56px;
+        height: 56px;
+        background-color: var(--background-secondary);
+        border-radius: 5px;
+      }
+
+      .player__music__info__title {
+        color: var(--text-secondary);
+        font-style: italic;
+      }
+    }
 
     &__cover {
       width: 56px;
