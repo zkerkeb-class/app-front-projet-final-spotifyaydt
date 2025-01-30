@@ -1,8 +1,7 @@
 .resizable_layout {
   display: flex;
-  height: 100%;
   width: 100%;
-  gap: 0;
+  height: 100%;
   position: relative;
 }
 
@@ -10,9 +9,11 @@
   background-color: var(--background-secondary);
   overflow-x: hidden;
   overflow-y: hidden;
-  transition: width 0.1s ease;
+  transition: width 0.3s ease;
   min-width: 100px;
   border-radius: 10px;
+  height: 100%;
+  position: relative;
 
   &:hover {
     overflow-y: auto;
@@ -47,12 +48,17 @@
     width: 100%;
     min-width: 0; /* Prevent content from forcing panel wider */
   }
+
+  &.collapsed {
+    width: 100px !important;
+  }
 }
 
 .resizable_divider {
   width: 4px;
-  cursor: col-resize;
+  height: 100%;
   background-color: transparent;
+  cursor: col-resize;
   position: relative;
   margin: 0 2px;
   transition: background-color 0.2s ease;
@@ -71,6 +77,14 @@
     bottom: 0;
     cursor: col-resize;
   }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &.collapsed {
+    cursor: e-resize;
+  }
 }
 
 .content_panel {
@@ -80,6 +94,8 @@
   overflow: hidden;
   position: relative;
   min-width: 0; /* Prevent content from forcing panel wider */
+  height: 100%;
+  min-width: 200px;
 
   &:hover {
     overflow-y: auto;

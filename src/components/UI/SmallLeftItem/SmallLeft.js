@@ -1,18 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import styles from './SideItem.module.scss';
+import styles from './SmallLeft.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { mockTracks } from '../../../constant/mockData';
 
-const Playlist = ({ playlist = {}, onClick }) => {
+const SmallLeftItem = ({ playlist = {}, onClick }) => {
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
-  // If playlist is undefined or null, return null or a placeholder
   const isThisPlaying = isPlaying && activeCardId === playlist.id;
+
   const handleImageError = () => {
     setImageError(true);
   };
@@ -58,6 +58,12 @@ const Playlist = ({ playlist = {}, onClick }) => {
           className={styles.image}
           onError={handleImageError}
           loading="lazy"
+          title={
+            <div className={styles.content}>
+              <span className={styles.title}>{playlist.title}</span>
+              <p className={styles.artist}>{playlist.description}</p>
+            </div>
+          }
         />
         <button
           className={styles.playButton}
@@ -67,15 +73,11 @@ const Playlist = ({ playlist = {}, onClick }) => {
           {isThisPlaying ? <FaPause /> : <FaPlay />}
         </button>
       </div>
-      <div className={styles.content}>
-        <span className={styles.title}>{playlist.title}</span>
-        <p className={styles.artist}>{playlist.description}</p>
-      </div>
     </div>
   );
 };
 
-Playlist.propTypes = {
+SmallLeftItem.propTypes = {
   playlist: PropTypes.shape({
     id: PropTypes.number,
     title: PropTypes.string,
@@ -85,7 +87,7 @@ Playlist.propTypes = {
   onClick: PropTypes.func,
 };
 
-Playlist.defaultProps = {
+SmallLeftItem.defaultProps = {
   playlist: {
     id: 0,
     title: 'Untitled Playlist',
@@ -95,4 +97,4 @@ Playlist.defaultProps = {
   onClick: () => {},
 };
 
-export default Playlist;
+export default SmallLeftItem;

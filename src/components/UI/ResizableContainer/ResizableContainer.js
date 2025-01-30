@@ -17,6 +17,8 @@ const ResizableContainer = ({
   const [rightWidth, setRightWidth] = useState(defaultRightWidth);
   const [isResizingLeft, setIsResizingLeft] = useState(false);
   const [isResizingRight, setIsResizingRight] = useState(false);
+  const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
+  const COLLAPSED_WIDTH = 100;
 
   const handleMouseDown = useCallback(
     (side) => (e) => {
@@ -41,7 +43,17 @@ const ResizableContainer = ({
 
       if (isResizingLeft) {
         const newWidth = e.clientX;
-        if (newWidth >= minLeftWidth && newWidth <= maxLeftWidth) {
+        if (newWidth < minLeftWidth && !isLeftCollapsed) {
+          setIsLeftCollapsed(true);
+          setLeftWidth(COLLAPSED_WIDTH);
+        } else if (newWidth >= minLeftWidth && isLeftCollapsed) {
+          setIsLeftCollapsed(false);
+          setLeftWidth(minLeftWidth);
+        } else if (
+          newWidth >= minLeftWidth &&
+          newWidth <= maxLeftWidth &&
+          !isLeftCollapsed
+        ) {
           setLeftWidth(newWidth);
         }
       }
@@ -62,8 +74,18 @@ const ResizableContainer = ({
       maxLeftWidth,
       minRightWidth,
       maxRightWidth,
+      isLeftCollapsed,
     ]
   );
+
+  // Update leftWidth when isLeftCollapsed changes
+  React.useEffect(() => {
+    if (isLeftCollapsed) {
+      setLeftWidth(COLLAPSED_WIDTH);
+    } else {
+      setLeftWidth(defaultLeftWidth);
+    }
+  }, [isLeftCollapsed, defaultLeftWidth]);
 
   React.useEffect(() => {
     if (isResizingLeft || isResizingRight) {
@@ -77,13 +99,26 @@ const ResizableContainer = ({
     };
   }, [isResizingLeft, isResizingRight, handleMouseMove, handleMouseUp]);
 
+  // Clone and inject isCollapsed prop into leftPanel
+  const leftPanelWithCollapse = React.cloneElement(leftPanel, {
+    isCollapsed: isLeftCollapsed,
+    setIsCollapsed: setIsLeftCollapsed,
+  });
+
   return (
     <div className={styles.resizable_layout}>
-      <div className={styles.resizable_panel} style={{ width: leftWidth }}>
-        {leftPanel}
+      <div
+        className={`${styles.resizable_panel} ${isLeftCollapsed ? styles.collapsed : ''}`}
+        style={{
+          width: leftWidth,
+          minWidth: isLeftCollapsed ? COLLAPSED_WIDTH : minLeftWidth,
+          maxWidth: isLeftCollapsed ? COLLAPSED_WIDTH : maxLeftWidth,
+        }}
+      >
+        {leftPanelWithCollapse}
       </div>
       <div
-        className={styles.resizable_divider}
+        className={`${styles.resizable_divider} ${isLeftCollapsed ? styles.collapsed : ''}`}
         onMouseDown={handleMouseDown('left')}
       />
       <div className={styles.content_panel}>{mainContent}</div>

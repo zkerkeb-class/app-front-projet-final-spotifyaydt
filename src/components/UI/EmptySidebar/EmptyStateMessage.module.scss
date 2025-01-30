@@ -1,9 +1,19 @@
 .emptyStateContainer {
   background-color: #1c1c1c;
   color: #fff;
-  padding: 20px;
+  padding: 16px 20px;
   border-radius: 8px;
-  text-align: center;
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 800;
+    margin: unset;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 400;
+  }
 }
 
 .createButton {
@@ -11,7 +21,9 @@
   color: #000;
   border: none;
   border-radius: 20px;
-  padding: 10px 20px;
+  padding: 4px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
 

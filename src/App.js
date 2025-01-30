@@ -70,7 +70,7 @@ const AppLayout = memo(({ children }) => (
             leftPanel={<SidebarLeft />}
             rightPanel={<SideBarRight />}
             mainContent={<MainContentWrapper />}
-            minLeftWidth={200}
+            minLeftWidth={260}
             maxLeftWidth={350}
             minRightWidth={200}
             maxRightWidth={300}

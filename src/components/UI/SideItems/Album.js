@@ -3,16 +3,17 @@ import PropTypes from 'prop-types';
 import styles from './SideItem.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { mockTracks } from '../../../constant/mockData';
 
-const Playlist = ({ playlist = {}, onClick }) => {
+const Album = ({ album, onClick }) => {
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
-  // If playlist is undefined or null, return null or a placeholder
-  const isThisPlaying = isPlaying && activeCardId === playlist.id;
+  const isThisPlaying = isPlaying && activeCardId === album.id;
+
   const handleImageError = () => {
     setImageError(true);
   };
@@ -20,41 +21,43 @@ const Playlist = ({ playlist = {}, onClick }) => {
   const handleClick = useCallback(
     (e) => {
       e.preventDefault();
-      navigate(`/playlist/${playlist.id}`);
+      navigate(`/album/${album.id}`);
     },
-    [navigate, playlist.id]
+    [navigate, album.id]
   );
 
   const handlePlayClick = useCallback(
     (e) => {
       e.stopPropagation();
 
-      // Get all tracks from this playlist in the correct order
-      const playlistTracks = playlist.tracks
-        .map((trackId) => mockTracks.find((track) => track.id === trackId))
-        .filter(Boolean);
+      const albumTracks = mockTracks
+        .filter((track) => track.album === album.title)
+        .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0));
 
-      if (playlistTracks.length === 0) {
-        console.warn(`No tracks found for playlist: ${playlist.title}`);
+      if (albumTracks.length === 0) {
+        console.warn(`No tracks found for album: ${album.title}`);
         return;
       }
 
-      // Play the first track but include all playlist tracks
       handlePlay({
-        track: playlistTracks[0],
-        tracks: playlistTracks,
+        track: albumTracks[0],
+        tracks: albumTracks,
         action: isThisPlaying ? 'pause' : 'play',
       });
     },
-    [playlist, handlePlay, isThisPlaying]
+    [album, handlePlay, isThisPlaying]
   );
 
   return (
-    <div className={styles.card} onClick={handleClick}>
+    <Link
+      to={`/album/${album.id}`}
+      className={styles.card}
+      onClick={handleClick}
+    >
       <div className={styles.imageContainer}>
         <img
-          src={imageError ? '/default-playlist.png' : playlist.coverUrl}
-          alt={playlist.title}
+          src={imageError ? '/default-playlist.png' : album.coverUrl}
+          alt={album.title}
           className={styles.image}
           onError={handleImageError}
           loading="lazy"
@@ -62,37 +65,35 @@ const Playlist = ({ playlist = {}, onClick }) => {
         <button
           className={styles.playButton}
           onClick={handlePlayClick}
-          aria-label={`Play ${playlist.title}`}
+          aria-label={`Play ${album.title}`}
         >
           {isThisPlaying ? <FaPause /> : <FaPlay />}
         </button>
       </div>
       <div className={styles.content}>
-        <span className={styles.title}>{playlist.title}</span>
-        <p className={styles.artist}>{playlist.description}</p>
+        <span className={styles.title}>{album.title}</span>
+        <p className={styles.artist}>{album.description}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 
-Playlist.propTypes = {
-  playlist: PropTypes.shape({
+Album.propTypes = {
+  album: PropTypes.shape({
     id: PropTypes.number,
     title: PropTypes.string,
     coverUrl: PropTypes.string,
     description: PropTypes.string,
   }),
-  onClick: PropTypes.func,
 };
 
-Playlist.defaultProps = {
-  playlist: {
+Album.defaultProps = {
+  album: {
     id: 0,
-    title: 'Untitled Playlist',
-    coverUrl: '/default-playlist.png',
-    description: 'Playlist',
+    title: 'Untitled Album',
+    coverUrl: '/default-album.png',
+    description: 'Album',
   },
-  onClick: () => {},
 };
 
-export default Playlist;
+export default Album;
