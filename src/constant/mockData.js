@@ -9,6 +9,9 @@ import Audio8 from '../assests/audio/stylish-deep.mp3';
 import Audio9 from '../assests/audio/tell-me-the-truth.mp3';
 import Audio10 from '../assests/audio/vlog.mp3';
 
+const Audio11 =
+  'https://d897w75kgpkpm.cloudfront.net/tracks/1738087497342-zed-ft.-la-mano-1.9-hockey-clip-officiel-.m4a';
+
 const audioFiles = [
   Audio1,
   Audio2,
@@ -20,6 +23,7 @@ const audioFiles = [
   Audio8,
   Audio9,
   Audio10,
+  Audio11,
 ];
 
 export const mockArtists = [
@@ -166,7 +170,7 @@ export const mockTracks = mockAlbums.flatMap((album, albumIndex) => {
       artist: album.artist,
       album: album.title,
       coverUrl: album.coverUrl,
-      audio: audioFiles[i % 10],
+      audio: audioFiles[i % 11],
       duration: '3:30',
       type: 'track',
       releaseYear: album.year,

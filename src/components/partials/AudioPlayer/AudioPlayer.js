@@ -22,6 +22,28 @@ const AudioPlayer = ({ onError }) => {
     onError?.(error);
   };
 
+  // Get the file extension from the audio URL
+  const getFileType = (url) => {
+    if (!url) return null;
+    const extension = url.split('.').pop().toLowerCase();
+    switch (extension) {
+      case 'mp3':
+        return 'audio/mpeg';
+      case 'wav':
+        return 'audio/wav';
+      case 'ogg':
+        return 'audio/ogg';
+      case 'm4a':
+        return 'audio/mp4';
+      case 'aac':
+        return 'audio/aac';
+      case 'webm':
+        return 'audio/webm';
+      default:
+        return null;
+    }
+  };
+
   // Always render the audio element, even when no tracks are loaded
   const renderAudioElement = () => (
     <audio
@@ -29,7 +51,17 @@ const AudioPlayer = ({ onError }) => {
       onError={handleError}
       preload="metadata"
       aria-hidden="true"
-    />
+    >
+      {currentTracks?.[currentTrackIndex]?.audio && (
+        <source
+          src={currentTracks[currentTrackIndex].audio}
+          type={
+            getFileType(currentTracks[currentTrackIndex].audio) || 'audio/mpeg'
+          }
+        />
+      )}
+      Your browser does not support the audio element.
+    </audio>
   );
 
   // Return a disabled player if no tracks are loaded
@@ -124,7 +156,6 @@ const AudioPlayer = ({ onError }) => {
       </div>
 
       {renderAudioElement()}
-      {currentTrack && <source src={currentTrack.audio} type="audio/mpeg" />}
     </div>
   );
 };
