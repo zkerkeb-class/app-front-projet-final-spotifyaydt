@@ -5,6 +5,7 @@ import style from './Sidebar.module.scss';
 import Filter from '../../UI/Filter/Filter';
 import Playlist from '../../UI/SideItems/Playlist';
 import { mockPlaylists } from '../../../constant/mockData';
+import SmallLeftItem from '../../UI/SmallLeftItem/SmallLeft';
 import EmptyStateMessage from '../../UI/EmptySidebar/EmptyStateMessage';
 //icons
 import { FaPlus } from 'react-icons/fa6';
@@ -31,8 +32,14 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
   };
 
   const renderPlaylists = () => {
-    if (mockPlaylists.length !== 0) {
+    if (mockPlaylists.length === 0) {
       return !isCollapsed && <EmptyStateMessage />;
+    }
+
+    if (isCollapsed) {
+      return mockPlaylists.map((playlist) => (
+        <SmallLeftItem key={playlist.id} playlist={playlist} />
+      ));
     }
 
     return mockPlaylists.map((playlist) => (
