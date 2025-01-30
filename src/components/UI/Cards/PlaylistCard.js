@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
@@ -14,9 +14,12 @@ const PlaylistCard = ({ playlist }) => {
   // Check if this specific playlist is the active source of playback
   const isThisPlaying = isPlaying && activeCardId === playlist.id;
 
-  const handleClick = useCallback(
+  const handleCardClick = useCallback(
     (e) => {
-      e.preventDefault();
+      // Don't navigate if clicking the play button
+      if (e.target.closest(`.${styles.playButton}`)) {
+        return;
+      }
       navigate(`/playlist/${playlist.id}`);
     },
     [navigate, playlist.id]
@@ -24,7 +27,8 @@ const PlaylistCard = ({ playlist }) => {
 
   const handlePlayClick = useCallback(
     (e) => {
-      e.stopPropagation();
+      e.preventDefault(); // Prevent any navigation
+      e.stopPropagation(); // Stop event bubbling
 
       // Get all tracks from this playlist in the correct order
       const playlistTracks = playlist.tracks
@@ -47,10 +51,11 @@ const PlaylistCard = ({ playlist }) => {
   );
 
   return (
-    <Link
-      to={`/playlist/${playlist.id}`}
+    <div
       className={styles.card}
-      onClick={handleClick}
+      onClick={handleCardClick}
+      role="button"
+      tabIndex={0}
     >
       <div className={styles.imageContainer}>
         {playlist.coverUrl ? (
@@ -78,7 +83,7 @@ const PlaylistCard = ({ playlist }) => {
       <div className={styles.content}>
         <span className={styles.title}>{playlist.title}</span>
       </div>
-    </Link>
+    </div>
   );
 };
 

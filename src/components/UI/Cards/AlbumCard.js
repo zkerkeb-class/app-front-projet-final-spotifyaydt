@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
@@ -14,9 +14,12 @@ const AlbumCard = ({ album }) => {
   // Check if this specific album is the active source of playback
   const isThisPlaying = isPlaying && activeCardId === album.id;
 
-  const handleClick = useCallback(
+  const handleCardClick = useCallback(
     (e) => {
-      e.preventDefault();
+      // Don't navigate if clicking the play button
+      if (e.target.closest(`.${styles.playButton}`)) {
+        return;
+      }
       navigate(`/album/${album.id}`);
     },
     [navigate, album.id]
@@ -24,7 +27,8 @@ const AlbumCard = ({ album }) => {
 
   const handlePlayClick = useCallback(
     (e) => {
-      e.stopPropagation();
+      e.preventDefault(); // Prevent any navigation
+      e.stopPropagation(); // Stop event bubbling
 
       // Get all tracks from this album in order
       const albumTracks = mockTracks
@@ -47,10 +51,11 @@ const AlbumCard = ({ album }) => {
   );
 
   return (
-    <Link
-      to={`/album/${album.id}`}
+    <div
       className={styles.card}
-      onClick={handleClick}
+      onClick={handleCardClick}
+      role="button"
+      tabIndex={0}
     >
       <div className={styles.imageContainer}>
         {album.coverUrl ? (
@@ -80,7 +85,7 @@ const AlbumCard = ({ album }) => {
         <p className={styles.artist}>{album.artist}</p>
         <p className={styles.year}>{album.year}</p>
       </div>
-    </Link>
+    </div>
   );
 };
 

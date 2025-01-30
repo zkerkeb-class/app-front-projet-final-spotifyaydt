@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import styles from './Cards.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
@@ -8,24 +8,26 @@ import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 const TrackCard = ({ track }) => {
   const navigate = useNavigate();
-  const {
-    handlePlay,
-    currentTracks,
-    currentTrackIndex,
-    isPlaying,
-    activeCardId,
-  } = useAudioPlayer();
+  const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
   // Check if this track is currently playing
   const isThisPlaying = isPlaying && activeCardId === track.id;
 
-  const handleClick = useCallback(() => {
-    navigate(`/track/${track.id}`);
-  }, [navigate, track.id]);
+  const handleCardClick = useCallback(
+    (e) => {
+      // Don't navigate if clicking the play button
+      if (e.target.closest(`.${styles.playButton}`)) {
+        return;
+      }
+      navigate(`/track/${track.id}`);
+    },
+    [navigate, track.id]
+  );
 
   const handlePlayClick = useCallback(
     (e) => {
-      e.stopPropagation();
+      e.preventDefault(); // Prevent any navigation
+      e.stopPropagation(); // Stop event bubbling
       handlePlay({
         track,
         tracks: [track],
@@ -41,10 +43,11 @@ const TrackCard = ({ track }) => {
   };
 
   return (
-    <Link
-      to={`/track/${track.id}`}
+    <div
       className={styles.card}
-      onClick={handleClick}
+      onClick={handleCardClick}
+      role="button"
+      tabIndex={0}
     >
       <div className={styles.imageContainer}>
         {track.coverUrl ? (
@@ -72,7 +75,7 @@ const TrackCard = ({ track }) => {
         <p className={styles.artist}>{track.artist}</p>
         <p className={styles.duration}>{formatDuration(track.duration)}</p>
       </div>
-    </Link>
+    </div>
   );
 };
 

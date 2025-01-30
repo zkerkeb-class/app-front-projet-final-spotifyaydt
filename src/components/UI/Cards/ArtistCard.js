@@ -56,8 +56,8 @@ const ArtistCard = ({ artist, onPlay }) => {
   };
 
   return (
-    <Link
-      to={`/artist/${artist.id}`}
+    <div
+      onClick={handleClick}
       className={`${styles.card} ${styles.artistCard}`}
     >
       <div className={styles.artistImageContainer}>
@@ -89,7 +89,7 @@ const ArtistCard = ({ artist, onPlay }) => {
           {new Intl.NumberFormat().format(artist.followers)} followers
         </p>
       </div>
-    </Link>
+    </div>
   );
 };
 

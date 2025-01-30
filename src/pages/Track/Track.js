@@ -9,7 +9,7 @@ import { FaPlay, FaPause, FaHeart } from 'react-icons/fa';
 const Track = () => {
   const { id } = useParams();
   const { handlePlay, isPlaying, currentTrack, handlePause } = useAudioPlayer();
-  const track = mockTracks.find((t) => t.id === id);
+  const track = mockTracks.find((t) => t.id === parseInt(id, 10));
   const album = mockAlbums.find((a) => a.title === track?.album);
 
   const handlePlayClick = useCallback(() => {
@@ -17,7 +17,11 @@ const Track = () => {
       if (isPlaying && currentTrack?.id === track.id) {
         handlePause();
       } else {
-        handlePlay(track);
+        handlePlay({
+          track,
+          tracks: [track],
+          action: 'play',
+        });
       }
     }
   }, [track, isPlaying, currentTrack, handlePlay, handlePause]);
