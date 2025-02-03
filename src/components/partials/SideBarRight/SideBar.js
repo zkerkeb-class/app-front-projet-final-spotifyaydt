@@ -15,6 +15,10 @@ import { HiMiniUserGroup } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
 
 import WaveformAnimation from '../../UI/WaveformAnimation/WaveformAnimation';
+import NowPlaying from './NowPlaying';
+import Queue from './Queue';
+import Devices from './Devices';
+import Jam from '../Jam/Jam';
 
 const SideBar = () => {
   const {
@@ -95,7 +99,7 @@ const SideBar = () => {
     if (displayPlay) return 'Now Playing';
     if (displayQueue) return 'Queue';
     if (displayDevices) return 'Connect to a device';
-    if (displayJam) return 'Jam with friends';
+    if (displayJam) return 'Jam Session';
     return '';
   };
 
@@ -109,6 +113,14 @@ const SideBar = () => {
       default:
         return <BsLaptop size={20} />;
     }
+  };
+
+  const getCurrentComponent = () => {
+    if (displayPlay) return <NowPlaying />;
+    if (displayQueue) return <Queue />;
+    if (displayDevices) return <Devices />;
+    if (displayJam) return <Jam onClose={toggleJam} />;
+    return null;
   };
 
   const renderQueueContent = () => {
@@ -313,105 +325,7 @@ const SideBar = () => {
         </div>
       </header>
 
-      <div className={style.content}>
-        {displayPlay && currentTrack && (
-          <>
-            <div className={style.track_info}>
-              <div className={style.cover}>
-                <img
-                  src={currentTrack.coverUrl}
-                  alt={currentTrack.title}
-                  className={style.cover_image}
-                />
-                <button
-                  className={style.play_button}
-                  onClick={handlePlayClick}
-                  aria-label={isPlaying ? 'Pause' : 'Play'}
-                >
-                  {isPlaying ? <FaPause /> : <FaPlay />}
-                </button>
-              </div>
-              <div className={style.details}>
-                <h2 className={style.title}>{currentTrack.title}</h2>
-                <p
-                  className={style.artist}
-                  onClick={handleArtistClick}
-                  role="link"
-                  tabIndex={0}
-                >
-                  {currentTrack.artist}
-                </p>
-                <p
-                  className={style.album}
-                  onClick={handleAlbumClick}
-                  role="link"
-                  tabIndex={0}
-                >
-                  {currentTrack.album}
-                </p>
-                <button className={style.add_button}>
-                  <IoMdAddCircleOutline />
-                  Add to Library
-                </button>
-              </div>
-            </div>
-
-            {currentTracks.length > currentTrackIndex + 1 && (
-              <div className={style.next_up_section}>
-                <div className={style.next_up_header}>
-                  <h2 className={style.section_title}>Up Next</h2>
-                  <button
-                    className={style.open_queue_button}
-                    onClick={handleOpenQueue}
-                  >
-                    Open Queue
-                  </button>
-                </div>
-                <div className={style.next_track_preview}>
-                  {currentTracks[currentTrackIndex + 1] && (
-                    <div
-                      className={style.queue_track_item}
-                      onClick={(e) =>
-                        handleTrackClick(
-                          e,
-                          currentTracks[currentTrackIndex + 1],
-                          currentTrackIndex + 1
-                        )
-                      }
-                    >
-                      <div className={style.track_info_container}>
-                        <img
-                          src={currentTracks[currentTrackIndex + 1].coverUrl}
-                          alt={currentTracks[currentTrackIndex + 1].title}
-                          className={style.track_cover}
-                        />
-                        <div className={style.track_details}>
-                          <span className={style.track_title}>
-                            {currentTracks[currentTrackIndex + 1].title}
-                          </span>
-                          <span className={style.track_artist}>
-                            {currentTracks[currentTrackIndex + 1].artist}
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        className={style.track_options}
-                        onClick={handleOptionsClick}
-                        aria-label="Track options"
-                      >
-                        <BsThreeDotsVertical />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </>
-        )}
-        {displayQueue && renderQueueContent()}
-        {displayDevices && renderDevicesContent()}
-        {displayJam && renderJamContent()}
-      </div>
+      <div className={style.content}>{getCurrentComponent()}</div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import './App.css';
 import './styles/theme.scss';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import { JamProvider } from './contexts/JamContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Footer from './components/partials/Footer/Footer';
 
@@ -95,11 +96,13 @@ const App = () => {
     <ErrorBoundary>
       <ThemeProvider>
         <AudioPlayerProvider>
-          <Router>
-            <AppLayout>
-              <MainContentWrapper />
-            </AppLayout>
-          </Router>
+          <JamProvider>
+            <Router>
+              <AppLayout>
+                <MainContentWrapper />
+              </AppLayout>
+            </Router>
+          </JamProvider>
         </AudioPlayerProvider>
       </ThemeProvider>
     </ErrorBoundary>
