@@ -16,6 +16,7 @@ const Album = lazy(() => import('./pages/Album/Album'));
 const Track = lazy(() => import('./pages/Track/Track'));
 const Search = lazy(() => import('./pages/Search/Search'));
 const Playlist = lazy(() => import('./pages/Playlist/Playlist'));
+const More = lazy(() => import('./pages/More/More'));
 const NotFound = lazy(() => import('./pages/404/404'));
 const Navbar = lazy(() => import('./components/partials/Navbar/Navbar'));
 const SidebarLeft = lazy(
@@ -47,6 +48,7 @@ const MainContent = memo(() => (
       <Route path="/track/:id" element={<Track />} />
       <Route path="/search" element={<Search />} />
       <Route path="/playlist/:id" element={<Playlist />} />
+      <Route path="/more/:category" element={<More />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </div>
