@@ -5,6 +5,7 @@ import './App.css';
 import './styles/theme.scss';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import { JamProvider } from './contexts/JamContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Footer from './components/partials/Footer/Footer';
 
@@ -15,6 +16,7 @@ const Album = lazy(() => import('./pages/Album/Album'));
 const Track = lazy(() => import('./pages/Track/Track'));
 const Search = lazy(() => import('./pages/Search/Search'));
 const Playlist = lazy(() => import('./pages/Playlist/Playlist'));
+const More = lazy(() => import('./pages/More/More'));
 const NotFound = lazy(() => import('./pages/404/404'));
 const Navbar = lazy(() => import('./components/partials/Navbar/Navbar'));
 const SidebarLeft = lazy(
@@ -46,6 +48,7 @@ const MainContent = memo(() => (
       <Route path="/track/:id" element={<Track />} />
       <Route path="/search" element={<Search />} />
       <Route path="/playlist/:id" element={<Playlist />} />
+      <Route path="/more/:category" element={<More />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </div>
@@ -73,9 +76,9 @@ const AppLayout = memo(({ children }) => (
             minLeftWidth={260}
             maxLeftWidth={350}
             minRightWidth={200}
-            maxRightWidth={300}
+            maxRightWidth={310}
             defaultLeftWidth={350}
-            defaultRightWidth={300}
+            defaultRightWidth={310}
           />
         </Suspense>
       </div>
@@ -95,11 +98,13 @@ const App = () => {
     <ErrorBoundary>
       <ThemeProvider>
         <AudioPlayerProvider>
-          <Router>
-            <AppLayout>
-              <MainContentWrapper />
-            </AppLayout>
-          </Router>
+          <JamProvider>
+            <Router>
+              <AppLayout>
+                <MainContentWrapper />
+              </AppLayout>
+            </Router>
+          </JamProvider>
         </AudioPlayerProvider>
       </ThemeProvider>
     </ErrorBoundary>

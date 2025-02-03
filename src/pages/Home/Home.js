@@ -74,7 +74,7 @@ const Home = () => {
             <HorizontalScroll
               title="Popular Tracks"
               showShowMore={mockTracks.length > INITIAL_LIMIT}
-              moreLink="/tracks"
+              moreLink="/more/tracks"
               itemCount={mockTracks.length}
               maxItems={INITIAL_LIMIT}
             >
@@ -89,7 +89,7 @@ const Home = () => {
               <HorizontalScroll
                 title="Last Plays"
                 showShowMore={lastPlays.length > INITIAL_LIMIT}
-                moreLink="/history"
+                moreLink="/more/history"
                 itemCount={lastPlays.length}
                 maxItems={INITIAL_LIMIT}
               >
@@ -104,7 +104,7 @@ const Home = () => {
               <HorizontalScroll
                 title="Most Listened To"
                 showShowMore={mostListenedTo.length > INITIAL_LIMIT}
-                moreLink="/most-played"
+                moreLink="/more/most-played"
                 itemCount={mostListenedTo.length}
                 maxItems={INITIAL_LIMIT}
               >
@@ -118,7 +118,7 @@ const Home = () => {
             <HorizontalScroll
               title="Popular Artists"
               showShowMore={mockArtists.length > INITIAL_LIMIT}
-              moreLink="/artists"
+              moreLink="/more/artists"
               itemCount={mockArtists.length}
               maxItems={INITIAL_LIMIT}
             >
@@ -136,7 +136,7 @@ const Home = () => {
             <HorizontalScroll
               title="Featured Albums"
               showShowMore={mockAlbums.length > INITIAL_LIMIT}
-              moreLink="/albums"
+              moreLink="/more/albums"
               itemCount={mockAlbums.length}
               maxItems={INITIAL_LIMIT}
             >
@@ -150,7 +150,7 @@ const Home = () => {
             <HorizontalScroll
               title="Featured Playlists"
               showShowMore={mockPlaylists.length > INITIAL_LIMIT}
-              moreLink="/playlists"
+              moreLink="/more/playlists"
               itemCount={mockPlaylists.length}
               maxItems={INITIAL_LIMIT}
             >

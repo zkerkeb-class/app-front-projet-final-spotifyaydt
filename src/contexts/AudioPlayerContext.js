@@ -37,6 +37,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const [displayLyrics, setDisplayLyrics] = useState(false);
   const [displayQueue, setDisplayQueue] = useState(false);
   const [displayDevices, setDisplayDevices] = useState(false);
+  const [displayJam, setDisplayJam] = useState(false);
   const [displayMini, setDisplayMini] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [wasPlaying, setWasPlaying] = useState(false);
@@ -50,6 +51,24 @@ export const AudioPlayerProvider = ({ children }) => {
   const [currentTrack, setCurrentTrack] = useState(null);
   const [lastPlays, setLastPlays] = useState([]);
   const [playCounts, setPlayCounts] = useState({});
+  const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(false);
+  const [currentDevice, setCurrentDevice] = useState({
+    name: 'Ce navigateur web',
+    type: 'desktop',
+    id: 'current',
+    isActive: true,
+  });
+
+  const [availableDevices, setAvailableDevices] = useState([
+    {
+      name: window.navigator.userAgent.includes('Windows')
+        ? 'DESKTOP-' + Math.random().toString(36).substr(2, 6).toUpperCase()
+        : 'Device-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+      type: 'desktop',
+      id: 'device1',
+      isActive: false,
+    },
+  ]);
 
   const createShuffleQueue = useCallback(() => {
     const indices = Array.from({ length: currentTracks.length }, (_, i) => i);
@@ -301,40 +320,49 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   }, [isPlaying, currentTracks.length]);
 
-  const handlePlay = useCallback(({ track, tracks, action = 'play' }) => {
-    if (!track || !tracks.length) return;
+  const handlePlay = useCallback(
+    ({ track, tracks, action = 'play' }) => {
+      if (!track || !tracks.length) return;
 
-    const trackIndex = tracks.findIndex((t) => t.id === track.id);
-    if (trackIndex === -1) return;
+      const trackIndex = tracks.findIndex((t) => t.id === track.id);
+      if (trackIndex === -1) return;
 
-    setCurrentTracks(tracks);
-    setCurrentTrackIndex(trackIndex);
-    setCurrentTrack(track);
-    setActiveCardId(track.id);
+      setCurrentTracks(tracks);
+      setCurrentTrackIndex(trackIndex);
+      setCurrentTrack(track);
+      setActiveCardId(track.id);
 
-    if (action === 'play') {
-      setIsPlaying(true);
-      if (audioRef.current) {
-        audioRef.current.src = track.audio;
-        audioRef.current.play();
+      if (action === 'play') {
+        setIsPlaying(true);
+        if (!isRightSidebarVisible) {
+          setDisplayPlay(true);
+          setDisplayQueue(false);
+          setDisplayDevices(false);
+          setIsRightSidebarVisible(true);
+        }
+        if (audioRef.current) {
+          audioRef.current.src = track.audio;
+          audioRef.current.play();
+        }
+      } else {
+        setIsPlaying(false);
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
       }
-    } else {
-      setIsPlaying(false);
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    }
 
-    setLastPlays((prev) => {
-      const updatedPlays = [track, ...prev.filter((t) => t.id !== track.id)];
-      return updatedPlays.slice(0, 20); // Keep only the last 20 plays
-    });
+      setLastPlays((prev) => {
+        const updatedPlays = [track, ...prev.filter((t) => t.id !== track.id)];
+        return updatedPlays.slice(0, 20); // Keep only the last 20 plays
+      });
 
-    setPlayCounts((prevCounts) => {
-      const newCount = (prevCounts[track.id] || 0) + 1;
-      return { ...prevCounts, [track.id]: newCount };
-    });
-  }, []);
+      setPlayCounts((prevCounts) => {
+        const newCount = (prevCounts[track.id] || 0) + 1;
+        return { ...prevCounts, [track.id]: newCount };
+      });
+    },
+    [isRightSidebarVisible]
+  );
 
   const getVolumeIcon = useCallback(() => {
     const currentVolume = previewVolume !== null ? previewVolume : volume;
@@ -560,6 +588,10 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!displayPlay) {
       setDisplayQueue(false);
       setDisplayDevices(false);
+      setDisplayJam(false);
+      setIsRightSidebarVisible(true);
+    } else {
+      setIsRightSidebarVisible(false);
     }
     setDisplayPlay(!displayPlay);
   };
@@ -572,6 +604,10 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!displayQueue) {
       setDisplayPlay(false);
       setDisplayDevices(false);
+      setDisplayJam(false);
+      setIsRightSidebarVisible(true);
+    } else {
+      setDisplayPlay(true);
     }
     setDisplayQueue(!displayQueue);
   };
@@ -580,8 +616,24 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!displayDevices) {
       setDisplayPlay(false);
       setDisplayQueue(false);
+      setDisplayJam(false);
+      setIsRightSidebarVisible(true);
+    } else {
+      setDisplayPlay(true);
     }
     setDisplayDevices(!displayDevices);
+  };
+
+  const toggleJam = () => {
+    if (!displayJam) {
+      setDisplayPlay(false);
+      setDisplayQueue(false);
+      setDisplayDevices(false);
+      setIsRightSidebarVisible(true);
+    } else {
+      setDisplayPlay(true);
+    }
+    setDisplayJam(!displayJam);
   };
 
   const toggleMini = () => {
@@ -596,11 +648,93 @@ export const AudioPlayerProvider = ({ children }) => {
     setIsFullscreen(false);
   }, []);
 
+  const closeSidebar = () => {
+    setDisplayPlay(false);
+    setDisplayQueue(false);
+    setDisplayDevices(false);
+    setDisplayJam(false);
+    setIsRightSidebarVisible(false);
+  };
+
   const mostListenedTo = Object.entries(playCounts)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 20)
     .map(([id]) => lastPlays.find((track) => track.id === id))
     .filter(Boolean);
+
+  // Effect to handle sidebar visibility based on display states
+  useEffect(() => {
+    if (displayPlay || displayQueue || displayDevices) {
+      setIsRightSidebarVisible(true);
+    }
+  }, [displayPlay, displayQueue, displayDevices]);
+
+  // Add this useEffect to detect the current device
+  useEffect(() => {
+    const detectDevice = () => {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      let deviceType = 'desktop';
+      let deviceName = 'Ce navigateur web';
+      let browserInfo = '';
+
+      // Detect browser
+      if (userAgent.includes('edg/')) {
+        browserInfo = `(Microsoft Edge)`;
+      } else if (userAgent.includes('chrome/')) {
+        browserInfo = `(Google Chrome)`;
+      } else if (userAgent.includes('firefox/')) {
+        browserInfo = `(Firefox)`;
+      } else if (
+        userAgent.includes('safari/') &&
+        !userAgent.includes('chrome/')
+      ) {
+        browserInfo = `(Safari)`;
+      } else if (userAgent.includes('opr/') || userAgent.includes('opera/')) {
+        browserInfo = `(Opera)`;
+      }
+
+      if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(userAgent)) {
+        deviceType = 'tablet';
+        deviceName = 'Tablette';
+      } else if (
+        /Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
+          userAgent
+        )
+      ) {
+        deviceType = 'mobile';
+        deviceName = 'Téléphone';
+      } else if (window.navigator.userAgent.includes('Windows')) {
+        deviceName =
+          'DESKTOP-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+      }
+
+      setCurrentDevice({
+        name: deviceName,
+        type: deviceType,
+        id: 'current',
+        isActive: true,
+        browserInfo: browserInfo,
+      });
+    };
+
+    detectDevice();
+  }, []);
+
+  // Add function to handle device selection
+  const selectDevice = useCallback((deviceId) => {
+    setAvailableDevices((prev) =>
+      prev.map((device) => ({
+        ...device,
+        isActive: device.id === deviceId,
+      }))
+    );
+
+    if (deviceId === 'current') {
+      setCurrentDevice((prev) => ({ ...prev, isActive: true }));
+    } else {
+      setCurrentDevice((prev) => ({ ...prev, isActive: false }));
+    }
+  }, []);
 
   return (
     <AudioPlayerContext.Provider
@@ -634,13 +768,17 @@ export const AudioPlayerProvider = ({ children }) => {
         repeatPlaylist,
         toggleRepeat,
         displayPlay,
+        setDisplayPlay,
         toggleDisplayPlay,
         displayLyrics,
         toggleLyrics,
         displayQueue,
+        setDisplayQueue,
         toggleQueue,
         displayDevices,
         toggleDevices,
+        displayJam,
+        toggleJam,
         displayMini,
         toggleMini,
         volumeBarRef,
@@ -660,6 +798,12 @@ export const AudioPlayerProvider = ({ children }) => {
         setCurrentTrack,
         lastPlays,
         mostListenedTo,
+        isRightSidebarVisible,
+        setIsRightSidebarVisible,
+        closeSidebar,
+        currentDevice,
+        availableDevices,
+        selectDevice,
       }}
     >
       {children}

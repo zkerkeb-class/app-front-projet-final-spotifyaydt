@@ -2,106 +2,281 @@
 @import '../../../styles/variables';
 
 .sidebar {
-  width: 100%;
-  background-color: var(--background-secondary);
-  border-radius: 10px;
+  height: 100%;
+  background-color: var(--background-base);
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
-  gap: 1px;
 
   .wrapper {
     display: flex;
-    flex-direction: column;
-    gap: 1px;
-    width: 100%;
-    background-color: transparent;
-    -webkit-transition:
-      background-color 0.5s ease,
-      -webkit-box-shadow 0.5s ease;
-    transition:
-      background-color 0.5s ease,
-      -webkit-box-shadow 0.5s ease;
-    transition:
-      background-color 0.5s ease,
-      box-shadow 0.5s ease;
-    transition:
-      background-color 0.5s ease,
-      box-shadow 0.5s ease,
-      -webkit-box-shadow 0.5s ease;
-    z-index: 2;
+    flex-direction: row;
+    align-items: center;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    background-color: var(--background-secondary);
 
     .header {
       display: flex;
       flex-direction: row;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
       width: 100%;
-      padding-inline: 16px;
 
       &__title {
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 8px;
 
         &__text {
-          font-size: 20px;
-          color: var(--text-secondary);
-        }
-
-        span {
-          padding: 4px 8px;
           font-size: 16px;
           font-weight: 700;
+          margin: 0;
         }
       }
-      .header_button {
+
+      &__button {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
+        font-size: 24px;
         color: var(--text-secondary);
-        font-weight: 700;
-        font-size: 18px;
-        gap: 10px;
+        background: none;
+        border: none;
         cursor: pointer;
-
-        span {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 8px;
-          border-radius: 50%;
-          transition: background-color 0.3s ease;
-
-          &:hover {
-            background-color: var(--hover-background);
-          }
-        }
       }
     }
   }
 
-  .content {
-    padding: 16px;
+  &__content {
     flex: 1;
     overflow-y: auto;
   }
 }
 
-/* Styles pour la scrollbar */
-.content::-webkit-scrollbar {
-  width: 10px;
+// NowPlaying styles
+.nowPlaying {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+
+  &__empty {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 20px;
+  }
+
+  &__track {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    &__cover {
+      width: 250px;
+      height: 270px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      h3 {
+        font-size: 24px;
+        margin: 0 0 8px 0;
+      }
+
+      p {
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      &__buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        font-size: 24px;
+        color: var(--text-secondary);
+      }
+    }
+  }
+
+  &__lyrics {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+
+    &__placeholder {
+      font-style: italic;
+    }
+  }
 }
 
-.content::-webkit-scrollbar-track {
-  background: transparent;
+// Queue styles
+.queue {
+  padding: 20px;
+
+  &__section {
+    margin-bottom: 24px;
+
+    &__title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      color: var(--text-secondary);
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--background-tinted-highlight);
+    }
+
+    &__cover {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+
+    &__info {
+      flex: 1;
+      min-width: 0;
+
+      &__title {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      &__artist {
+        display: block;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+    }
+  }
+
+  &__empty {
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+  }
 }
 
-.content::-webkit-scrollbar-thumb {
-  background: var(--text-secondary);
-}
+// Devices styles
+.devices {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
-.content::-webkit-scrollbar-thumb:hover {
-  background: var(--text-primary);
+  &__section__title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 0 0 16px 0;
+  }
+
+  &__current {
+    margin-bottom: 24px;
+  }
+
+  &__available {
+    margin-bottom: 24px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 4px;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+
+    &:hover {
+      background-color: var(--background-tinted-highlight);
+    }
+
+    svg {
+      font-size: 20px;
+      color: var(--text-secondary);
+    }
+
+    &__current {
+      background-color: var(--background-tinted-base);
+    }
+
+    &__info {
+      flex: 1;
+      min-width: 0;
+
+      &__name {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+
+      &__status {
+        display: block;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+    }
+
+    &__status {
+      &__indicator {
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--accent-color);
+      }
+    }
+  }
+
+  &__footer__button {
+    margin-top: auto;
+    padding: 12px;
+    border-radius: 20px;
+    background-color: var(--accent-color);
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.02);
+      background-color: var(--accent-color-hover);
+    }
+  }
 }

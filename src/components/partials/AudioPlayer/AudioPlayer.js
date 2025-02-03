@@ -67,12 +67,8 @@ const AudioPlayer = ({ onError }) => {
   // Return a disabled player if no tracks are loaded
   if (!currentTracks || currentTracks.length === 0) {
     return (
-      <div
-        className={`${style.player} ${style.player__disabled}`}
-        role="region"
-        aria-label="Audio player"
-      >
-        <div className={style.player__music}>
+      <div className={style.player} role="region" aria-label="Audio player">
+        <div className={`${style.player__music} ${style.player__disabled}`}>
           <div className={style.player__music__cover}>
             <div className={style.player__music__cover__placeholder} />
           </div>
@@ -83,7 +79,9 @@ const AudioPlayer = ({ onError }) => {
           </div>
         </div>
 
-        <div className={style.player__controlsContainer}>
+        <div
+          className={`${style.player__controlsContainer} ${style.player__disabled}`}
+        >
           <Controls />
         </div>
 
