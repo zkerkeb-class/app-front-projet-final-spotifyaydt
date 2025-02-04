@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import style from './Sidebar.module.scss';
 
 import Filter from '../../UI/Filter/Filter';
@@ -13,6 +14,7 @@ import { FaListUl } from 'react-icons/fa6';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 
 const SideBar = ({ isCollapsed, setIsCollapsed }) => {
+  const { t } = useTranslation();
   const [searchVisible, setSearchVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState('Playlist');
 
@@ -56,7 +58,11 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
       <header className={style.wrapper}>
         <div className={style.header}>
           <div className={style.header_title}>
-            <div className={style.icon} onClick={toggleCollapse}>
+            <div
+              className={style.icon}
+              onClick={toggleCollapse}
+              title={t('common.toggleSidebar')}
+            >
               <svg
                 data-encore-id="icon"
                 role="img"
@@ -72,14 +78,22 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
                 ></path>
               </svg>
             </div>
-            {!isCollapsed && <span>Bibliotheque</span>}
+            {!isCollapsed && <span>{t('common.library')}</span>}
           </div>
           <div className={style.header_button}>
-            <span onClick={toggleCollapse} className={style.collapse_button}>
+            <span
+              onClick={toggleCollapse}
+              className={style.collapse_button}
+              title={
+                isCollapsed
+                  ? t('common.expandSidebar')
+                  : t('common.collapseSidebar')
+              }
+            >
               {isCollapsed ? <FaArrowRight /> : <FaArrowLeft />}
             </span>
             {!isCollapsed && (
-              <span>
+              <span title={t('common.createNew')}>
                 <FaPlus />
               </span>
             )}
@@ -89,19 +103,19 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
         {!isCollapsed && (
           <div className={style.filters}>
             <Filter
-              filterName="Playlist"
+              filterName={t('filters.playlists')}
               isActive={activeFilter === 'Playlist'}
-              onFilter={handleFilterChange}
+              onFilter={() => handleFilterChange('Playlist')}
             />
             <Filter
-              filterName="Album"
+              filterName={t('filters.albums')}
               isActive={activeFilter === 'Album'}
-              onFilter={handleFilterChange}
+              onFilter={() => handleFilterChange('Album')}
             />
             <Filter
-              filterName="Artist"
+              filterName={t('filters.artists')}
               isActive={activeFilter === 'Artist'}
-              onFilter={handleFilterChange}
+              onFilter={() => handleFilterChange('Artist')}
             />
           </div>
         )}
@@ -112,19 +126,24 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
         {!isCollapsed && (
           <div className={style.topbar}>
             <div className={style.search}>
-              <span className={style.icon_search} onClick={toggleSearch}>
+              <span
+                className={style.icon_search}
+                onClick={toggleSearch}
+                title={t('common.searchLibrary')}
+              >
                 <FiSearch />
               </span>
               <input
                 type="text"
-                placeholder="Rechercher dans la bibliotheque"
+                placeholder={t('common.searchInLibrary')}
                 className={searchVisible ? style.show : ''}
+                aria-label={t('common.searchInLibrary')}
               />
             </div>
 
             <div className={style.sort}>
-              <span>Recent</span>
-              <span className={style.icon_sort}>
+              <span>{t('common.recent')}</span>
+              <span className={style.icon_sort} title={t('common.sortBy')}>
                 <FaListUl />
               </span>
             </div>

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
@@ -8,6 +9,7 @@ import { mockTracks } from '../../../constant/mockData';
 import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 const PlaylistCard = ({ playlist }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
@@ -56,12 +58,13 @@ const PlaylistCard = ({ playlist }) => {
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
+      aria-label={t('common.playlist')}
     >
       <div className={styles.imageContainer}>
         {playlist.coverUrl ? (
           <img
             src={playlist.coverUrl}
-            alt={playlist.title}
+            alt={t('common.playlistCover', { title: playlist.title })}
             className={styles.image}
             loading="lazy"
           />
@@ -73,8 +76,8 @@ const PlaylistCard = ({ playlist }) => {
           onClick={handlePlayClick}
           aria-label={
             isThisPlaying
-              ? `Pause playlist: ${playlist.title}`
-              : `Play playlist: ${playlist.title}`
+              ? t('common.pausePlaylist', { title: playlist.title })
+              : t('common.playPlaylist', { title: playlist.title })
           }
         >
           {isThisPlaying ? <FaPause /> : <FaPlay />}

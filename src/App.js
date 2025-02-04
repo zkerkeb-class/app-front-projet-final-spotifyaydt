@@ -6,6 +6,7 @@ import './styles/theme.scss';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
 import { JamProvider } from './contexts/JamContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Footer from './components/partials/Footer/Footer';
 
@@ -96,17 +97,19 @@ AppLayout.displayName = 'AppLayout';
 const App = () => {
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <AudioPlayerProvider>
-          <JamProvider>
-            <Router>
-              <AppLayout>
-                <MainContentWrapper />
-              </AppLayout>
-            </Router>
-          </JamProvider>
-        </AudioPlayerProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <AudioPlayerProvider>
+            <JamProvider>
+              <Router>
+                <AppLayout>
+                  <MainContentWrapper />
+                </AppLayout>
+              </Router>
+            </JamProvider>
+          </AudioPlayerProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 };

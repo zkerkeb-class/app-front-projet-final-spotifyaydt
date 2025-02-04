@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from './Cards.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { mockTracks } from '../../../constant/mockData';
@@ -9,6 +10,7 @@ import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 import { FaPlay, FaPause } from 'react-icons/fa';
 
 const ArtistCard = ({ artist, onPlay }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
@@ -58,12 +60,15 @@ const ArtistCard = ({ artist, onPlay }) => {
     <div
       onClick={handleClick}
       className={`${styles.card} ${styles.artistCard}`}
+      role="button"
+      tabIndex={0}
+      aria-label={t('common.artist')}
     >
       <div className={styles.artistImageContainer}>
         {artist.imageUrl ? (
           <img
             src={artist.imageUrl}
-            alt={artist.name}
+            alt={t('common.artistPhoto', { name: artist.name })}
             className={`${styles.image} ${styles.artistImage}`}
             loading="lazy"
           />
@@ -75,8 +80,8 @@ const ArtistCard = ({ artist, onPlay }) => {
           onClick={handlePlayClick}
           aria-label={
             isThisPlaying
-              ? `Pause ${artist.name}'s top tracks`
-              : `Play ${artist.name}'s top tracks`
+              ? t('common.pauseArtist', { name: artist.name })
+              : t('common.playArtist', { name: artist.name })
           }
         >
           {isThisPlaying ? <FaPause /> : <FaPlay />}
@@ -85,7 +90,7 @@ const ArtistCard = ({ artist, onPlay }) => {
       <div className={styles.content}>
         <span className={styles.title}>{artist.name}</span>
         <p className={styles.followers}>
-          {new Intl.NumberFormat().format(artist.followers)} followers
+          {t('common.followerCount', { count: artist.followers })}
         </p>
       </div>
     </div>

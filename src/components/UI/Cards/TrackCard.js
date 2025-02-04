@@ -1,11 +1,13 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import styles from './Cards.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 const TrackCard = ({ track }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
@@ -47,12 +49,13 @@ const TrackCard = ({ track }) => {
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
+      aria-label={t('common.track')}
     >
       <div className={styles.imageContainer}>
         {track.coverUrl ? (
           <img
             src={track.coverUrl}
-            alt={track.title}
+            alt={t('common.coverArt', { title: track.title })}
             className={styles.image}
             loading="lazy"
           />
@@ -63,7 +66,9 @@ const TrackCard = ({ track }) => {
           className={`${styles.playButton} ${isThisPlaying ? styles.visible : ''}`}
           onClick={handlePlayClick}
           aria-label={
-            isThisPlaying ? `Pause ${track.title}` : `Play ${track.title}`
+            isThisPlaying
+              ? t('common.pause', { title: track.title })
+              : t('common.play', { title: track.title })
           }
         >
           {isThisPlaying ? <FaPause /> : <FaPlay />}
