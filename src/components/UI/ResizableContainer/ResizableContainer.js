@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styles from './ResizableContainer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
+import { useTranslation } from 'react-i18next';
 
 const ResizableContainer = ({
   leftPanel,
@@ -13,7 +14,10 @@ const ResizableContainer = ({
   maxRightWidth = 400,
   defaultLeftWidth = 350,
   defaultRightWidth = 300,
+  className,
+  ...props
 }) => {
+  const { t } = useTranslation();
   const [leftWidth, setLeftWidth] = useState(defaultLeftWidth);
   const [rightWidth, setRightWidth] = useState(defaultRightWidth);
   const [isResizingLeft, setIsResizingLeft] = useState(false);
@@ -108,40 +112,49 @@ const ResizableContainer = ({
   });
 
   return (
-    <div className={styles.resizable_layout}>
-      <div
-        className={`${styles.resizable_panel} ${isLeftCollapsed ? styles.collapsed : ''}`}
-        style={{
-          width: leftWidth,
-          minWidth: isLeftCollapsed ? COLLAPSED_WIDTH : minLeftWidth,
-          maxWidth: isLeftCollapsed ? COLLAPSED_WIDTH : maxLeftWidth,
-        }}
-      >
-        {leftPanelWithCollapse}
+    <div
+      className={`${className} overflow-y-auto`}
+      {...props}
+      aria-label={t('common.scrollableContent')}
+    >
+      <div className={styles.resizable_layout}>
+        <div
+          className={`${styles.resizable_panel} ${isLeftCollapsed ? styles.collapsed : ''}`}
+          style={{
+            width: leftWidth,
+            minWidth: isLeftCollapsed ? COLLAPSED_WIDTH : minLeftWidth,
+            maxWidth: isLeftCollapsed ? COLLAPSED_WIDTH : maxLeftWidth,
+          }}
+        >
+          {leftPanelWithCollapse}
+        </div>
+        <div
+          className={`${styles.resizable_divider} ${isLeftCollapsed ? styles.collapsed : ''}`}
+          onMouseDown={handleMouseDown('left')}
+        />
+        <div
+          className={styles.content_panel}
+          style={{
+            marginRight: isRightSidebarVisible ? undefined : '0',
+          }}
+        >
+          {mainContent}
+        </div>
+        {isRightSidebarVisible && (
+          <>
+            <div
+              className={styles.resizable_divider}
+              onMouseDown={handleMouseDown('right')}
+            />
+            <div
+              className={styles.resizable_panel}
+              style={{ width: rightWidth }}
+            >
+              {rightPanel}
+            </div>
+          </>
+        )}
       </div>
-      <div
-        className={`${styles.resizable_divider} ${isLeftCollapsed ? styles.collapsed : ''}`}
-        onMouseDown={handleMouseDown('left')}
-      />
-      <div
-        className={styles.content_panel}
-        style={{
-          marginRight: isRightSidebarVisible ? undefined : '0',
-        }}
-      >
-        {mainContent}
-      </div>
-      {isRightSidebarVisible && (
-        <>
-          <div
-            className={styles.resizable_divider}
-            onMouseDown={handleMouseDown('right')}
-          />
-          <div className={styles.resizable_panel} style={{ width: rightWidth }}>
-            {rightPanel}
-          </div>
-        </>
-      )}
     </div>
   );
 };
@@ -156,6 +169,7 @@ ResizableContainer.propTypes = {
   maxRightWidth: PropTypes.number,
   defaultLeftWidth: PropTypes.number,
   defaultRightWidth: PropTypes.number,
+  className: PropTypes.string,
 };
 
 export default ResizableContainer;

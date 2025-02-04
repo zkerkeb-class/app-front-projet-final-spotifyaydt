@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import style from './Navbar.module.scss';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import {
   mockTracks,
   mockAlbums,
@@ -23,11 +25,12 @@ import { BsInboxes, BsInboxesFill } from 'react-icons/bs';
 const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const { toggleJam } = useAudioPlayer();
+  const { t } = useTranslation();
+  const { language, changeLanguage } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const avatarUrl = `https://picsum.photos/200?random=1`;
 
-  const [language, setLanguage] = useState('ENG');
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -114,7 +117,8 @@ const Navbar = () => {
   }, []);
 
   const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
+    const newLang = event.target.value;
+    changeLanguage(newLang);
   };
 
   const handleGoBack = () => {
@@ -231,38 +235,42 @@ const Navbar = () => {
           <div className={style.logo_icon}>
             <FaSpotify />
           </div>
-          <span>Spotify AYDT</span>
+          <span>{t('common.appName')}</span>
         </div>
         <div className={style.nav_button}>
           <button
             className={`${style.nav_buttons} ${!canGoBack ? style.disabled : ''}`}
             onClick={handleGoBack}
-            aria-label="Go back"
+            aria-label={t('common.previous')}
             disabled={!canGoBack}
-            title="Back"
+            title={t('common.previous')}
           >
             <FaChevronLeft />
           </button>
           <button
             className={`${style.nav_buttons} ${!canGoForward ? style.disabled : ''}`}
             onClick={handleGoForward}
-            aria-label="Go forward"
+            aria-label={t('common.next')}
             disabled={!canGoForward}
-            title="Forward"
+            title={t('common.next')}
           >
             <FaChevronRight />
           </button>
         </div>
       </div>
       <div className={style.middle_cont}>
-        <Link to="/" className={style.nav_large_button} title="Home">
+        <Link
+          to="/"
+          className={style.nav_large_button}
+          title={t('common.home')}
+        >
           <GrHomeRounded className={style.middle_cont_icon} />
         </Link>
         <div className={style.search_bar}>
           <div className={style.search_wrapper}>
             <span
               className={style.search_icon}
-              title="Search"
+              title={t('common.search')}
               onClick={handleSearchIconClick}
               style={{ cursor: 'pointer' }}
             >
@@ -270,7 +278,7 @@ const Navbar = () => {
             </span>
             <input
               type="text"
-              placeholder="Que souhaitez-vous écouter ?"
+              placeholder={t('common.search')}
               className={style.search_input}
               value={searchQuery}
               onChange={handleSearchChange}
@@ -280,7 +288,7 @@ const Navbar = () => {
             {showResults && !searchQuery && (
               <div className={style.search_results}>
                 <div className={style.result_section}>
-                  <h3>Recent Searches</h3>
+                  <h3>{t('common.recentlyPlayed')}</h3>
                   {getRecentSearches().map((item, index) => (
                     <div
                       key={item.timestamp}
@@ -303,14 +311,14 @@ const Navbar = () => {
                     className={style.clear_history}
                     onClick={handleClearHistory}
                   >
-                    Clear search history
+                    {t('common.clearSearchHistory')}
                   </div>
                 )}
               </div>
             )}
             <span
               className={style.grouped_icon}
-              title={searchQuery ? 'Clear search' : 'Sort'}
+              title={searchQuery ? t('common.clear') : t('common.sort')}
               onClick={searchQuery ? handleClearSearch : undefined}
             >
               {searchQuery ? (
@@ -328,7 +336,7 @@ const Navbar = () => {
         <button
           onClick={toggleTheme}
           className={style.theme_toggle}
-          title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
+          title={isDarkMode ? t('common.lightMode') : t('common.darkMode')}
         >
           {isDarkMode ? (
             <PiSunDimFill className={style.toggle_icon} />
@@ -339,7 +347,7 @@ const Navbar = () => {
         <button
           className={style.user_button}
           onClick={toggleJam}
-          title="Start a Jam Session"
+          title={t('jamSession.title')}
         >
           <HiMiniUserGroup className={style.user_icon} />
         </button>
@@ -347,11 +355,12 @@ const Navbar = () => {
           <FaGlobe aria-hidden="true" />
           <select
             value={language}
-            onChange={(e) => handleLanguageChange(e.target.value)}
+            onChange={handleLanguageChange}
+            aria-label={t('common.selectLanguage')}
           >
-            <option value="FR">FR</option>
-            <option value="EN">EN</option>
-            <option value="AR">AR</option>
+            <option value="fr">FR</option>
+            <option value="en">EN</option>
+            <option value="ar">AR</option>
           </select>
         </div>
         <div className={style.avatar_button}>

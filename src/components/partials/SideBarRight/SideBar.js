@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import style from './Sidebar.module.scss';
 import { IoClose } from 'react-icons/io5';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
@@ -21,6 +22,7 @@ import Devices from './Devices';
 import Jam from '../Jam/Jam';
 
 const SideBar = () => {
+  const { t } = useTranslation();
   const {
     displayPlay,
     displayQueue,
@@ -96,10 +98,10 @@ const SideBar = () => {
   };
 
   const getCurrentTitle = () => {
-    if (displayPlay) return 'Now Playing';
-    if (displayQueue) return 'Queue';
-    if (displayDevices) return 'Connect to a device';
-    if (displayJam) return 'Jam Session';
+    if (displayPlay) return t('player.nowPlaying');
+    if (displayQueue) return t('player.queue');
+    if (displayDevices) return t('player.connectDevice');
+    if (displayJam) return t('jamSession.title');
     return '';
   };
 
@@ -127,7 +129,7 @@ const SideBar = () => {
     if (!currentTracks || currentTracks.length === 0) {
       return (
         <div className={style.empty_queue}>
-          <p>No tracks in queue</p>
+          <p>{t('player.emptyQueue')}</p>
         </div>
       );
     }
@@ -137,7 +139,7 @@ const SideBar = () => {
         {/* Current Track Section */}
         {currentTrack && (
           <div className={style.current_section}>
-            <h2 className={style.section_title}>Title playing</h2>
+            <h2 className={style.section_title}>{t('player.titlePlaying')}</h2>
             <div className={style.queue_track_item}>
               <div className={style.track_info_container}>
                 <img
@@ -157,7 +159,7 @@ const SideBar = () => {
               <button
                 className={style.track_options}
                 onClick={handleOptionsClick}
-                aria-label="Track options"
+                aria-label={t('common.trackOptions')}
               >
                 <BsThreeDotsVertical />
               </button>
@@ -168,7 +170,7 @@ const SideBar = () => {
         {/* Next Up Section */}
         {currentTracks.length > currentTrackIndex + 1 && (
           <div className={style.next_section}>
-            <h2 className={style.section_title}>Up Next</h2>
+            <h2 className={style.section_title}>{t('player.upNext')}</h2>
             <div className={style.queue_tracks_list}>
               {currentTracks
                 .slice(currentTrackIndex + 1)
@@ -199,7 +201,7 @@ const SideBar = () => {
                     <button
                       className={style.track_options}
                       onClick={handleOptionsClick}
-                      aria-label="Track options"
+                      aria-label={t('common.trackOptions')}
                     >
                       <BsThreeDotsVertical />
                     </button>
@@ -218,7 +220,7 @@ const SideBar = () => {
         <div className={style.current_device}>
           <div className={style.device_status_indicator}>
             <div className={style.indicator_bar}></div>
-            <span>Appareil actuel</span>
+            <span>{t('player.currentDevice')}</span>
           </div>
           <div
             className={`${style.device_item} ${currentDevice.isActive ? style.active : ''}`}
@@ -230,7 +232,9 @@ const SideBar = () => {
                 getDeviceIcon(currentDevice.type)
               )}
               <div className={style.device_details}>
-                <span className={style.device_name}>Web Player</span>
+                <span className={style.device_name}>
+                  {t('player.webPlayer')}
+                </span>
                 <span className={style.device_type}>
                   {currentDevice.browserInfo}
                 </span>
@@ -239,13 +243,15 @@ const SideBar = () => {
           </div>
           <button className={style.launch_jam_button} onClick={toggleJam}>
             <HiMiniUserGroup size={20} />
-            Lancer un Jam
+            {t('jamSession.startJam')}
           </button>
         </div>
 
         {availableDevices.length > 0 && (
           <div className={style.other_devices}>
-            <h2 className={style.section_title}>Select another device</h2>
+            <h2 className={style.section_title}>
+              {t('player.selectAnotherDevice')}
+            </h2>
             <div className={style.devices_list}>
               {availableDevices.map((device) => (
                 <div
@@ -276,7 +282,7 @@ const SideBar = () => {
             tabIndex={0}
           >
             <BsQuestionCircle size={16} />
-            <span>You don't see your device ?</span>
+            <span>{t('player.deviceNotFound')}</span>
           </div>
         </div>
       </div>
@@ -287,17 +293,17 @@ const SideBar = () => {
     return (
       <div className={style.jam_content}>
         <div className={style.jam_header}>
-          <h2 className={style.section_title}>Start a Jam Session</h2>
-          <p className={style.jam_description}>
-            Listen to music together with your friends in real-time
-          </p>
+          <h2 className={style.section_title}>
+            {t('jamSession.startSession')}
+          </h2>
+          <p className={style.jam_description}>{t('jamSession.subtitle')}</p>
         </div>
         <div className={style.jam_actions}>
           <button className={style.create_session_button}>
-            Create a new session
+            {t('jamSession.createNew')}
           </button>
           <button className={style.join_session_button}>
-            Join existing session
+            {t('jamSession.joinExisting')}
           </button>
         </div>
       </div>
@@ -318,7 +324,7 @@ const SideBar = () => {
           <button
             className={style.header__button}
             onClick={handleClose}
-            aria-label="Close sidebar"
+            aria-label={t('common.closeSidebar')}
           >
             <IoClose />
           </button>

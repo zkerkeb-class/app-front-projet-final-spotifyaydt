@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, memo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from './HorizontalScroll.module.scss';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -13,6 +14,7 @@ const HorizontalScroll = ({
   itemCount = 0,
   maxItems = 20,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   const [showLeftChevron, setShowLeftChevron] = useState(false);
@@ -76,7 +78,7 @@ const HorizontalScroll = ({
         {showShowMore && itemCount > maxItems && (
           <div className={styles.right_element}>
             <div className={styles.show_more} onClick={handleShowMore}>
-              Show More
+              {t('common.showMore')}
             </div>
           </div>
         )}
@@ -90,7 +92,7 @@ const HorizontalScroll = ({
           <button
             onClick={() => handleScroll('left')}
             className={`${styles.control_button} ${styles.left}`}
-            aria-label="Scroll left"
+            aria-label={t('common.previous')}
           >
             <FaChevronLeft />
           </button>
@@ -99,7 +101,7 @@ const HorizontalScroll = ({
           className={styles.scroll_container}
           ref={scrollContainerRef}
           role="region"
-          aria-label="Scrollable content"
+          aria-label={t('common.scrollableContent')}
         >
           {children}
         </div>
@@ -107,7 +109,7 @@ const HorizontalScroll = ({
           <button
             onClick={() => handleScroll('right')}
             className={`${styles.control_button} ${styles.right}`}
-            aria-label="Scroll right"
+            aria-label={t('common.next')}
           >
             <FaChevronRight />
           </button>
