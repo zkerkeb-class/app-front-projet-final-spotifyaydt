@@ -3,6 +3,7 @@
   width: 100%;
   height: 100%;
   position: relative;
+  justify-content: space-between;
 }
 
 .resizable_panel {
@@ -14,6 +15,7 @@
   border-radius: 10px;
   height: 100%;
   position: relative;
+  flex-shrink: 0; /* Prevent panels from shrinking */
 
   &:hover {
     overflow-y: auto;
@@ -62,6 +64,7 @@
   position: relative;
   margin: 0 2px;
   transition: background-color 0.2s ease;
+  flex-shrink: 0; /* Prevent divider from shrinking */
 
   &:hover,
   &:active {
@@ -93,9 +96,9 @@
   border-radius: 10px;
   overflow: hidden;
   position: relative;
-  min-width: 0; /* Prevent content from forcing panel wider */
+  min-width: 200px; /* Minimum width for content */
   height: 100%;
-  min-width: 200px;
+  margin: 0 8px; /* Add some spacing between panels */
 
   &:hover {
     overflow-y: auto;
