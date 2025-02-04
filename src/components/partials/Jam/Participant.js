@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styles from './Jam.module.scss';
 import { IoClose } from 'react-icons/io5';
 import { useJam } from '../../../contexts/JamContext';
@@ -49,17 +48,6 @@ const Participant = ({ participant }) => {
       )}
     </div>
   );
-};
-
-Participant.propTypes = {
-  participant: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    isHost: PropTypes.bool.isRequired,
-    avatar: PropTypes.string,
-    joinedAt: PropTypes.string.isRequired,
-    status: PropTypes.oneOf(['active', 'inactive', 'away']).isRequired,
-  }).isRequired,
 };
 
 export default Participant;

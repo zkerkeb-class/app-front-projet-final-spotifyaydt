@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import style from './Sidebar.module.scss';
 
 import Filter from '../../UI/Filter/Filter';
@@ -54,7 +53,6 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
 
   return (
     <div className={`${style.sidebar} ${isCollapsed ? style.collapsed : ''}`}>
-      {/* Header de la sidebar */}
       <header className={style.wrapper}>
         <div className={style.header}>
           <div className={style.header_title}>
@@ -137,16 +135,6 @@ const SideBar = ({ isCollapsed, setIsCollapsed }) => {
       </div>
     </div>
   );
-};
-
-SideBar.propTypes = {
-  isCollapsed: PropTypes.bool,
-  setIsCollapsed: PropTypes.func,
-};
-
-SideBar.defaultProps = {
-  isCollapsed: false,
-  setIsCollapsed: () => {},
 };
 
 export default SideBar;

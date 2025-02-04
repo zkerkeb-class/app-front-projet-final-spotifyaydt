@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
-// Importing icons
 import { PiShuffleBold } from 'react-icons/pi';
 import {
   IoPlayCircle,
@@ -39,11 +37,9 @@ const Controls = () => {
     audioRef,
   } = useAudioPlayer();
 
-  // Add last click time ref for double-click detection
   const lastClickTimeRef = useRef(0);
-  const DOUBLE_CLICK_DELAY = 300; // milliseconds
+  const DOUBLE_CLICK_DELAY = 300;
 
-  // Handle double-click on previous track
   const handlePreviousClick = useCallback(
     (e) => {
       e.preventDefault();
@@ -51,12 +47,10 @@ const Controls = () => {
       const timeDiff = currentTime - lastClickTimeRef.current;
 
       if (timeDiff < DOUBLE_CLICK_DELAY) {
-        // Double click - restart current track
         if (audioRef.current) {
           audioRef.current.currentTime = 0;
         }
       } else {
-        // Single click - play previous track
         playPreviousTrack();
       }
 
@@ -73,10 +67,8 @@ const Controls = () => {
     [playNextTrack]
   );
 
-  // Add keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e) => {
-      // Only handle if not in an input/textarea
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
         return;
 
@@ -399,10 +391,6 @@ const Controls = () => {
       </div>
     </div>
   );
-};
-
-Controls.propTypes = {
-  className: PropTypes.string,
 };
 
 export default Controls;

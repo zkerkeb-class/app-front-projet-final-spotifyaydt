@@ -13,7 +13,6 @@ const JamContent = ({ onClose }) => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const { jamSession, participants, isHost, createJamSession } = useJam();
 
-  // Create a jam session when component mounts if none exists
   useEffect(() => {
     if (!jamSession) {
       createJamSession();

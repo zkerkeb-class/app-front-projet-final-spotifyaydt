@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 
@@ -22,7 +21,6 @@ const AudioPlayer = ({ onError }) => {
     onError?.(error);
   };
 
-  // Get the file extension from the audio URL
   const getFileType = (url) => {
     if (!url) return null;
     const extension = url.split('.').pop().toLowerCase();
@@ -44,7 +42,6 @@ const AudioPlayer = ({ onError }) => {
     }
   };
 
-  // Always render the audio element, even when no tracks are loaded
   const renderAudioElement = () => (
     <audio
       ref={audioRef}
@@ -64,7 +61,6 @@ const AudioPlayer = ({ onError }) => {
     </audio>
   );
 
-  // Return a disabled player if no tracks are loaded
   if (!currentTracks || currentTracks.length === 0) {
     return (
       <div className={style.player} role="region" aria-label="Audio player">
@@ -156,10 +152,6 @@ const AudioPlayer = ({ onError }) => {
       {renderAudioElement()}
     </div>
   );
-};
-
-AudioPlayer.propTypes = {
-  onError: PropTypes.func,
 };
 
 export default AudioPlayer;

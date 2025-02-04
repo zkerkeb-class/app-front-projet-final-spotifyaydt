@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FaUser, FaMusic, FaCompactDisc } from 'react-icons/fa';
 import styles from './CardFallbackIcon.module.scss';
 
@@ -23,10 +22,6 @@ const CardFallbackIcon = ({ type }) => {
       {getIcon()}
     </div>
   );
-};
-
-CardFallbackIcon.propTypes = {
-  type: PropTypes.oneOf(['artist', 'track', 'album', 'playlist']).isRequired,
 };
 
 export default CardFallbackIcon;

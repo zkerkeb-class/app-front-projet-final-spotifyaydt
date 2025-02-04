@@ -35,17 +35,14 @@ const Navbar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
 
-  // Cache for search results
   const searchCache = new Map();
 
-  // Debounced search function
   const debouncedSearch = useCallback((query) => {
     if (!query.trim()) {
       setSearchResults([]);
       return;
     }
 
-    // Check cache first
     if (searchCache.has(query)) {
       setSearchResults(searchCache.get(query));
       return;
@@ -53,11 +50,9 @@ const Navbar = () => {
 
     setIsLoading(true);
 
-    // Simulate API call with mock data
     setTimeout(() => {
       const searchTerm = query.toLowerCase();
 
-      // Limit initial results
       const tracks = mockTracks
         .filter(
           (track) =>
@@ -85,7 +80,6 @@ const Navbar = () => {
         query,
       };
 
-      // Cache the results
       searchCache.set(query, results);
       setSearchResults(results);
       setIsLoading(false);
@@ -103,14 +97,11 @@ const Navbar = () => {
   }, [searchQuery, debouncedSearch]);
 
   useEffect(() => {
-    // Check if we can go back (not on home page and has history)
     setCanGoBack(location.pathname !== '/' && window.history.length > 1);
 
-    // Check if we can go forward
     setCanGoForward(window.history.state?.idx < window.history.length - 1);
   }, [location]);
 
-  // Add click outside listener
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(`.${style.search_bar}`)) {
@@ -144,15 +135,20 @@ const Navbar = () => {
 
     if (!query.trim()) {
       setSearchResults([]);
-      setShowResults(true); // Only show dropdown (recent searches) when empty
+      setShowResults(true);
+      navigate('/');
+    } else {
+      setShowResults(false);
+
+      navigate(`/search?query=${encodeURIComponent(query)}`);
     }
   };
 
   const handleClearSearch = (e) => {
-    e.preventDefault(); // Prevent any bubbling
+    e.preventDefault();
     setSearchQuery('');
     setSearchResults([]);
-    setShowResults(true); // Show dropdown with recent searches after clearing
+    setShowResults(true);
   };
 
   const handleClearHistory = (e) => {
@@ -163,7 +159,6 @@ const Navbar = () => {
   };
 
   const handleSearchFocus = () => {
-    // Only show dropdown if search is empty
     if (!searchQuery.trim()) {
       setShowResults(true);
     }
@@ -172,25 +167,20 @@ const Navbar = () => {
   const handleSearch = (query) => {
     if (!query.trim()) return;
 
-    // Add to recent searches with timestamp
     const timestamp = Date.now();
     const searchItem = { query, timestamp };
 
-    // Get existing searches from localStorage
     const existingSearches = JSON.parse(
       localStorage.getItem('recentSearches') || '[]'
     );
 
-    // Add new search and limit to 8 items
     const updatedSearches = [
       searchItem,
       ...existingSearches.filter((item) => item.query !== query),
     ].slice(0, 8);
 
-    // Save to localStorage
     localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
 
-    // Navigate to search page with query
     navigate(`/search?query=${encodeURIComponent(query)}`);
     setShowResults(false);
   };
@@ -201,7 +191,6 @@ const Navbar = () => {
     }
   };
 
-  // Get recent searches from localStorage
   const getRecentSearches = useCallback(() => {
     const searches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
     return searches.sort((a, b) => b.timestamp - a.timestamp).slice(0, 8);
@@ -209,7 +198,7 @@ const Navbar = () => {
 
   const handleSearchItemClick = (query) => {
     setSearchQuery(query);
-    handleSearch(query); // Use handleSearch instead of direct navigation
+    handleSearch(query);
     setShowResults(false);
   };
 
@@ -220,23 +209,19 @@ const Navbar = () => {
   };
 
   const handleDeleteSearchItem = (e, timestamp) => {
-    e.stopPropagation(); // Prevent triggering the parent click
+    e.stopPropagation();
 
-    // Get existing searches
     const existingSearches = JSON.parse(
       localStorage.getItem('recentSearches') || '[]'
     );
 
-    // Remove the specific search item
     const updatedSearches = existingSearches.filter(
       (item) => item.timestamp !== timestamp
     );
 
-    // Save back to localStorage
     localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
 
-    // Force a re-render by updating state
-    setSearchResults([]); // Reset search results to trigger re-render
+    setSearchResults([]);
   };
 
   return (
