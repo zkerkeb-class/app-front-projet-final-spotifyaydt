@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import FullscreenView from '../FullscreenMode/FullscreenView';
@@ -249,10 +248,6 @@ const Options = () => {
       {isFullscreen && <FullscreenView />}
     </>
   );
-};
-
-Options.propTypes = {
-  className: PropTypes.string,
 };
 
 export default Options;

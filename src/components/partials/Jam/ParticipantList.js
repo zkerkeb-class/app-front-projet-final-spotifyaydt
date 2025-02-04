@@ -6,18 +6,16 @@ import Participant from './Participant';
 
 const ParticipantList = ({ participants }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('joinedAt'); // 'joinedAt', 'name', 'status'
+  const [sortBy, setSortBy] = useState('joinedAt');
   const [sortOrder, setSortOrder] = useState('asc');
   const [groupByStatus, setGroupByStatus] = useState(true);
 
-  // Filter participants based on search query
   const filteredParticipants = useMemo(() => {
     return participants.filter((participant) =>
       participant.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [participants, searchQuery]);
 
-  // Sort participants
   const sortedParticipants = useMemo(() => {
     return [...filteredParticipants].sort((a, b) => {
       let comparison = 0;
@@ -38,7 +36,6 @@ const ParticipantList = ({ participants }) => {
     });
   }, [filteredParticipants, sortBy, sortOrder]);
 
-  // Group participants by status
   const groupedParticipants = useMemo(() => {
     if (!groupByStatus) return { all: sortedParticipants };
 

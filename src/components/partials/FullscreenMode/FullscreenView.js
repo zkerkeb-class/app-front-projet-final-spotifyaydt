@@ -11,7 +11,6 @@ import {
 } from 'react-icons/io5';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { TbRepeat, TbRepeatOnce } from 'react-icons/tb';
-import { HiMiniSpeakerWave, HiMiniSpeakerXMark } from 'react-icons/hi2';
 import { LuMinimize2 } from 'react-icons/lu';
 import { FaSpotify } from 'react-icons/fa';
 const FullscreenView = () => {
@@ -59,7 +58,6 @@ const FullscreenView = () => {
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const currentTrack = mockTracks[currentTrackIndex];
 
-  // Handle true fullscreen mode
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -107,13 +105,11 @@ const FullscreenView = () => {
     };
   }, []);
 
-  // Initialize audio context
   useEffect(() => {
     if (!audioRef.current || !canvasRef.current || isAudioInitialized) return;
 
     const initializeAudio = async () => {
       try {
-        // Resume audio context if it's suspended
         if (
           audioContextRef.current &&
           audioContextRef.current.state === 'suspended'
@@ -121,19 +117,16 @@ const FullscreenView = () => {
           await audioContextRef.current.resume();
         }
 
-        // Create new audio context if it doesn't exist
         if (!audioContextRef.current) {
           audioContextRef.current = new (window.AudioContext ||
             window.webkitAudioContext)();
         }
 
-        // Create analyzer if it doesn't exist
         if (!analyserRef.current) {
           analyserRef.current = audioContextRef.current.createAnalyser();
           analyserRef.current.fftSize = 256;
         }
 
-        // Create and connect source node if it doesn't exist
         if (!sourceNodeRef.current) {
           sourceNodeRef.current =
             audioContextRef.current.createMediaElementSource(audioRef.current);
@@ -150,7 +143,6 @@ const FullscreenView = () => {
     initializeAudio();
   }, [audioRef, isAudioInitialized]);
 
-  // Handle visualization
   useEffect(() => {
     if (!isAudioInitialized || !canvasRef.current || !analyserRef.current)
       return;
@@ -206,19 +198,16 @@ const FullscreenView = () => {
       await document.msExitFullscreen();
     }
 
-    // Stop the visualization but keep the audio playing
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
 
-    // Disconnect visualization nodes but keep the audio connection
     if (analyserRef.current) {
       sourceNodeRef.current?.disconnect(analyserRef.current);
       analyserRef.current.disconnect();
       analyserRef.current = null;
     }
 
-    // Reconnect the source directly to the destination if it exists
     if (sourceNodeRef.current && audioContextRef.current) {
       sourceNodeRef.current.connect(audioContextRef.current.destination);
     }

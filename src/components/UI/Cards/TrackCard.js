@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import styles from './Cards.module.scss';
@@ -77,16 +76,6 @@ const TrackCard = ({ track }) => {
       </div>
     </div>
   );
-};
-
-TrackCard.propTypes = {
-  track: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-    artist: PropTypes.string.isRequired,
-    coverUrl: PropTypes.string,
-    duration: PropTypes.string.isRequired,
-  }).isRequired,
 };
 
 export default TrackCard;

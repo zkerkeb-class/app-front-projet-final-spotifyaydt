@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
@@ -87,16 +86,6 @@ const AlbumCard = ({ album }) => {
       </div>
     </div>
   );
-};
-
-AlbumCard.propTypes = {
-  album: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-    artist: PropTypes.string.isRequired,
-    coverUrl: PropTypes.string,
-    year: PropTypes.number.isRequired,
-  }).isRequired,
 };
 
 export default AlbumCard;

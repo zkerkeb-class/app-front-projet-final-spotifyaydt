@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import style from './Search.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import TrackCard from '../../components/UI/Cards/TrackCard';
@@ -20,6 +20,7 @@ import {
   intelligentSearch,
   getAutocompleteSuggestions,
 } from '../../utils/searchUtils';
+import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 
 const Search = () => {
   const navigate = useNavigate();
@@ -45,9 +46,51 @@ const Search = () => {
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get('query') || '';
 
+  const [searchParams] = useSearchParams();
+  const { handlePlay } = useAudioPlayer();
+
   const INITIAL_LIMIT = 6;
 
-  const findBestResult = (searchResults) => {
+  const handleSearch = useCallback(
+    (searchQuery) => {
+      if (!searchQuery.trim()) {
+        setResults({ tracks: [], albums: [], artists: [], playlists: [] });
+        setBestResult(null);
+        return;
+      }
+
+      setIsLoading(true);
+
+      // Use intelligent search for each category
+      const searchResults = {
+        tracks: intelligentSearch(mockTracks, searchQuery, {
+          fields: ['title', 'artist'],
+          usePhonetic: false,
+        }),
+        albums: intelligentSearch(mockAlbums, searchQuery, {
+          fields: ['title', 'artist'],
+          usePhonetic: false,
+        }),
+        artists: intelligentSearch(mockArtists, searchQuery, {
+          fields: ['name'],
+          usePhonetic: true,
+          similarityThreshold: 0.3,
+        }),
+        playlists: intelligentSearch(mockPlaylists, searchQuery, {
+          fields: ['title'],
+          usePhonetic: false,
+        }),
+      };
+
+      setResults(searchResults);
+      const bestMatch = findBestResult(searchResults, searchQuery);
+      setBestResult(bestMatch);
+      setIsLoading(false);
+    },
+    [] // Remove query dependency since we use the searchQuery parameter
+  );
+
+  const findBestResult = (searchResults, searchQuery) => {
     // Priority order: Artist > Album > Track > Playlist
     const typeScores = {
       artist: 4,
@@ -61,7 +104,7 @@ const Search = () => {
 
     // Check artists first (exact name match gets highest priority)
     const artistMatch = searchResults.artists.find(
-      (artist) => artist.name.toLowerCase() === query.toLowerCase()
+      (artist) => artist.name.toLowerCase() === searchQuery.toLowerCase()
     );
     if (artistMatch) {
       return { type: 'artist', item: artistMatch };
@@ -76,10 +119,11 @@ const Search = () => {
 
           // Add relevance factors
           const name = item.name || item.title;
-          if (name.toLowerCase() === query.toLowerCase()) score += 5;
-          else if (name.toLowerCase().startsWith(query.toLowerCase()))
+          if (name.toLowerCase() === searchQuery.toLowerCase()) score += 5;
+          else if (name.toLowerCase().startsWith(searchQuery.toLowerCase()))
             score += 3;
-          else if (name.toLowerCase().includes(query.toLowerCase())) score += 1;
+          else if (name.toLowerCase().includes(searchQuery.toLowerCase()))
+            score += 1;
 
           if (score > highestScore) {
             highestScore = score;
@@ -91,59 +135,6 @@ const Search = () => {
 
     return bestMatch;
   };
-
-  const handleSearch = useCallback(
-    (searchQuery) => {
-      if (!searchQuery.trim()) {
-        setResults({ tracks: [], albums: [], artists: [], playlists: [] });
-        setBestResult(null);
-        return;
-      }
-
-      setIsLoading(true);
-
-      // Simulate API call with mock data
-      setTimeout(() => {
-        // Use intelligent search for each category
-        const filteredTracks = intelligentSearch(mockTracks, searchQuery, {
-          fields: ['title', 'artist'],
-          usePhonetic: false,
-        });
-
-        const filteredAlbums = intelligentSearch(mockAlbums, searchQuery, {
-          fields: ['title', 'artist'],
-          usePhonetic: false,
-        });
-
-        const filteredArtists = intelligentSearch(mockArtists, searchQuery, {
-          fields: ['name'],
-          usePhonetic: true, // Enable phonetic matching for artists
-          similarityThreshold: 0.3, // More lenient for artist names
-        });
-
-        const filteredPlaylists = intelligentSearch(
-          mockPlaylists,
-          searchQuery,
-          {
-            fields: ['title'],
-            usePhonetic: false,
-          }
-        );
-
-        const searchResults = {
-          tracks: filteredTracks,
-          albums: filteredAlbums,
-          artists: filteredArtists,
-          playlists: filteredPlaylists,
-        };
-
-        setResults(searchResults);
-        setBestResult(findBestResult(searchResults));
-        setIsLoading(false);
-      }, 500);
-    },
-    [query]
-  );
 
   // Handle autocomplete suggestions
   const updateSuggestions = useCallback((searchQuery) => {
@@ -297,10 +288,6 @@ const Search = () => {
   useEffect(() => {
     setFilteredResults(results);
   }, [results]);
-
-  const handlePlay = useCallback((item) => {
-    console.log('Playing:', item);
-  }, []);
 
   const renderBestResult = () => {
     if (!bestResult) return null;

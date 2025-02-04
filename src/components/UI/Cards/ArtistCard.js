@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import styles from './Cards.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { mockTracks } from '../../../constant/mockData';
@@ -91,16 +90,6 @@ const ArtistCard = ({ artist, onPlay }) => {
       </div>
     </div>
   );
-};
-
-ArtistCard.propTypes = {
-  artist: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    imageUrl: PropTypes.string,
-    followers: PropTypes.number.isRequired,
-  }).isRequired,
-  onPlay: PropTypes.func,
 };
 
 export default ArtistCard;

@@ -1,5 +1,4 @@
 import React, { memo, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import style from './Filter.module.scss';
 
 const Filter = ({ filterName, onFilter, isActive }) => {
@@ -18,12 +17,6 @@ const Filter = ({ filterName, onFilter, isActive }) => {
       </button>
     </div>
   );
-};
-
-Filter.propTypes = {
-  filterName: PropTypes.string.isRequired,
-  onFilter: PropTypes.func.isRequired,
-  isActive: PropTypes.bool,
 };
 
 Filter.defaultProps = {
