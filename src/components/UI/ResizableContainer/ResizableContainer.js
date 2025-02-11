@@ -112,49 +112,40 @@ const ResizableContainer = ({
   });
 
   return (
-    <div
-      className={`${className} overflow-y-auto`}
-      {...props}
-      aria-label={t('common.scrollableContent')}
-    >
-      <div className={styles.resizable_layout}>
-        <div
-          className={`${styles.resizable_panel} ${isLeftCollapsed ? styles.collapsed : ''}`}
-          style={{
-            width: leftWidth,
-            minWidth: isLeftCollapsed ? COLLAPSED_WIDTH : minLeftWidth,
-            maxWidth: isLeftCollapsed ? COLLAPSED_WIDTH : maxLeftWidth,
-          }}
-        >
-          {leftPanelWithCollapse}
-        </div>
-        <div
-          className={`${styles.resizable_divider} ${isLeftCollapsed ? styles.collapsed : ''}`}
-          onMouseDown={handleMouseDown('left')}
-        />
-        <div
-          className={styles.content_panel}
-          style={{
-            marginRight: isRightSidebarVisible ? undefined : '0',
-          }}
-        >
-          {mainContent}
-        </div>
-        {isRightSidebarVisible && (
-          <>
-            <div
-              className={styles.resizable_divider}
-              onMouseDown={handleMouseDown('right')}
-            />
-            <div
-              className={styles.resizable_panel}
-              style={{ width: rightWidth }}
-            >
-              {rightPanel}
-            </div>
-          </>
-        )}
+    <div className={styles.resizable_layout}>
+      <div
+        className={`${styles.resizable_panel} ${isLeftCollapsed ? styles.collapsed : ''}`}
+        style={{
+          width: leftWidth,
+          minWidth: isLeftCollapsed ? COLLAPSED_WIDTH : minLeftWidth,
+          maxWidth: isLeftCollapsed ? COLLAPSED_WIDTH : maxLeftWidth,
+        }}
+      >
+        {leftPanelWithCollapse}
       </div>
+      <div
+        className={`${styles.resizable_divider} ${isLeftCollapsed ? styles.collapsed : ''}`}
+        onMouseDown={handleMouseDown('left')}
+      />
+      <div
+        className={styles.content_panel}
+        style={{
+          marginRight: isRightSidebarVisible ? undefined : '0',
+        }}
+      >
+        {mainContent}
+      </div>
+      {isRightSidebarVisible && (
+        <>
+          <div
+            className={styles.resizable_divider}
+            onMouseDown={handleMouseDown('right')}
+          />
+          <div className={styles.resizable_panel} style={{ width: rightWidth }}>
+            {rightPanel}
+          </div>
+        </>
+      )}
     </div>
   );
 };

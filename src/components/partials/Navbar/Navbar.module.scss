@@ -423,3 +423,20 @@
     margin-bottom: 3px;
   }
 }
+
+[dir='rtl'] {
+  .search_icon {
+    right: 12px;
+  }
+
+  .search_input {
+    padding-right: 55px !important;
+  }
+
+  .grouped_icon {
+    right: unset !important;
+    left: 0;
+    border-right: 1px solid var(--text-secondary);
+    border-left: none !important;
+  }
+}

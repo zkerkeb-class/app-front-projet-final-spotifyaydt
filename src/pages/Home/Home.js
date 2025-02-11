@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import styles from './Home.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
@@ -25,6 +26,7 @@ const Home = () => {
   const { handlePlay, lastPlays, mostListenedTo } = useAudioPlayer();
   const [activeFilter, setActiveFilter] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const INITIAL_LIMIT = 20;
 
@@ -36,27 +38,27 @@ const Home = () => {
     <div className={styles.home}>
       <header className={styles.header}>
         <Filter
-          filterName="All"
+          filterName={t('filters.all')}
           onFilter={handleFilterChange}
           isActive={activeFilter === 'All'}
         />
         <Filter
-          filterName="Tracks"
+          filterName={t('filters.tracks')}
           onFilter={handleFilterChange}
           isActive={activeFilter === 'Tracks'}
         />
         <Filter
-          filterName="Artists"
+          filterName={t('filters.artists')}
           onFilter={handleFilterChange}
           isActive={activeFilter === 'Artists'}
         />
         <Filter
-          filterName="Albums"
+          filterName={t('filters.albums')}
           onFilter={handleFilterChange}
           isActive={activeFilter === 'Albums'}
         />
         <Filter
-          filterName="Playlists"
+          filterName={t('filters.playlists')}
           onFilter={handleFilterChange}
           isActive={activeFilter === 'Playlists'}
         />
