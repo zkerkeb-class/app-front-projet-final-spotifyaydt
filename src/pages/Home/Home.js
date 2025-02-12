@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
@@ -28,7 +28,33 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
-  const INITIAL_LIMIT = 20;
+  const [artists, setArtists] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchArtists = async () => {
+      try {
+        const response = await fetch(
+          'https://back-end-projet-final-spotifyaydt.onrender.com/api/albums'
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch artists');
+        }
+        const data = await response.json();
+        setArtists(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArtists();
+    console.log(artists);
+  }, []);
+
+  const INITIAL_LIMIT = 15;
 
   const handleFilterChange = (filterName) => {
     setActiveFilter(filterName);
@@ -72,9 +98,18 @@ const Home = () => {
         />
 
         <main className={styles.mainContent}>
+          <div>
+            <h2>Artists List</h2>
+            <ul>
+              {artists.map((artist) => (
+                <li key={artist.id}>{artist.name}</li>
+              ))}
+            </ul>
+          </div>
+
           {(activeFilter === 'All' || activeFilter === 'Tracks') && (
             <HorizontalScroll
-              title="Popular Tracks"
+              title={t('common.popularTracks')}
               showShowMore={mockTracks.length > INITIAL_LIMIT}
               moreLink="/more/tracks"
               itemCount={mockTracks.length}
@@ -89,7 +124,7 @@ const Home = () => {
           {(activeFilter === 'All' || activeFilter === 'Last Plays') &&
             lastPlays.length > 0 && (
               <HorizontalScroll
-                title="Last Plays"
+                title={t('common.lastPlayed')}
                 showShowMore={lastPlays.length > INITIAL_LIMIT}
                 moreLink="/more/history"
                 itemCount={lastPlays.length}
@@ -104,7 +139,7 @@ const Home = () => {
           {(activeFilter === 'All' || activeFilter === 'Most Listened To') &&
             mostListenedTo.length > 0 && (
               <HorizontalScroll
-                title="Most Listened To"
+                title={t('common.mostPlayed')}
                 showShowMore={mostListenedTo.length > INITIAL_LIMIT}
                 moreLink="/more/most-played"
                 itemCount={mostListenedTo.length}
@@ -118,7 +153,7 @@ const Home = () => {
 
           {(activeFilter === 'All' || activeFilter === 'Artists') && (
             <HorizontalScroll
-              title="Popular Artists"
+              title={t('common.popularArtists')}
               showShowMore={mockArtists.length > INITIAL_LIMIT}
               moreLink="/more/artists"
               itemCount={mockArtists.length}
@@ -136,7 +171,7 @@ const Home = () => {
 
           {(activeFilter === 'All' || activeFilter === 'Albums') && (
             <HorizontalScroll
-              title="Featured Albums"
+              title={t('common.featuredAlbums')}
               showShowMore={mockAlbums.length > INITIAL_LIMIT}
               moreLink="/more/albums"
               itemCount={mockAlbums.length}
@@ -150,7 +185,7 @@ const Home = () => {
 
           {(activeFilter === 'All' || activeFilter === 'Playlists') && (
             <HorizontalScroll
-              title="Featured Playlists"
+              title={t('common.featuredPlaylists')}
               showShowMore={mockPlaylists.length > INITIAL_LIMIT}
               moreLink="/more/playlists"
               itemCount={mockPlaylists.length}

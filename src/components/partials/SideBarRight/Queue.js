@@ -1,16 +1,20 @@
 import React from 'react';
 import styles from './Sidebar.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
+import { useTranslation } from 'react-i18next';
 
 const Queue = () => {
   const { currentTracks, currentTrackIndex } = useAudioPlayer();
+  const { t } = useTranslation();
 
   const upcomingTracks = currentTracks.slice(currentTrackIndex + 1);
 
   return (
     <div className={styles.queue}>
       <div className={styles.queue__section}>
-        <h3 className={styles.queue__section__title}>Now Playing</h3>
+        <h3 className={styles.queue__section__title}>
+          {t('player.nowPlaying')}
+        </h3>
         {currentTracks[currentTrackIndex] && (
           <div className={styles.queue__item}>
             <img
@@ -31,9 +35,9 @@ const Queue = () => {
       </div>
 
       <div className={styles.queue__section}>
-        <h3 className={styles.queue__section__title}>Next Up</h3>
+        <h3 className={styles.queue__section__title}>{t('player.upNext')}</h3>
         {upcomingTracks.length === 0 ? (
-          <p className={styles.queue__empty}>No upcoming tracks</p>
+          <p className={styles.queue__empty}>{t('player.emptyQueue')}</p>
         ) : (
           upcomingTracks.map((track, index) => (
             <div key={track.id} className={styles.queue__item}>

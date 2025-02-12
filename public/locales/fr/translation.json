@@ -21,6 +21,11 @@
     "availableDevices": "Appareils disponibles",
     "followers": "abonnés",
     "following": "abonnements",
+    "allItems": "Tous les éléments",
+    "allTracks": "Tous les titres",
+    "allAlbums": "Tous les albums",
+    "allArtists": "Tous les artistes",
+    "allPlaylists": "Toutes les playlists",
     "popular": "Populaire",
     "popularTracks": "Titres populaires",
     "popularArtists": "Artistes populaires",
@@ -28,6 +33,7 @@
     "featuredPlaylists": "Playlists en vedette",
     "recentlyPlayed": "Écoutés récemment",
     "mostPlayed": "Les plus écoutés",
+    "lastPlayed": "Dernière écoute",
     "appName": "Spotify AYDT",
     "clearSearchHistory": "Effacer l'historique de recherche",
     "selectLanguage": "Choisir la langue",
@@ -64,7 +70,9 @@
     "tracks": "Titres",
     "albums": "Albums",
     "artists": "Artistes",
-    "playlists": "Playlists"
+    "playlists": "Playlists",
+    "recent": "Récent",
+    "popular": "Populaire"
   },
   "errors": {
     "somethingWentWrong": "Quelque chose s'est mal passé",
@@ -76,15 +84,20 @@
     "loadError": "Échec du chargement du contenu",
     "networkError": "Erreur de connexion réseau",
     "notFound": "Non trouvé",
-    "unauthorized": "Accès non autorisé"
+    "unauthorized": "Accès non autorisé",
+    "noResults": "Aucun résultat trouvé",
+    "noResultsmessage": "Aucun résultat trouvé pour votre recherche"
   },
   "player": {
     "nowPlaying": "En cours de lecture",
+    "emptyPlay": "Aucun titre en cours de lecture",
     "queue": "File d'attente",
     "connectDevice": "Se connecter à un appareil",
     "emptyQueue": "Aucune piste dans la file d'attente",
     "titlePlaying": "Titre en cours",
     "upNext": "À suivre",
+    "currentDevice": "Appareil actuel",
+    "availableDevices": "Appareils disponibles",
     "webPlayer": "Lecteur Web",
     "selectAnotherDevice": "Sélectionner un autre appareil",
     "deviceNotFound": "Vous ne voyez pas votre appareil ?"

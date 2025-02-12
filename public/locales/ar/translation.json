@@ -21,6 +21,11 @@
     "availableDevices": "الأجهزة المتاحة",
     "followers": "متابع",
     "following": "يتابع",
+    "allItems": "جميع العناصر",
+    "allTracks": "جميع الأغاني",
+    "allAlbums": "جميع الألبومات",
+    "allArtists": "جميع الفنانين",
+    "allPlaylists": "جميع قوائم التشغيل",
     "popular": "شائع",
     "popularTracks": "الأغاني الشائعة",
     "popularArtists": "الفنانون المشهورون",
@@ -28,6 +33,7 @@
     "featuredPlaylists": "قوائم تشغيل مميزة",
     "recentlyPlayed": "تم تشغيله مؤخراً",
     "mostPlayed": "الأكثر تشغيلاً",
+    "lastPlayed": "آخر تشغيل",
     "appName": "سبوتيفاي AYDT",
     "clearSearchHistory": "مسح سجل البحث",
     "selectLanguage": "اختر اللغة",
@@ -64,7 +70,9 @@
     "tracks": "الأغاني",
     "albums": "الألبومات",
     "artists": "الفنانون",
-    "playlists": "قوائم التشغيل"
+    "playlists": "قوائم التشغيل",
+    "recent": "الأخيرة",
+    "popular": "الشائعة"
   },
   "errors": {
     "somethingWentWrong": "حدث خطأ ما",
@@ -76,15 +84,20 @@
     "loadError": "فشل في تحميل المحتوى",
     "networkError": "خطأ في اتصال الشبكة",
     "notFound": "غير موجود",
-    "unauthorized": "غير مصرح به"
+    "unauthorized": "غير مصرح به",
+    "noResults": "لا توجد نتائج",
+    "noResultsmessage": "لا توجد عناصر في هذه الفئة حتى الآن"
   },
   "player": {
     "nowPlaying": "يتم التشغيل الآن",
+    "emptyPlay": "لا توجد أغنية تعمل حالياً",
     "queue": "قائمة الانتظار",
     "connectDevice": "الاتصال بجهاز",
     "emptyQueue": "لا توجد مسارات في قائمة الانتظار",
     "titlePlaying": "العنوان قيد التشغيل",
     "upNext": "التالي",
+    "currentDevice": "الجهاز الحالي",
+    "availableDevices": "الأجهزة المتاحة",
     "webPlayer": "مشغل الويب",
     "selectAnotherDevice": "اختر جهازاً آخر",
     "deviceNotFound": "لا ترى جهازك؟"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from './More.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import TrackCard from '../../components/UI/Cards/TrackCard';
@@ -17,10 +18,10 @@ import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 
 const More = () => {
   const { category } = useParams();
-  const location = useLocation();
   const { handlePlay } = useAudioPlayer();
   const [items, setItems] = useState([]);
   const [sortBy, setSortBy] = useState('default');
+  const { t } = useTranslation();
 
   useEffect(() => {
     let data = [];
@@ -73,19 +74,19 @@ const More = () => {
   const getCategoryTitle = () => {
     switch (category) {
       case 'tracks':
-        return 'All Tracks';
+        return t('common.allTracks');
       case 'albums':
-        return 'All Albums';
+        return t('common.allAlbums');
       case 'artists':
-        return 'All Artists';
+        return t('common.allArtists');
       case 'playlists':
-        return 'All Playlists';
+        return t('common.allPlaylists');
       case 'history':
-        return 'Recently Played';
+        return t('common.recentlyPlayed');
       case 'most-played':
-        return 'Most Played';
+        return t('common.mostPlayed');
       default:
-        return 'All Items';
+        return t('common.allItems');
     }
   };
 
@@ -119,17 +120,17 @@ const More = () => {
           <h1>{getCategoryTitle()}</h1>
           <div className={styles.filters}>
             <Filter
-              filterName="A-Z"
+              filterName={t('filters.all')}
               onFilter={() => handleSort('name')}
               isActive={sortBy === 'name'}
             />
             <Filter
-              filterName="Recent"
+              filterName={t('filters.recent')}
               onFilter={() => handleSort('recent')}
               isActive={sortBy === 'recent'}
             />
             <Filter
-              filterName="Popular"
+              filterName={t('filters.popular')}
               onFilter={() => handleSort('popularity')}
               isActive={sortBy === 'popularity'}
             />
@@ -141,8 +142,8 @@ const More = () => {
             renderItems()
           ) : (
             <div className={styles.empty}>
-              <h2>No items found</h2>
-              <p>There are no items in this category yet.</p>
+              <h2>{t('errors.noResults')}</h2>
+              <p>{t('errors.noResultsmessage')}</p>
             </div>
           )}
         </div>

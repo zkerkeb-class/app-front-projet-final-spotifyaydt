@@ -21,6 +21,11 @@
     "availableDevices": "Available Devices",
     "followers": "followers",
     "following": "following",
+    "allItems": "All Items",
+    "allTracks": "All Tracks",
+    "allAlbums": "All Albums",
+    "allArtists": "All Artists",
+    "allPlaylists": "All Playlists",
     "popular": "Popular",
     "popularTracks": "Popular Tracks",
     "popularArtists": "Popular Artists",
@@ -28,6 +33,7 @@
     "featuredPlaylists": "Featured Playlists",
     "recentlyPlayed": "Recently Played",
     "mostPlayed": "Most Played",
+    "lastPlayed": "Last Played",
     "appName": "Spotify AYDT",
     "clearSearchHistory": "Clear search history",
     "selectLanguage": "Select language",
@@ -64,7 +70,9 @@
     "tracks": "Tracks",
     "albums": "Albums",
     "artists": "Artists",
-    "playlists": "Playlists"
+    "playlists": "Playlists",
+    "recent": "Recent",
+    "popular": "Popular"
   },
   "errors": {
     "somethingWentWrong": "Something went wrong",
@@ -76,16 +84,20 @@
     "loadError": "Failed to load content",
     "networkError": "Network connection error",
     "notFound": "Not found",
-    "unauthorized": "Unauthorized access"
+    "unauthorized": "Unauthorized access",
+    "noResults": "No results found",
+    "noResultsmessage": "Il n’y a pas encore d’articles dans cette catégorie."
   },
   "player": {
     "nowPlaying": "Now Playing",
+    "emptyPlay": "No Track currently playing",
     "queue": "Queue",
     "connectDevice": "Connect to a device",
     "emptyQueue": "No tracks in queue",
     "titlePlaying": "Title playing",
     "upNext": "Up Next",
     "currentDevice": "Current device",
+    "availableDevices": "Available devices",
     "webPlayer": "Web Player",
     "selectAnotherDevice": "Select another device",
     "deviceNotFound": "You don't see your device?"

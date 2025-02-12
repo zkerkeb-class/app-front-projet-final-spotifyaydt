@@ -2,15 +2,17 @@ import React from 'react';
 import styles from './Sidebar.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { IoPlayCircleOutline } from 'react-icons/io5';
+import { useTranslation } from 'react-i18next';
 
 const NowPlaying = () => {
   const { currentTrack } = useAudioPlayer();
+  const { t } = useTranslation();
 
   if (!currentTrack) {
     return (
       <div className={styles.nowPlaying}>
         <div className={styles.nowPlaying__empty}>
-          <span>No track currently playing</span>
+          <span>{t('player.emptyPlay')}</span>
         </div>
       </div>
     );
