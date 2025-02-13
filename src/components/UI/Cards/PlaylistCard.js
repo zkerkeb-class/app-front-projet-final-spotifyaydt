@@ -5,16 +5,20 @@ import { useTranslation } from 'react-i18next';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
-import { mockTracks } from '../../../constant/mockData';
 import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
+import OptimizedImage from '../OptimizedImage/OptimizedImage';
+import { api } from '../../../services/api';
+import { useApi } from '../../../hooks/useApi';
 
 const PlaylistCard = ({ playlist }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
+  const { data: tracks } = useApi(() => api.tracks.getAll(), []);
+
   // Check if this specific playlist is the active source of playback
-  const isThisPlaying = isPlaying && activeCardId === playlist.id;
+  const isThisPlaying = isPlaying && activeCardId === playlist._id;
 
   const handleCardClick = useCallback(
     (e) => {
@@ -22,9 +26,9 @@ const PlaylistCard = ({ playlist }) => {
       if (e.target.closest(`.${styles.playButton}`)) {
         return;
       }
-      navigate(`/playlist/${playlist.id}`);
+      navigate(`/playlist/${playlist._id}`);
     },
-    [navigate, playlist.id]
+    [navigate, playlist._id]
   );
 
   const handlePlayClick = useCallback(
@@ -32,24 +36,21 @@ const PlaylistCard = ({ playlist }) => {
       e.preventDefault(); // Prevent any navigation
       e.stopPropagation(); // Stop event bubbling
 
-      // Get all tracks from this playlist in the correct order
-      const playlistTracks = playlist.tracks
-        .map((trackId) => mockTracks.find((track) => track.id === trackId))
-        .filter(Boolean);
+      const playlistTracks =
+        tracks?.filter((track) => playlist.tracks.includes(track._id)) || [];
 
       if (playlistTracks.length === 0) {
         console.warn(`No tracks found for playlist: ${playlist.title}`);
         return;
       }
 
-      // Play the first track but include all playlist tracks
       handlePlay({
         track: playlistTracks[0],
         tracks: playlistTracks,
         action: isThisPlaying ? 'pause' : 'play',
       });
     },
-    [playlist, handlePlay, isThisPlaying]
+    [playlist, tracks, handlePlay, isThisPlaying]
   );
 
   return (
@@ -62,10 +63,11 @@ const PlaylistCard = ({ playlist }) => {
     >
       <div className={styles.imageContainer}>
         {playlist.coverUrl ? (
-          <img
+          <OptimizedImage
             src={playlist.coverUrl}
             alt={t('common.playlistCover', { title: playlist.title })}
             className={styles.image}
+            sizes="(max-width: 768px) 150px, 200px"
             loading="lazy"
           />
         ) : (
@@ -84,7 +86,10 @@ const PlaylistCard = ({ playlist }) => {
         </button>
       </div>
       <div className={styles.content}>
-        <span className={styles.title}>{playlist.title}</span>
+        <span className={styles.title}>{playlist.name}</span>
+        <p className={styles.owner}>
+          {t('common.by')} {playlist.owner}
+        </p>
       </div>
     </div>
   );

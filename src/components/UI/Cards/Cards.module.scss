@@ -95,7 +95,8 @@
 
 .artist,
 .followers,
-.year {
+.year,
+.duration {
   color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 400;
@@ -137,9 +138,4 @@
   font-size: 0.75rem;
   font-weight: 700;
   z-index: 1;
-}
-
-.duration {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
 }

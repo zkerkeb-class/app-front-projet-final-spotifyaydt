@@ -47,6 +47,15 @@
         object-fit: cover;
         box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
       }
+
+      &__fallback {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        position: relative;
+      }
     }
 
     &__info {

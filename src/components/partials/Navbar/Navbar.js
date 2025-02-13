@@ -360,7 +360,7 @@ const Navbar = () => {
           >
             <option value="fr">FR</option>
             <option value="en">EN</option>
-            <option value="ar">ARA</option>
+            <option value="ar">AR</option>
           </select>
         </div>
         <div className={style.avatar_button}>

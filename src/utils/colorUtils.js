@@ -1,5 +1,6 @@
 // Function to generate a consistent hash from a string
 const hashString = (str) => {
+  if (!str) return 0;
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
@@ -17,6 +18,15 @@ const generateColor = (hash, saturation = 50, lightness = 30) => {
 
 // Main function to generate gradient
 export const generateGradient = (identifier) => {
+  if (!identifier) {
+    // Return a default gradient if no identifier is provided
+    return {
+      backgroundColor: 'hsl(0, 0%, 15%)',
+      backgroundImage:
+        'linear-gradient(180deg, hsl(0, 0%, 15%) 0%, hsl(0, 0%, 10%) 100%)',
+    };
+  }
+
   const hash = hashString(identifier);
   const color1 = generateColor(hash);
   const color2 = generateColor(hash + 120, 45, 25); // Offset hue by 120 degrees for complementary color

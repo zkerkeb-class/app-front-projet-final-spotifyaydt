@@ -1,27 +1,40 @@
 import React, { useCallback } from 'react';
 import style from './Album.module.scss';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import WaveformAnimation from '../../components/UI/WaveformAnimation/WaveformAnimation';
 import { generateGradient } from '../../utils/colorUtils';
+import OptimizedImage from '../../components/UI/OptimizedImage/OptimizedImage';
+import LoadingSpinner from '../../components/UI/LoadingSpinner/LoadingSpinner';
+import CardFallbackIcon from '../../components/UI/CardFallbackIcon/CardFallbackIcon';
+import { api } from '../../services/api';
+import { useApi } from '../../hooks/useApi';
 
 import { FaSpotify, FaPlay, FaPause } from 'react-icons/fa';
 import { PiShuffleBold } from 'react-icons/pi';
 import { LuDot } from 'react-icons/lu';
 import { MdAccessTime } from 'react-icons/md';
 
-import { mockAlbums, mockTracks } from '../../constant/mockData';
-
 const Album = () => {
   const { id } = useParams();
+  const { t } = useTranslation();
   const { handlePlay, isPlaying, activeCardId, currentTrack } =
     useAudioPlayer();
 
-  const album = mockAlbums.find((a) => a.id === Number(id));
-  const albumTracks = mockTracks
-    .filter((track) => track.album === album?.title)
-    .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0));
+  const {
+    data: album,
+    loading: albumLoading,
+    error: albumError,
+  } = useApi(() => api.albums.getById(id), [id]);
+
+  const { data: tracks } = useApi(() => api.tracks.getAll(), []);
+
+  const albumTracks =
+    tracks
+      ?.filter((track) => track.album._id === album?._id)
+      .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0)) || [];
 
   // Generate unique gradient for this album
   const headerStyle = generateGradient(album?.title || '');
@@ -67,13 +80,38 @@ const Album = () => {
     });
   }, [album, albumTracks, handlePlay]);
 
+  const getArtistName = (track) => {
+    if (!track?.artist) return t('common.unknownArtist');
+    if (typeof track.artist === 'string') return track.artist;
+    if (track.artist._id) return track.artist.name || t('common.unknownArtist');
+    return track.artist.name || t('common.unknownArtist');
+  };
+
+  if (albumLoading) {
+    return <LoadingSpinner aria-label={t('album.loading')} />;
+  }
+
+  if (albumError) {
+    return (
+      <div>
+        {t('album.error')}: {albumError}
+      </div>
+    );
+  }
+
   if (!album) {
-    return <div>Album not found</div>;
+    return <div>{t('album.notFound')}</div>;
   }
 
   const formatDuration = (duration) => {
-    const [minutes, seconds] = duration.split(':');
-    return `${minutes}:${seconds.padStart(2, '0')}`;
+    if (!duration) return '0:00';
+    if (typeof duration === 'string' && duration.includes(':')) {
+      const [minutes, seconds] = duration.split(':');
+      return `${minutes}:${seconds.padStart(2, '0')}`;
+    }
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -81,23 +119,31 @@ const Album = () => {
       <div className={style.container}>
         <header className={style.header} style={headerStyle}>
           <div className={style.header__container}>
-            <img
-              className={style.header__container__image}
-              src={album.coverUrl}
-              alt={`${album.title} Cover`}
-              loading="lazy"
-            />
+            {album.coverImage ? (
+              <OptimizedImage
+                src={album.coverImage}
+                alt={t('common.albumCover', { title: album.title })}
+                className={style.header__container__image}
+                sizes="(max-width: 768px) 200px, 232px"
+                loading="eager"
+              />
+            ) : (
+              <CardFallbackIcon type="album" />
+            )}
           </div>
           <div className={style.header__info}>
-            <span>Album</span>
+            <span>{t('album.title')}</span>
             <h1 className={style.header__info__title}>{album.title}</h1>
-            <span>{album.artist}</span>
+            <span>{getArtistName(album)}</span>
             <div className={style.header__info__more}>
               <FaSpotify className={style.header__info__more__logo} />
               <span>Spotify</span>
               <LuDot className={style.header__info__more__icon} />
               <span>
-                {albumTracks.length} tracks • {album.year}
+                {t('album.trackCount', { count: albumTracks.length })} •{' '}
+                {album.releaseDate
+                  ? new Date(album.releaseDate).getFullYear()
+                  : ''}
               </span>
             </div>
           </div>
@@ -109,14 +155,18 @@ const Album = () => {
               <button
                 className={style.main__header__container__button}
                 onClick={handlePlayClick}
-                aria-label={isThisPlaying ? 'Pause album' : 'Play album'}
+                aria-label={
+                  isThisPlaying
+                    ? t('common.pauseAlbum', { title: album.title })
+                    : t('common.playAlbum', { title: album.title })
+                }
               >
                 {isThisPlaying ? <FaPause /> : <FaPlay />}
               </button>
               <button
                 className={`${style.main__header__container__button} ${style.shuffle_button}`}
                 onClick={handleShuffle}
-                aria-label="Shuffle album"
+                aria-label={t('album.shufflePlay')}
               >
                 <PiShuffleBold />
               </button>
@@ -124,9 +174,13 @@ const Album = () => {
             <div className={style.main__header__table}>
               <div className={style.main__header__table__flex}>
                 <span className={style.main__header__table__item}>#</span>
-                <span className={style.main__header__table__item}>Title</span>
+                <span className={style.main__header__table__item}>
+                  {t('common.title')}
+                </span>
               </div>
-              <span className={style.main__header__table__item}>Album</span>
+              <span className={style.main__header__table__item}>
+                {t('common.artist')}
+              </span>
               <span
                 className={style.main__header__table__item}
                 style={{
@@ -135,7 +189,7 @@ const Album = () => {
                   justifyContent: 'flex-end',
                 }}
               >
-                <MdAccessTime />
+                <MdAccessTime title={t('album.duration')} />
               </span>
             </div>
           </div>
@@ -157,8 +211,8 @@ const Album = () => {
                       }}
                       aria-label={
                         isPlaying && currentTrack.id === track.id
-                          ? 'Pause track'
-                          : 'Play track'
+                          ? t('common.pauseTrack', { title: track.title })
+                          : t('common.playTrack', { title: track.title })
                       }
                     >
                       <WaveformAnimation className={style.waveform} />
@@ -173,7 +227,9 @@ const Album = () => {
                           e.stopPropagation();
                           handleTrackPlay(track);
                         }}
-                        aria-label="Play track"
+                        aria-label={t('common.playTrack', {
+                          title: track.title,
+                        })}
                       >
                         <FaPlay />
                       </button>
@@ -189,10 +245,12 @@ const Album = () => {
                     ) : (
                       <span className={style.track__title}>{track.title}</span>
                     )}
-                    <span className={style.track__artist}>{track.artist}</span>
+                    <span className={style.track__artist}>
+                      {getArtistName(track)}
+                    </span>
                   </div>
                 </div>
-                <span className={style.track__album}>{track.album}</span>
+                <span className={style.track__album}>{album.title}</span>
                 <span className={style.track__duration}>
                   {formatDuration(track.duration)}
                 </span>

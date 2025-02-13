@@ -139,3 +139,11 @@
     cursor: pointer;
   }
 }
+
+[dir='rtl'] {
+  .filter_dropdown,
+  .sort_dropdown {
+    right: unset;
+    left: 0;
+  }
+}

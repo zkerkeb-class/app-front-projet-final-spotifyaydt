@@ -13,6 +13,11 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 import { TbRepeat, TbRepeatOnce } from 'react-icons/tb';
 import { LuMinimize2 } from 'react-icons/lu';
 import { FaSpotify } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
+import OptimizedImage from '../../UI/OptimizedImage/OptimizedImage';
+import CardFallbackIcon from '../../UI/CardFallbackIcon/CardFallbackIcon';
+import { IoClose } from 'react-icons/io5';
+
 const FullscreenView = () => {
   const {
     currentTrackIndex,
@@ -47,6 +52,8 @@ const FullscreenView = () => {
     isAdjustingProgress,
     progressBarRef,
     previewTime,
+    currentTrack,
+    toggleFullscreen,
   } = useAudioPlayer();
 
   const containerRef = useRef(null);
@@ -56,7 +63,15 @@ const FullscreenView = () => {
   const analyserRef = useRef(null);
   const animationFrameRef = useRef(null);
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
-  const currentTrack = mockTracks[currentTrackIndex];
+  const { t } = useTranslation();
+  const [imageError, setImageError] = useState(false);
+
+  const getArtistName = (track) => {
+    if (!track?.artist) return t('common.unknownArtist');
+    if (typeof track.artist === 'string') return track.artist;
+    if (track.artist._id) return track.artist.name || t('common.unknownArtist');
+    return track.artist.name || t('common.unknownArtist');
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -319,6 +334,9 @@ const FullscreenView = () => {
 
   return (
     <div ref={containerRef} className={styles.fullscreen}>
+      <button className={styles.close} onClick={toggleFullscreen}>
+        <IoClose />
+      </button>
       <div
         className={styles.background}
         style={{ backgroundImage: `url(${currentTrack.coverUrl})` }}
@@ -333,19 +351,23 @@ const FullscreenView = () => {
         </div>
         <div className={styles.artworkContainer}>
           <div className={styles.artwork}>
-            <picture>
-              <source srcSet={currentTrack.coverUrl} type="image/webp" />
-              <source srcSet={currentTrack.coverUrl} type="image/jpeg" />
-              <img
-                src={currentTrack.coverUrl}
-                alt={`${currentTrack.title} artwork`}
+            {!imageError && currentTrack?.coverImage ? (
+              <OptimizedImage
+                src={currentTrack.coverImage}
+                alt={t('common.coverArt', { title: currentTrack.title })}
+                className={styles.artwork__image}
+                sizes="(max-width: 768px) 200px, 400px"
+                loading="eager"
+                onError={() => setImageError(true)}
               />
-            </picture>
+            ) : (
+              <CardFallbackIcon type="track" />
+            )}
           </div>
 
           <div className={styles.metadata}>
             <h1>{currentTrack.title}</h1>
-            <h2>{currentTrack.artist}</h2>
+            <h2>{getArtistName(currentTrack)}</h2>
             <p className={styles.album}>
               {currentTrack.album} • {currentTrack.releaseYear}
             </p>

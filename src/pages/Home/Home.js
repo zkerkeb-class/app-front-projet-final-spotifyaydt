@@ -1,58 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
-import styles from './Home.module.scss';
-import ErrorBoundary from '../../components/ErrorBoundary';
-
-// Components
-import HorizontalScroll from '../../components/UI/HorizontalScroll/HorizontalScroll';
-import TrackCard from '../../components/UI/Cards/TrackCard';
-import ArtistCard from '../../components/UI/Cards/ArtistCard';
-import AlbumCard from '../../components/UI/Cards/AlbumCard';
-import PlaylistCard from '../../components/UI/Cards/PlaylistCard';
-import RecentSection from '../../components/UI/RecentSection/RecentSection';
+import { fetchWithCache } from '../../utils/cacheUtils';
 import Filter from '../../components/UI/Filter/Filter';
+import style from './Home.module.scss';
+import ErrorBoundary from '../../components/ErrorBoundary';
+import { api } from '../../services/api';
+import { useApi } from '../../hooks/useApi';
 
-// Mock Data
-import {
-  mockTracks,
-  mockArtists,
-  mockAlbums,
-  mockPlaylists,
-} from '../../constant/mockData';
+// Lazy loaded components
+const HorizontalScroll = lazy(
+  () => import('../../components/UI/HorizontalScroll/HorizontalScroll')
+);
+const RecentSection = lazy(
+  () => import('../../components/UI/RecentSection/RecentSection')
+);
+const TrackCard = lazy(() => import('../../components/UI/Cards/TrackCard'));
+const ArtistCard = lazy(() => import('../../components/UI/Cards/ArtistCard'));
+const AlbumCard = lazy(() => import('../../components/UI/Cards/AlbumCard'));
+const PlaylistCard = lazy(
+  () => import('../../components/UI/Cards/PlaylistCard')
+);
+
+const LoadingFallback = () => (
+  <div className="loading-spinner">
+    <div className="spinner"></div>
+  </div>
+);
 
 const Home = () => {
   const { handlePlay, lastPlays, mostListenedTo } = useAudioPlayer();
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
+  const [activeFilter, setActiveFilter] = useState(t('filters.all'));
 
-  const [artists, setArtists] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Fetch data from API
+  const { data: tracks, loading: tracksLoading } = useApi(
+    () => api.tracks.getAll(),
+    []
+  );
+  const { data: albums, loading: albumsLoading } = useApi(
+    () => api.albums.getAll(),
+    []
+  );
+  const { data: artists, loading: artistsLoading } = useApi(
+    () => api.artists.getAll(),
+    []
+  );
+  const { data: playlists, loading: playlistsLoading } = useApi(
+    () => api.playlists.getAll(),
+    []
+  );
 
-  useEffect(() => {
-    const fetchArtists = async () => {
-      try {
-        const response = await fetch(
-          'https://back-end-projet-final-spotifyaydt.onrender.com/api/albums'
-        );
-        if (!response.ok) {
-          throw new Error('Failed to fetch artists');
-        }
-        const data = await response.json();
-        setArtists(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const isLoading =
+    tracksLoading || albumsLoading || artistsLoading || playlistsLoading;
 
-    fetchArtists();
-    console.log(artists);
-  }, []);
+  // Sort tracks by play count for popular tracks
+  const popularTracks = tracks
+    ? [...tracks]
+        .sort((a, b) => (b.playCount || 0) - (a.playCount || 0))
+        .slice(0, 10)
+    : [];
+
+  // Sort artists by followers for popular artists
+  const popularArtists = artists
+    ? [...artists]
+        .sort((a, b) => (b.followers || 0) - (a.followers || 0))
+        .slice(0, 10)
+    : [];
+
+  // Get featured albums (could be based on release date or other criteria)
+  const featuredAlbums = albums
+    ? [...albums]
+        .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
+        .slice(0, 10)
+    : [];
+
+  // Get featured playlists
+  const featuredPlaylists = playlists
+    ? [...playlists].sort(() => Math.random() - 0.5).slice(0, 10)
+    : [];
 
   const INITIAL_LIMIT = 15;
 
@@ -61,146 +88,111 @@ const Home = () => {
   };
 
   return (
-    <div className={styles.home}>
-      <header className={styles.header}>
+    <div className={style.home}>
+      <header className={style.header}>
         <Filter
           filterName={t('filters.all')}
           onFilter={handleFilterChange}
-          isActive={activeFilter === 'All'}
+          isActive={activeFilter === t('filters.all')}
         />
         <Filter
           filterName={t('filters.tracks')}
           onFilter={handleFilterChange}
-          isActive={activeFilter === 'Tracks'}
+          isActive={activeFilter === t('filters.tracks')}
         />
         <Filter
           filterName={t('filters.artists')}
           onFilter={handleFilterChange}
-          isActive={activeFilter === 'Artists'}
+          isActive={activeFilter === t('filters.artists')}
         />
         <Filter
           filterName={t('filters.albums')}
           onFilter={handleFilterChange}
-          isActive={activeFilter === 'Albums'}
+          isActive={activeFilter === t('filters.albums')}
         />
         <Filter
           filterName={t('filters.playlists')}
           onFilter={handleFilterChange}
-          isActive={activeFilter === 'Playlists'}
+          isActive={activeFilter === t('filters.playlists')}
         />
       </header>
 
       <ErrorBoundary>
-        <RecentSection
-          tracks={lastPlays}
-          isLoading={isLoading}
-          onPlay={handlePlay}
-        />
-
-        <main className={styles.mainContent}>
-          <div>
-            <h2>Artists List</h2>
-            <ul>
-              {artists.map((artist) => (
-                <li key={artist.id}>{artist.name}</li>
-              ))}
-            </ul>
-          </div>
-
-          {(activeFilter === 'All' || activeFilter === 'Tracks') && (
-            <HorizontalScroll
-              title={t('common.popularTracks')}
-              showShowMore={mockTracks.length > INITIAL_LIMIT}
-              moreLink="/more/tracks"
-              itemCount={mockTracks.length}
-              maxItems={INITIAL_LIMIT}
-            >
-              {mockTracks.slice(0, INITIAL_LIMIT).map((track) => (
-                <TrackCard key={track.id} track={track} onPlay={handlePlay} />
-              ))}
-            </HorizontalScroll>
-          )}
-
-          {(activeFilter === 'All' || activeFilter === 'Last Plays') &&
-            lastPlays.length > 0 && (
-              <HorizontalScroll
-                title={t('common.lastPlayed')}
-                showShowMore={lastPlays.length > INITIAL_LIMIT}
-                moreLink="/more/history"
-                itemCount={lastPlays.length}
-                maxItems={INITIAL_LIMIT}
-              >
-                {lastPlays.slice(0, INITIAL_LIMIT).map((track) => (
-                  <TrackCard key={track.id} track={track} onPlay={handlePlay} />
-                ))}
-              </HorizontalScroll>
-            )}
-
-          {(activeFilter === 'All' || activeFilter === 'Most Listened To') &&
-            mostListenedTo.length > 0 && (
-              <HorizontalScroll
-                title={t('common.mostPlayed')}
-                showShowMore={mostListenedTo.length > INITIAL_LIMIT}
-                moreLink="/more/most-played"
-                itemCount={mostListenedTo.length}
-                maxItems={INITIAL_LIMIT}
-              >
-                {mostListenedTo.slice(0, INITIAL_LIMIT).map((track) => (
-                  <TrackCard key={track.id} track={track} onPlay={handlePlay} />
-                ))}
-              </HorizontalScroll>
-            )}
-
-          {(activeFilter === 'All' || activeFilter === 'Artists') && (
-            <HorizontalScroll
-              title={t('common.popularArtists')}
-              showShowMore={mockArtists.length > INITIAL_LIMIT}
-              moreLink="/more/artists"
-              itemCount={mockArtists.length}
-              maxItems={INITIAL_LIMIT}
-            >
-              {mockArtists.slice(0, INITIAL_LIMIT).map((artist) => (
-                <ArtistCard
-                  key={artist.id}
-                  artist={artist}
+        <Suspense fallback={<LoadingFallback />}>
+          {isLoading ? (
+            <LoadingFallback />
+          ) : (
+            <>
+              {activeFilter === t('filters.all') && (
+                <RecentSection
+                  tracks={lastPlays}
+                  isLoading={false}
                   onPlay={handlePlay}
                 />
-              ))}
-            </HorizontalScroll>
-          )}
+              )}
 
-          {(activeFilter === 'All' || activeFilter === 'Albums') && (
-            <HorizontalScroll
-              title={t('common.featuredAlbums')}
-              showShowMore={mockAlbums.length > INITIAL_LIMIT}
-              moreLink="/more/albums"
-              itemCount={mockAlbums.length}
-              maxItems={INITIAL_LIMIT}
-            >
-              {mockAlbums.slice(0, INITIAL_LIMIT).map((album) => (
-                <AlbumCard key={album.id} album={album} onPlay={handlePlay} />
-              ))}
-            </HorizontalScroll>
-          )}
+              {(activeFilter === t('filters.all') ||
+                activeFilter === t('filters.tracks')) && (
+                <HorizontalScroll
+                  title={t('common.popularTracks')}
+                  showShowMore={true}
+                  moreLink="/more/tracks"
+                  itemCount={tracks?.length || 0}
+                  maxItems={INITIAL_LIMIT}
+                >
+                  {popularTracks.map((track) => (
+                    <TrackCard key={track.id} track={track} />
+                  ))}
+                </HorizontalScroll>
+              )}
 
-          {(activeFilter === 'All' || activeFilter === 'Playlists') && (
-            <HorizontalScroll
-              title={t('common.featuredPlaylists')}
-              showShowMore={mockPlaylists.length > INITIAL_LIMIT}
-              moreLink="/more/playlists"
-              itemCount={mockPlaylists.length}
-              maxItems={INITIAL_LIMIT}
-            >
-              {mockPlaylists.slice(0, INITIAL_LIMIT).map((playlist) => (
-                <PlaylistCard
-                  key={playlist.id}
-                  playlist={playlist}
-                  onPlay={handlePlay}
-                />
-              ))}
-            </HorizontalScroll>
+              {(activeFilter === t('filters.all') ||
+                activeFilter === t('filters.artists')) && (
+                <HorizontalScroll
+                  title={t('common.popularArtists')}
+                  showShowMore={true}
+                  moreLink="/more/artists"
+                  itemCount={artists?.length || 0}
+                  maxItems={INITIAL_LIMIT}
+                >
+                  {popularArtists.map((artist) => (
+                    <ArtistCard key={artist._id} artist={artist} />
+                  ))}
+                </HorizontalScroll>
+              )}
+
+              {(activeFilter === t('filters.all') ||
+                activeFilter === t('filters.albums')) && (
+                <HorizontalScroll
+                  title={t('common.featuredAlbums')}
+                  showShowMore={true}
+                  moreLink="/more/albums"
+                  itemCount={albums?.length || 0}
+                  maxItems={INITIAL_LIMIT}
+                >
+                  {featuredAlbums.map((album) => (
+                    <AlbumCard key={album.id} album={album} />
+                  ))}
+                </HorizontalScroll>
+              )}
+
+              {(activeFilter === t('filters.all') ||
+                activeFilter === t('filters.playlists')) && (
+                <HorizontalScroll
+                  title={t('common.featuredPlaylists')}
+                  showShowMore={true}
+                  moreLink="/more/playlists"
+                  itemCount={playlists?.length || 0}
+                  maxItems={INITIAL_LIMIT}
+                >
+                  {featuredPlaylists.map((playlist) => (
+                    <PlaylistCard key={playlist.id} playlist={playlist} />
+                  ))}
+                </HorizontalScroll>
+              )}
+            </>
           )}
-        </main>
+        </Suspense>
       </ErrorBoundary>
     </div>
   );

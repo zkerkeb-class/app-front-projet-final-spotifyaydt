@@ -216,6 +216,23 @@
       transition: all 0.3s ease;
     }
   }
+
+  .loading,
+  .error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    padding: 16px;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  .error {
+    color: var(--error-color);
+    font-size: 14px;
+    line-height: 1.5;
+  }
 }
 
 /* Styles pour la scrollbar */

@@ -1,6 +1,7 @@
 {
   "common": {
-    "search": "Que souhaitez-vous écouter ?",
+    "title": "Titre",
+    "search": "Que voulez-vous écouter ?",
     "library": "Bibliothèque",
     "home": "Accueil",
     "playlist": "Liste de lecture",
@@ -21,11 +22,6 @@
     "availableDevices": "Appareils disponibles",
     "followers": "abonnés",
     "following": "abonnements",
-    "allItems": "Tous les éléments",
-    "allTracks": "Tous les titres",
-    "allAlbums": "Tous les albums",
-    "allArtists": "Tous les artistes",
-    "allPlaylists": "Toutes les playlists",
     "popular": "Populaire",
     "popularTracks": "Titres populaires",
     "popularArtists": "Artistes populaires",
@@ -33,14 +29,15 @@
     "featuredPlaylists": "Playlists en vedette",
     "recentlyPlayed": "Écoutés récemment",
     "mostPlayed": "Les plus écoutés",
-    "lastPlayed": "Dernière écoute",
     "appName": "Spotify AYDT",
-    "clearSearchHistory": "Effacer l'historique de recherche",
+    "clearSearchHistory": "Effacer l'historique",
     "selectLanguage": "Choisir la langue",
     "lightMode": "Mode clair",
     "darkMode": "Mode sombre",
     "clear": "Effacer",
     "sort": "Trier",
+    "filter": "Filtrer",
+    "all": "Tout",
     "copyright": "© {{year}} AYDT",
     "toggleSidebar": "Basculer la barre latérale",
     "expandSidebar": "Développer la barre latérale",
@@ -61,9 +58,21 @@
     "pauseAlbum": "Mettre en pause l'album : {{title}}",
     "playArtist": "Lire les meilleures chansons de {{name}}",
     "pauseArtist": "Mettre en pause les chansons de {{name}}",
-    "playPlaylist": "Lire la playlist : {{title}}",
-    "pausePlaylist": "Mettre en pause la playlist : {{title}}",
-    "followerCount": "{{count}} abonnés"
+    "playPlaylist": "Lire {{title}}",
+    "pausePlaylist": "Mettre en pause {{title}}",
+    "followerCount": "{{count}} abonnés",
+    "by": "par",
+    "unknownArtist": "Artiste inconnu",
+    "unknownTitle": "Titre inconnu",
+    "unknownAlbum": "Album inconnu",
+    "shuffleArtist": "Lecture aléatoire des titres de {{name}}",
+    "followerCount_one": "{{count}} abonné",
+    "followerCount_other": "{{count}} abonnés",
+    "shufflePlaylist": "Lecture aléatoire de la liste",
+    "playTrack": "Lire {{title}}",
+    "pauseTrack": "Mettre en pause {{title}}",
+    "trackCount": "{{count}} titres",
+    "likeCount": "{{count}} j'aime"
   },
   "filters": {
     "all": "Tout",
@@ -71,6 +80,7 @@
     "albums": "Albums",
     "artists": "Artistes",
     "playlists": "Playlists",
+    "alphabetical": "A-Z",
     "recent": "Récent",
     "popular": "Populaire"
   },
@@ -85,19 +95,16 @@
     "networkError": "Erreur de connexion réseau",
     "notFound": "Non trouvé",
     "unauthorized": "Accès non autorisé",
-    "noResults": "Aucun résultat trouvé",
-    "noResultsmessage": "Aucun résultat trouvé pour votre recherche"
+    "loadingPlaylist": "Erreur lors du chargement de la liste de lecture",
+    "playlistNotFound": "Liste de lecture introuvable"
   },
   "player": {
     "nowPlaying": "En cours de lecture",
-    "emptyPlay": "Aucun titre en cours de lecture",
     "queue": "File d'attente",
     "connectDevice": "Se connecter à un appareil",
     "emptyQueue": "Aucune piste dans la file d'attente",
     "titlePlaying": "Titre en cours",
     "upNext": "À suivre",
-    "currentDevice": "Appareil actuel",
-    "availableDevices": "Appareils disponibles",
     "webPlayer": "Lecteur Web",
     "selectAnotherDevice": "Sélectionner un autre appareil",
     "deviceNotFound": "Vous ne voyez pas votre appareil ?"
@@ -122,5 +129,95 @@
     "daysAgo": "Il y a {{count}} jours",
     "monthsAgo": "Il y a {{count}} mois",
     "yearsAgo": "Il y a {{count}} ans"
+  },
+  "search": {
+    "placeholder": "Rechercher des titres, albums, artistes...",
+    "noResults": "Aucun résultat trouvé",
+    "bestMatch": "Meilleur résultat",
+    "tryAgain": "Essayez une autre recherche",
+    "emptyState": "Commencez à taper pour rechercher",
+    "tracksCount": "{{count}} titres trouvés",
+    "albumsCount": "{{count}} albums trouvés",
+    "artistsCount": "{{count}} artistes trouvés",
+    "playlistsCount": "{{count}} playlists trouvées",
+    "filters": {
+      "all": "Tout",
+      "tracks": "Titres",
+      "albums": "Albums",
+      "artists": "Artistes",
+      "playlists": "Playlists"
+    },
+    "sort": {
+      "title": "Trier par",
+      "duration": "Durée",
+      "releaseDate": "Date de sortie",
+      "popularity": "Popularité",
+      "alphabetical": "A-Z"
+    },
+    "filter": {
+      "title": "Filtrer par",
+      "artist": "Artiste",
+      "album": "Album",
+      "genre": "Genre",
+      "year": "Année",
+      "duration": {
+        "title": "Durée",
+        "short": "Court (≤ 3 min)",
+        "medium": "Moyen (3-5 min)",
+        "long": "Long (> 5 min)"
+      },
+      "popularity": {
+        "title": "Popularité",
+        "high": "Élevée",
+        "medium": "Moyenne",
+        "low": "Faible"
+      }
+    }
+  },
+  "track": {
+    "details": "Détails du titre",
+    "lyrics": "Paroles",
+    "lyricsAvailable": "Les paroles sont disponibles pour ce titre",
+    "plays": "{{count}} écoutes",
+    "like": "Aimer le titre",
+    "unlike": "Ne plus aimer le titre",
+    "details_labels": {
+      "album": "Album",
+      "artist": "Artiste",
+      "genre": "Genre",
+      "releaseYear": "Année de sortie",
+      "duration": "Durée",
+      "mood": "Ambiance"
+    },
+    "unknown": {
+      "genre": "Genre inconnu",
+      "year": "Année inconnue",
+      "mood": "Ambiance inconnue"
+    }
+  },
+  "artist": {
+    "discography": "Discographie",
+    "albums": "Albums",
+    "noTracks": "Aucun titre disponible",
+    "noAlbums": "Aucun album disponible"
+  },
+  "album": {
+    "title": "Album",
+    "tracks": "Titres",
+    "releaseYear": "Année de sortie",
+    "trackCount": "{{count}} titres",
+    "trackCount_one": "{{count}} titre",
+    "trackCount_other": "{{count}} titres",
+    "shufflePlay": "Lecture aléatoire",
+    "notFound": "Album introuvable",
+    "loading": "Chargement de l'album...",
+    "error": "Erreur lors du chargement de l'album",
+    "duration": "Durée",
+    "trackNumber": "Numéro de piste"
+  },
+  "playlist": {
+    "noTracks": "Cette liste de lecture ne contient aucun titre",
+    "loading": "Chargement de la liste de lecture...",
+    "error": "Erreur lors du chargement de la liste de lecture"
   }
 }

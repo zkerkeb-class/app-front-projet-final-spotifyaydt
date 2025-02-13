@@ -7,27 +7,80 @@ import AlbumCard from '../../components/UI/Cards/AlbumCard';
 import WaveformAnimation from '../../components/UI/WaveformAnimation/WaveformAnimation';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import { generateGradient } from '../../utils/colorUtils';
+import OptimizedImage from '../../components/UI/OptimizedImage/OptimizedImage';
+import { useTranslation } from 'react-i18next';
+import LoadingSpinner from '../../components/UI/LoadingSpinner/LoadingSpinner';
+import { api } from '../../services/api';
+import { useApi } from '../../hooks/useApi';
+import CardFallbackIcon from '../../components/UI/CardFallbackIcon/CardFallbackIcon';
 
 // Icons
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { PiShuffleBold } from 'react-icons/pi';
 
-import { mockArtists, mockTracks, mockAlbums } from '../../constant/mockData';
-
 const Artist = () => {
   const { id } = useParams();
   const { handlePlay, isPlaying, currentTrack } = useAudioPlayer();
+  const { t } = useTranslation();
 
-  const artist = mockArtists.find((a) => a.id === Number(id)) || mockArtists[0];
-  const artistTracks = mockTracks.filter((track) =>
-    track.artist.includes(artist.name)
+  const {
+    data: artist,
+    loading: artistLoading,
+    error: artistError,
+  } = useApi(() => api.artists.getById(id), [id]);
+
+  const { data: tracks, loading: tracksLoading } = useApi(
+    () => api.tracks.getAll(),
+    []
   );
-  const artistAlbums = mockAlbums.filter(
-    (album) => album.artist === artist.name
+
+  const { data: albums, loading: albumsLoading } = useApi(
+    () => api.albums.getAll(),
+    []
   );
+
+  console.log('Artist data:', artist);
+  console.log('Tracks data:', tracks);
+  console.log('Albums data:', albums);
+
+  const artistTracks =
+    tracks?.filter((track) => {
+      if (!track.artist || !artist?._id) return false;
+
+      // If track.artist is an object with _id (MongoDB format)
+      if (typeof track.artist === 'object' && track.artist._id) {
+        return track.artist._id === artist._id;
+      }
+
+      // If track.artist is an array of objects
+      if (Array.isArray(track.artist)) {
+        return track.artist.some((a) =>
+          typeof a === 'object' ? a._id === artist._id : a === artist._id
+        );
+      }
+
+      // If track.artist is a string (ID)
+      return track.artist === artist._id;
+    }) || [];
+
+  const artistAlbums =
+    albums?.filter((album) => {
+      if (!album.artist || !artist?._id) return false;
+
+      // If album.artist is an object
+      if (typeof album.artist === 'object') {
+        return album.artist._id === artist._id;
+      }
+
+      // If album.artist is a string (ID)
+      return album.artist === artist._id;
+    }) || [];
+
+  console.log('Filtered artist tracks:', artistTracks);
+  console.log('Filtered artist albums:', artistAlbums);
 
   // Generate unique gradient for this artist
-  const headerStyle = generateGradient(artist.name);
+  const headerStyle = artist ? generateGradient(artist.name) : {};
 
   // Check if this artist's tracks are currently playing
   const isThisPlaying =
@@ -75,27 +128,71 @@ const Artist = () => {
   };
 
   const formatDuration = (duration) => {
-    const [minutes, seconds] = duration.split(':');
-    return `${minutes}:${seconds.padStart(2, '0')}`;
+    if (!duration) return '0:00';
+
+    // If duration is already in MM:SS format
+    if (typeof duration === 'string' && duration.includes(':')) {
+      const [minutes, seconds] = duration.split(':');
+      return `${minutes}:${seconds.padStart(2, '0')}`;
+    }
+
+    // If duration is in seconds (number or string)
+    const totalSeconds = parseInt(duration, 10);
+    if (isNaN(totalSeconds)) return '0:00';
+
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
+
+  if (artistLoading || tracksLoading || albumsLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (artistError) {
+    return <div>Error loading artist: {artistError}</div>;
+  }
+
+  if (!artist) {
+    return <div>Artist not found</div>;
+  }
 
   return (
     <ErrorBoundary>
       <div className={styles.container}>
         <header className={styles.header} style={headerStyle}>
           <div className={styles.header__container}>
-            <img
-              className={styles.header__container__image}
-              src={artist.imageUrl}
-              alt={artist.name}
-              loading="lazy"
-            />
+            {artist.imageUrl ? (
+              <OptimizedImage
+                src={artist.imageUrl}
+                alt={t('common.artistPhoto', { name: artist.name })}
+                className={styles.header__container__image}
+                sizes="(max-width: 768px) 200px, 232px"
+                loading="eager"
+                onError={() => {
+                  const img = document.querySelector(
+                    `.${styles.header__container__image}`
+                  );
+                  if (img) img.src = '/default-artist.png';
+                }}
+              />
+            ) : (
+              <div
+                className={`${styles.header__container__fallback} ${styles.header__container__image}`}
+              >
+                <CardFallbackIcon type="artist" />
+              </div>
+            )}
           </div>
           <div className={styles.header__info}>
-            <span>Artist</span>
+            <span>{t('common.artist')}</span>
             <h1 className={styles.header__info__title}>{artist.name}</h1>
             <div className={styles.header__info__more}>
-              <span>{formatNumber(artist.followers)} followers</span>
+              <span>
+                {t('common.followerCount', {
+                  count: formatNumber(artist.followers),
+                })}
+              </span>
             </div>
           </div>
         </header>
@@ -108,8 +205,8 @@ const Artist = () => {
                 onClick={handlePlayClick}
                 aria-label={
                   isThisPlaying
-                    ? `Pause ${artist.name}'s popular tracks`
-                    : `Play ${artist.name}'s popular tracks`
+                    ? t('common.pauseArtist', { name: artist.name })
+                    : t('common.playArtist', { name: artist.name })
                 }
               >
                 {isThisPlaying ? <FaPause /> : <FaPlay />}
@@ -117,7 +214,7 @@ const Artist = () => {
               <button
                 className={`${styles.main__header__container__button} ${styles.shuffle_button}`}
                 onClick={handleShuffle}
-                aria-label={`Shuffle ${artist.name}'s tracks`}
+                aria-label={t('common.shuffleArtist', { name: artist.name })}
               >
                 <PiShuffleBold />
               </button>
@@ -126,92 +223,118 @@ const Artist = () => {
 
           <div className={styles.main__content}>
             <section className={styles.popular}>
-              <h2>Popular Tracks</h2>
-              <div className={styles.tracks}>
-                {artistTracks.slice(0, 5).map((track, index) => (
-                  <div
-                    key={track.id}
-                    className={styles.track}
-                    onClick={() => handleTrackPlay(track)}
-                  >
-                    <div className={styles.track__info}>
-                      {isPlaying &&
-                      currentTrack &&
-                      currentTrack.id === track.id ? (
-                        <button
-                          className={`${styles.track__play_icon} ${styles.visible}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleTrackPlay(track);
-                          }}
-                          aria-label={
-                            isPlaying && currentTrack.id === track.id
-                              ? 'Pause track'
-                              : 'Play track'
-                          }
-                        >
-                          <WaveformAnimation className={styles.waveform} />
-                          <FaPause className={styles.pause_icon} />
-                        </button>
-                      ) : (
-                        <>
-                          <span className={styles.track__number}>
-                            {index + 1}
-                          </span>
+              <h2>{t('common.popularTracks')}</h2>
+              {artistTracks.length > 0 ? (
+                <div className={styles.tracks}>
+                  {artistTracks.slice(0, 5).map((track, index) => (
+                    <div
+                      key={track.id}
+                      className={styles.track}
+                      onClick={() => handleTrackPlay(track)}
+                    >
+                      <div className={styles.track__info}>
+                        {isPlaying &&
+                        currentTrack &&
+                        currentTrack.id === track.id ? (
                           <button
-                            className={styles.track__play_icon}
+                            className={`${styles.track__play_icon} ${styles.visible}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleTrackPlay(track);
                             }}
-                            aria-label="Play track"
+                            aria-label={t('common.pause', {
+                              title: track.title,
+                            })}
                           >
-                            <FaPlay />
+                            <WaveformAnimation className={styles.waveform} />
+                            <FaPause className={styles.pause_icon} />
                           </button>
-                        </>
-                      )}
-                      <img
-                        src={track.coverUrl}
-                        alt={track.title}
-                        className={styles.track__image}
-                      />
-                      <div className={styles.track__details}>
-                        {isPlaying &&
-                        currentTrack &&
-                        currentTrack.id === track.id ? (
-                          <span
-                            className={`${styles.track__title} ${styles.green}`}
-                          >
-                            {track.title}
-                          </span>
                         ) : (
-                          <span className={styles.track__title}>
-                            {track.title}
-                          </span>
+                          <>
+                            <span className={styles.track__number}>
+                              {index + 1}
+                            </span>
+                            <button
+                              className={styles.track__play_icon}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleTrackPlay(track);
+                              }}
+                              aria-label={t('common.play', {
+                                title: track.title,
+                              })}
+                            >
+                              <FaPlay />
+                            </button>
+                          </>
                         )}
+                        {track.coverUrl ? (
+                          <OptimizedImage
+                            src={track.coverUrl}
+                            alt={t('common.coverArt', { title: track.title })}
+                            className={styles.track__image}
+                            sizes="(max-width: 768px) 40px, 50px"
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.src = '/default-track.png';
+                            }}
+                          />
+                        ) : (
+                          <div className={styles.track__image_fallback}>
+                            <CardFallbackIcon type="track" />
+                          </div>
+                        )}
+                        <div className={styles.track__details}>
+                          {isPlaying &&
+                          currentTrack &&
+                          currentTrack.id === track.id ? (
+                            <span
+                              className={`${styles.track__title} ${styles.green}`}
+                            >
+                              {track.title}
+                            </span>
+                          ) : (
+                            <span className={styles.track__title}>
+                              {track.title}
+                            </span>
+                          )}
+                        </div>
                       </div>
+                      <span className={styles.track__plays}>
+                        {t('track.plays', {
+                          count: formatNumber(track.plays || 0),
+                        })}
+                      </span>
+                      <span className={styles.track__duration}>
+                        {formatDuration(track.duration)}
+                      </span>
                     </div>
-                    <span className={styles.track__plays}>
-                      {formatNumber(track.plays || 0)} plays
-                    </span>
-                    <span className={styles.track__duration}>
-                      {formatDuration(track.duration)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.no_content}>
+                  <p>{t('artist.noTracks')}</p>
+                </div>
+              )}
             </section>
 
             <section className={styles.discography}>
-              <HorizontalScroll title="Albums">
-                {artistAlbums.map((album) => (
-                  <AlbumCard
-                    key={album.id}
-                    album={album}
-                    onPlay={handleTrackPlay}
-                  />
-                ))}
-              </HorizontalScroll>
+              <h2>{t('artist.discography')}</h2>
+              {artistAlbums.length > 0 ? (
+                <HorizontalScroll title={t('artist.albums')}>
+                  {artistAlbums.map((album) => (
+                    <AlbumCard
+                      key={album.id}
+                      album={album}
+                      onPlay={handleTrackPlay}
+                    />
+                  ))}
+                </HorizontalScroll>
+              ) : (
+                <div className={styles.no_content}>
+                  <p>{t('artist.noAlbums')}</p>
+                </div>
+              )}
             </section>
           </div>
         </main>

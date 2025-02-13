@@ -4,14 +4,21 @@ import styles from './SmallLeft.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
-import { mockTracks } from '../../../constant/mockData';
+import { useTranslation } from 'react-i18next';
+import OptimizedImage from '../OptimizedImage/OptimizedImage';
+import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
+import { api } from '../../../services/api';
+import { useApi } from '../../../hooks/useApi';
 
 const SmallLeftItem = ({ playlist = {}, onClick }) => {
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
+  const { t } = useTranslation();
 
-  const isThisPlaying = isPlaying && activeCardId === playlist.id;
+  const { data: tracks } = useApi(() => api.tracks.getAll(), []);
+
+  const isThisPlaying = isPlaying && activeCardId === playlist._id;
 
   const handleImageError = () => {
     setImageError(true);
@@ -20,55 +27,55 @@ const SmallLeftItem = ({ playlist = {}, onClick }) => {
   const handleClick = useCallback(
     (e) => {
       e.preventDefault();
-      navigate(`/playlist/${playlist.id}`);
+      navigate(`/playlist/${playlist._id}`);
     },
-    [navigate, playlist.id]
+    [navigate, playlist._id]
   );
 
   const handlePlayClick = useCallback(
     (e) => {
       e.stopPropagation();
 
-      // Get all tracks from this playlist in the correct order
-      const playlistTracks = playlist.tracks
-        .map((trackId) => mockTracks.find((track) => track.id === trackId))
-        .filter(Boolean);
+      const playlistTracks =
+        tracks?.filter((track) => playlist.tracks.includes(track._id)) || [];
 
       if (playlistTracks.length === 0) {
-        console.warn(`No tracks found for playlist: ${playlist.title}`);
+        console.warn(`No tracks found for playlist: ${playlist.name}`);
         return;
       }
 
-      // Play the first track but include all playlist tracks
       handlePlay({
         track: playlistTracks[0],
         tracks: playlistTracks,
         action: isThisPlaying ? 'pause' : 'play',
       });
     },
-    [playlist, handlePlay, isThisPlaying]
+    [playlist, tracks, handlePlay, isThisPlaying]
   );
 
   return (
     <div className={styles.card} onClick={handleClick}>
       <div className={styles.imageContainer}>
-        <img
-          src={imageError ? '/default-playlist.png' : playlist.coverUrl}
-          alt={playlist.title}
-          className={styles.image}
-          onError={handleImageError}
-          loading="lazy"
-          title={
-            <div className={styles.content}>
-              <span className={styles.title}>{playlist.title}</span>
-              <p className={styles.artist}>{playlist.description}</p>
-            </div>
-          }
-        />
+        {!imageError && playlist.coverUrl ? (
+          <OptimizedImage
+            src={playlist.coverUrl}
+            alt={t('common.playlistCover', { title: playlist.name })}
+            className={styles.image}
+            sizes="(max-width: 768px) 40px, 50px"
+            loading="lazy"
+            onError={handleImageError}
+          />
+        ) : (
+          <CardFallbackIcon type="playlist" />
+        )}
         <button
           className={styles.playButton}
           onClick={handlePlayClick}
-          aria-label={`Play ${playlist.title}`}
+          aria-label={
+            isThisPlaying
+              ? t('common.pausePlaylist', { title: playlist.name })
+              : t('common.playPlaylist', { title: playlist.name })
+          }
         >
           {isThisPlaying ? <FaPause /> : <FaPlay />}
         </button>
@@ -79,20 +86,22 @@ const SmallLeftItem = ({ playlist = {}, onClick }) => {
 
 SmallLeftItem.propTypes = {
   playlist: PropTypes.shape({
-    id: PropTypes.number,
-    title: PropTypes.string,
+    _id: PropTypes.string,
+    name: PropTypes.string,
     coverUrl: PropTypes.string,
     description: PropTypes.string,
+    tracks: PropTypes.arrayOf(PropTypes.string),
   }),
   onClick: PropTypes.func,
 };
 
 SmallLeftItem.defaultProps = {
   playlist: {
-    id: 0,
-    title: 'Untitled Playlist',
+    _id: '',
+    name: 'Untitled Playlist',
     coverUrl: '/default-playlist.png',
     description: 'Playlist',
+    tracks: [],
   },
   onClick: () => {},
 };

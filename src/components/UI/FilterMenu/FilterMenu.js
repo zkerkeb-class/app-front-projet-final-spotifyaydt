@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import style from './FilterMenu.module.scss';
 import { FaSort, FaFilter } from 'react-icons/fa';
 
 const FilterMenu = ({ onFilterChange, onSortChange }) => {
+  const { t } = useTranslation();
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [filters, setFilters] = useState({
@@ -18,23 +20,23 @@ const FilterMenu = ({ onFilterChange, onSortChange }) => {
 
   const handleFilterClick = () => {
     setShowFilterMenu(!showFilterMenu);
-    setShowSortMenu(false); // Close sort menu when filter menu is toggled
+    setShowSortMenu(false);
   };
 
   const handleSortClick = () => {
     setShowSortMenu(!showSortMenu);
-    setShowFilterMenu(false); // Close filter menu when sort menu is toggled
+    setShowFilterMenu(false);
   };
 
-  const handleFilterChange = (filterType, value) => {
-    const newFilters = { ...filters, [filterType]: value };
+  const handleFilterChange = (field, value) => {
+    const newFilters = { ...filters, [field]: value };
     setFilters(newFilters);
-    onFilterChange(newFilters);
+    onFilterChange?.(newFilters);
   };
 
   const handleSortChange = (sortType) => {
     setSortBy(sortType);
-    onSortChange(sortType);
+    onSortChange?.(sortType);
     setShowSortMenu(false);
   };
 
@@ -59,76 +61,80 @@ const FilterMenu = ({ onFilterChange, onSortChange }) => {
           className={`${style.filter_button} ${showFilterMenu ? style.active : ''}`}
           onClick={handleFilterClick}
         >
-          <FaFilter /> Filter
+          <FaFilter /> {t('common.filter')}
         </button>
         <button
           className={`${style.filter_button} ${showSortMenu ? style.active : ''}`}
           onClick={handleSortClick}
         >
-          <FaSort /> Sort
+          <FaSort /> {t('common.sort')}
         </button>
       </div>
 
       {showFilterMenu && (
         <div className={style.filter_dropdown}>
           <div className={style.filter_group}>
-            <label>Artist</label>
+            <label>{t('search.filter.artist')}</label>
             <input
               type="text"
               value={filters.artist}
               onChange={(e) => handleFilterChange('artist', e.target.value)}
-              placeholder="Filter by artist"
+              placeholder={t('search.filter.artist')}
             />
           </div>
           <div className={style.filter_group}>
-            <label>Album</label>
+            <label>{t('search.filter.album')}</label>
             <input
               type="text"
               value={filters.album}
               onChange={(e) => handleFilterChange('album', e.target.value)}
-              placeholder="Filter by album"
+              placeholder={t('search.filter.album')}
             />
           </div>
           <div className={style.filter_group}>
-            <label>Genre</label>
+            <label>{t('search.filter.genre')}</label>
             <input
               type="text"
               value={filters.genre}
               onChange={(e) => handleFilterChange('genre', e.target.value)}
-              placeholder="Filter by genre"
+              placeholder={t('search.filter.genre')}
             />
           </div>
           <div className={style.filter_group}>
-            <label>Year</label>
+            <label>{t('search.filter.year')}</label>
             <input
-              type="number"
+              type="text"
               value={filters.year}
               onChange={(e) => handleFilterChange('year', e.target.value)}
-              placeholder="Filter by year"
+              placeholder={t('search.filter.year')}
             />
           </div>
           <div className={style.filter_group}>
-            <label>Duration</label>
+            <label>{t('search.filter.duration.title')}</label>
             <select
               value={filters.duration}
               onChange={(e) => handleFilterChange('duration', e.target.value)}
             >
-              <option value="">All</option>
-              <option value="short">Short (&lt; 3 min)</option>
-              <option value="medium">Medium (3-5 min)</option>
-              <option value="long">Long (&gt; 5 min)</option>
+              <option value="">{t('common.all')}</option>
+              <option value="short">{t('search.filter.duration.short')}</option>
+              <option value="medium">
+                {t('search.filter.duration.medium')}
+              </option>
+              <option value="long">{t('search.filter.duration.long')}</option>
             </select>
           </div>
           <div className={style.filter_group}>
-            <label>Popularity</label>
+            <label>{t('search.filter.popularity.title')}</label>
             <select
               value={filters.popularity}
               onChange={(e) => handleFilterChange('popularity', e.target.value)}
             >
-              <option value="">All</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
+              <option value="">{t('common.all')}</option>
+              <option value="high">{t('search.filter.popularity.high')}</option>
+              <option value="medium">
+                {t('search.filter.popularity.medium')}
+              </option>
+              <option value="low">{t('search.filter.popularity.low')}</option>
             </select>
           </div>
         </div>
@@ -136,18 +142,17 @@ const FilterMenu = ({ onFilterChange, onSortChange }) => {
 
       {showSortMenu && (
         <div className={style.sort_dropdown}>
-          <button onClick={() => handleSortChange('duration')}>Duration</button>
+          <button onClick={() => handleSortChange('duration')}>
+            {t('search.sort.duration')}
+          </button>
           <button onClick={() => handleSortChange('releaseDate')}>
-            Release Date
+            {t('search.sort.releaseDate')}
           </button>
           <button onClick={() => handleSortChange('alphabetical')}>
-            Alphabetical
+            {t('search.sort.alphabetical')}
           </button>
           <button onClick={() => handleSortChange('popularity')}>
-            Popularity
-          </button>
-          <button onClick={() => handleSortChange('plays')}>
-            Number of Plays
+            {t('search.sort.popularity')}
           </button>
         </div>
       )}

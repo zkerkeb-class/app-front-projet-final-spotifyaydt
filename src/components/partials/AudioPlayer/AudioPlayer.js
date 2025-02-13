@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import style from './AudioPlayer.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
+import { useTranslation } from 'react-i18next';
 
 import Controls from './Controls';
 import Options from './Options';
@@ -9,6 +10,7 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 
 const AudioPlayer = ({ onError }) => {
   const { audioRef, currentTrackIndex, currentTracks } = useAudioPlayer();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (audioRef.current) {
@@ -40,6 +42,13 @@ const AudioPlayer = ({ onError }) => {
       default:
         return null;
     }
+  };
+
+  const getArtistName = (track) => {
+    if (!track?.artist) return t('common.unknownArtist');
+    if (typeof track.artist === 'string') return track.artist;
+    if (track.artist._id) return track.artist.name || t('common.unknownArtist');
+    return track.artist.name || t('common.unknownArtist');
   };
 
   const renderAudioElement = () => (
@@ -99,11 +108,15 @@ const AudioPlayer = ({ onError }) => {
   }
 
   return (
-    <div className={style.player} role="region" aria-label="Audio player">
+    <div
+      className={style.player}
+      role="region"
+      aria-label={`Now playing: ${currentTrack.title} by ${getArtistName(currentTrack)}`}
+    >
       <div
         className={style.player__music}
         role="group"
-        aria-label={`Now playing: ${currentTrack.title} by ${currentTrack.artist}`}
+        aria-label={`Now playing: ${currentTrack.title} by ${getArtistName(currentTrack)}`}
       >
         <div className={style.player__music__cover}>
           <img
@@ -120,7 +133,7 @@ const AudioPlayer = ({ onError }) => {
             {currentTrack.title}
           </span>
           <span className={style.player__music__info__artist}>
-            {currentTrack.artist}
+            {getArtistName(currentTrack)}
           </span>
         </div>
         <div className={style.player__music__add}>

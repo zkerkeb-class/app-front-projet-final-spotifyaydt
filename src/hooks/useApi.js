@@ -1,67 +1,54 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
-const cache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-export const useApi = (url, options = {}) => {
+export function useApi(apiCall, dependencies = []) {
   const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      // Check cache first
-      const cachedData = cache.get(url);
-      if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
-        setData(cachedData.data);
-        setLoading(false);
-        return;
-      }
-
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      // Update cache
-      cache.set(url, {
-        data: result,
-        timestamp: Date.now(),
-      });
-
-      setData(result);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [url, options]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await apiCall();
+
+        if (isMounted) {
+          // Handle both array and single object responses
+          if (Array.isArray(result)) {
+            setData(
+              result.map((item) => ({
+                ...item,
+                id: item._id, // Add id for backward compatibility
+              }))
+            );
+          } else if (result && typeof result === 'object') {
+            setData({
+              ...result,
+              id: result._id, // Add id for backward compatibility
+            });
+          } else {
+            setData(result);
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchData();
-  }, [fetchData]);
 
-  const refetch = useCallback(() => {
-    cache.delete(url);
-    fetchData();
-  }, [fetchData, url]);
+    return () => {
+      isMounted = false;
+    };
+  }, dependencies);
 
-  return { data, error, loading, refetch };
-};
-
-export const clearApiCache = () => {
-  cache.clear();
-};
+  return { data, loading, error };
+}

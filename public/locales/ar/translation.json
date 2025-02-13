@@ -1,5 +1,6 @@
 {
   "common": {
+    "title": "العنوان",
     "search": "ماذا تريد أن تستمع؟",
     "library": "المكتبة",
     "home": "الرئيسية",
@@ -21,11 +22,6 @@
     "availableDevices": "الأجهزة المتاحة",
     "followers": "متابع",
     "following": "يتابع",
-    "allItems": "جميع العناصر",
-    "allTracks": "جميع الأغاني",
-    "allAlbums": "جميع الألبومات",
-    "allArtists": "جميع الفنانين",
-    "allPlaylists": "جميع قوائم التشغيل",
     "popular": "شائع",
     "popularTracks": "الأغاني الشائعة",
     "popularArtists": "الفنانون المشهورون",
@@ -33,7 +29,6 @@
     "featuredPlaylists": "قوائم تشغيل مميزة",
     "recentlyPlayed": "تم تشغيله مؤخراً",
     "mostPlayed": "الأكثر تشغيلاً",
-    "lastPlayed": "آخر تشغيل",
     "appName": "سبوتيفاي AYDT",
     "clearSearchHistory": "مسح سجل البحث",
     "selectLanguage": "اختر اللغة",
@@ -41,6 +36,8 @@
     "darkMode": "الوضع الليلي",
     "clear": "مسح",
     "sort": "ترتيب",
+    "filter": "تصفية",
+    "all": "الكل",
     "copyright": "© {{year}} AYDT",
     "toggleSidebar": "تبديل الشريط الجانبي",
     "expandSidebar": "توسيع الشريط الجانبي",
@@ -63,7 +60,21 @@
     "pauseArtist": "إيقاف مسارات {{name}} مؤقتاً",
     "playPlaylist": "تشغيل قائمة التشغيل: {{title}}",
     "pausePlaylist": "إيقاف قائمة التشغيل مؤقتاً: {{title}}",
-    "followerCount": "{{count}} متابع"
+    "followerCount": "{{count}} متابع",
+    "by": "بواسطة",
+    "unknownArtist": "فنان غير معروف",
+    "unknownTitle": "عنوان غير معروف",
+    "unknownAlbum": "ألبوم غير معروف",
+    "shuffleArtist": "تشغيل عشوائي لمسارات {{name}}",
+    "followerCount_one": "متابع واحد",
+    "followerCount_other": "{{count}} متابع",
+    "playPlaylist": "تشغيل {{title}}",
+    "pausePlaylist": "إيقاف {{title}}",
+    "shufflePlaylist": "تشغيل عشوائي للقائمة",
+    "playTrack": "تشغيل {{title}}",
+    "pauseTrack": "إيقاف {{title}}",
+    "trackCount": "{{count}} مقطع",
+    "likeCount": "{{count}} إعجاب"
   },
   "filters": {
     "all": "الكل",
@@ -71,8 +82,9 @@
     "albums": "الألبومات",
     "artists": "الفنانون",
     "playlists": "قوائم التشغيل",
-    "recent": "الأخيرة",
-    "popular": "الشائعة"
+    "alphabetical": "أ-ي",
+    "recent": "الأحدث",
+    "popular": "الأكثر شعبية"
   },
   "errors": {
     "somethingWentWrong": "حدث خطأ ما",
@@ -85,19 +97,16 @@
     "networkError": "خطأ في اتصال الشبكة",
     "notFound": "غير موجود",
     "unauthorized": "غير مصرح به",
-    "noResults": "لا توجد نتائج",
-    "noResultsmessage": "لا توجد عناصر في هذه الفئة حتى الآن"
+    "loadingPlaylist": "خطأ في تحميل قائمة التشغيل",
+    "playlistNotFound": "قائمة التشغيل غير موجودة"
   },
   "player": {
     "nowPlaying": "يتم التشغيل الآن",
-    "emptyPlay": "لا توجد أغنية تعمل حالياً",
     "queue": "قائمة الانتظار",
     "connectDevice": "الاتصال بجهاز",
     "emptyQueue": "لا توجد مسارات في قائمة الانتظار",
     "titlePlaying": "العنوان قيد التشغيل",
     "upNext": "التالي",
-    "currentDevice": "الجهاز الحالي",
-    "availableDevices": "الأجهزة المتاحة",
     "webPlayer": "مشغل الويب",
     "selectAnotherDevice": "اختر جهازاً آخر",
     "deviceNotFound": "لا ترى جهازك؟"
@@ -122,5 +131,95 @@
     "daysAgo": "منذ {{count}} يوم",
     "monthsAgo": "منذ {{count}} شهر",
     "yearsAgo": "منذ {{count}} سنة"
+  },
+  "search": {
+    "placeholder": "ماذا تريد أن تستمع إليه؟",
+    "noResults": "لم يتم العثور على نتائج",
+    "bestMatch": "أفضل نتيجة",
+    "tryAgain": "حاول البحث عن شيء آخر",
+    "emptyState": "اكتب شيئًا للبحث",
+    "tracksCount": "تم العثور على {{count}} مسار",
+    "albumsCount": "تم العثور على {{count}} ألبوم",
+    "artistsCount": "تم العثور على {{count}} فنان",
+    "playlistsCount": "تم العثور على {{count}} قائمة تشغيل",
+    "filters": {
+      "all": "الكل",
+      "tracks": "المسارات",
+      "albums": "الألبومات",
+      "artists": "الفنانين",
+      "playlists": "قوائم التشغيل"
+    },
+    "sort": {
+      "title": "ترتيب حسب",
+      "duration": "المدة",
+      "releaseDate": "تاريخ الإصدار",
+      "popularity": "الشعبية",
+      "alphabetical": "أ-ي"
+    },
+    "filter": {
+      "title": "تصفية حسب",
+      "artist": "الفنان",
+      "album": "الألبوم",
+      "genre": "النوع",
+      "year": "السنة",
+      "duration": {
+        "title": "المدة",
+        "short": "قصير (≤ 3 دقائق)",
+        "medium": "متوسط (3-5 دقائق)",
+        "long": "طويل (> 5 دقائق)"
+      },
+      "popularity": {
+        "title": "الشعبية",
+        "high": "عالية",
+        "medium": "متوسطة",
+        "low": "منخفضة"
+      }
+    }
+  },
+  "track": {
+    "details": "تفاصيل المسار",
+    "lyrics": "كلمات",
+    "lyricsAvailable": "الكلمات متوفرة لهذا المسار",
+    "plays": "{{count}} استماع",
+    "like": "أعجبني المسار",
+    "unlike": "إلغاء الإعجاب بالمسار",
+    "details_labels": {
+      "album": "الألبوم",
+      "artist": "الفنان",
+      "genre": "النوع",
+      "releaseYear": "سنة الإصدار",
+      "duration": "المدة",
+      "mood": "الحالة"
+    },
+    "unknown": {
+      "genre": "نوع غير معروف",
+      "year": "سنة غير معروفة",
+      "mood": "حالة غير معروفة"
+    }
+  },
+  "artist": {
+    "discography": "الأعمال الفنية",
+    "albums": "الألبومات",
+    "noTracks": "لا توجد مسارات متاحة",
+    "noAlbums": "لا توجد ألبومات متاحة"
+  },
+  "album": {
+    "title": "ألبوم",
+    "tracks": "المسارات",
+    "releaseYear": "سنة الإصدار",
+    "trackCount": "{{count}} مسار",
+    "trackCount_one": "مسار واحد",
+    "trackCount_other": "{{count}} مسار",
+    "shufflePlay": "تشغيل عشوائي",
+    "notFound": "الألبوم غير موجود",
+    "loading": "جاري تحميل الألبوم...",
+    "error": "خطأ في تحميل الألبوم",
+    "duration": "المدة",
+    "trackNumber": "رقم المسار"
+  },
+  "playlist": {
+    "noTracks": "لا توجد مقاطع في قائمة التشغيل",
+    "loading": "جاري تحميل قائمة التشغيل...",
+    "error": "خطأ في تحميل قائمة التشغيل"
   }
 }
