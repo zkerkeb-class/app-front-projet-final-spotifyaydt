@@ -29,7 +29,9 @@ const QueueItem = ({ track }) => {
           onError={() => setImageError(true)}
         />
       ) : (
-        <CardFallbackIcon type="track" />
+        <div className={styles.queue__item__fallback}>
+          <CardFallbackIcon type="track" />
+        </div>
       )}
       <div className={styles.queue__item__info}>
         <span className={styles.queue__item__info__title}>{track.title}</span>

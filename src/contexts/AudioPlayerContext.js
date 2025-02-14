@@ -157,11 +157,11 @@ export const AudioPlayerProvider = ({ children }) => {
     nextTrack = currentTracks[nextIndex];
     setCurrentTrackIndex(nextIndex);
     setCurrentTrack(nextTrack);
-    setActiveCardId(nextTrack.id);
+    setActiveCardId(nextTrack._id);
 
     const audio = audioRef.current;
     if (audio) {
-      audio.src = nextTrack.audio;
+      audio.src = nextTrack.audioUrl;
       audio.load();
       audio.play().catch((error) => {
         console.error('Playback failed:', error);
@@ -223,9 +223,9 @@ export const AudioPlayerProvider = ({ children }) => {
     prevTrack = currentTracks[prevIndex];
     setCurrentTrackIndex(prevIndex);
     setCurrentTrack(prevTrack);
-    setActiveCardId(prevTrack.id);
+    setActiveCardId(prevTrack._id);
 
-    audio.src = prevTrack.audio;
+    audio.src = prevTrack.audioUrl;
     audio.load();
     audio.play().catch((error) => {
       console.error('Playback failed:', error);
@@ -324,13 +324,13 @@ export const AudioPlayerProvider = ({ children }) => {
     ({ track, tracks, action = 'play' }) => {
       if (!track || !tracks.length) return;
 
-      const trackIndex = tracks.findIndex((t) => t.id === track.id);
+      const trackIndex = tracks.findIndex((t) => t._id === track._id);
       if (trackIndex === -1) return;
 
       setCurrentTracks(tracks);
       setCurrentTrackIndex(trackIndex);
       setCurrentTrack(track);
-      setActiveCardId(track.id);
+      setActiveCardId(track._id);
 
       if (action === 'play') {
         setIsPlaying(true);
@@ -341,7 +341,7 @@ export const AudioPlayerProvider = ({ children }) => {
           setIsRightSidebarVisible(true);
         }
         if (audioRef.current) {
-          audioRef.current.src = track.audio;
+          audioRef.current.src = track.audioUrl;
           audioRef.current.play();
         }
       } else {
@@ -352,13 +352,16 @@ export const AudioPlayerProvider = ({ children }) => {
       }
 
       setLastPlays((prev) => {
-        const updatedPlays = [track, ...prev.filter((t) => t.id !== track.id)];
+        const updatedPlays = [
+          track,
+          ...prev.filter((t) => t._id !== track._id),
+        ];
         return updatedPlays.slice(0, 20); // Keep only the last 20 plays
       });
 
       setPlayCounts((prevCounts) => {
-        const newCount = (prevCounts[track.id] || 0) + 1;
-        return { ...prevCounts, [track.id]: newCount };
+        const newCount = (prevCounts[track._id] || 0) + 1;
+        return { ...prevCounts, [track._id]: newCount };
       });
     },
     [isRightSidebarVisible]
@@ -659,7 +662,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const mostListenedTo = Object.entries(playCounts)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 20)
-    .map(([id]) => lastPlays.find((track) => track.id === id))
+    .map(([id]) => lastPlays.find((track) => track._id === id))
     .filter(Boolean);
 
   // Effect to handle sidebar visibility based on display states

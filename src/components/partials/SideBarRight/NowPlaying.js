@@ -47,7 +47,9 @@ const NowPlaying = () => {
             onError={() => setImageError(true)}
           />
         ) : (
-          <CardFallbackIcon type="track" />
+          <div className={styles.nowPlaying__track__fallback}>
+            <CardFallbackIcon type="track" />
+          </div>
         )}
         <div className={styles.nowPlaying__track__info}>
           <h3>{currentTrack.title}</h3>

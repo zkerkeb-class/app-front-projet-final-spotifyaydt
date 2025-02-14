@@ -18,7 +18,7 @@ const TrackCard = ({ track = {}, onClick }) => {
 
   const { data: tracks } = useApi(() => api.tracks.getAll(), []);
 
-  const isThisPlaying = isPlaying && activeCardId === track.id;
+  const isThisPlaying = isPlaying && activeCardId === track._id;
 
   const handleImageError = () => {
     setImageError(true);
@@ -27,9 +27,9 @@ const TrackCard = ({ track = {}, onClick }) => {
   const handleClick = useCallback(
     (e) => {
       e.preventDefault();
-      navigate(`/track/${track._id || track.id}`);
+      navigate(`/track/${track._id}`);
     },
-    [navigate, track._id, track.id]
+    [navigate, track._id]
   );
 
   const handlePlayClick = useCallback(
@@ -113,7 +113,6 @@ const TrackCard = ({ track = {}, onClick }) => {
 TrackCard.propTypes = {
   track: PropTypes.shape({
     _id: PropTypes.string,
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     title: PropTypes.string,
     coverImage: PropTypes.string,
     artist: PropTypes.oneOfType([
@@ -137,7 +136,7 @@ TrackCard.propTypes = {
 
 TrackCard.defaultProps = {
   track: {
-    id: 0,
+    _id: '',
     title: 'Untitled Track',
     coverImage: '/default-track.png',
     artist: {

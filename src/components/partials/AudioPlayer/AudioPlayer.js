@@ -58,11 +58,12 @@ const AudioPlayer = ({ onError }) => {
       preload="metadata"
       aria-hidden="true"
     >
-      {currentTracks?.[currentTrackIndex]?.audio && (
+      {currentTracks?.[currentTrackIndex]?.audioUrl && (
         <source
-          src={currentTracks[currentTrackIndex].audio}
+          src={currentTracks[currentTrackIndex].audioUrl}
           type={
-            getFileType(currentTracks[currentTrackIndex].audio) || 'audio/mpeg'
+            getFileType(currentTracks[currentTrackIndex].audioUrl) ||
+            'audio/mpeg'
           }
         />
       )}
