@@ -6,6 +6,7 @@ import { FaPlay, FaPause } from 'react-icons/fa';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { useTranslation } from 'react-i18next';
 import OptimizedImage from '../OptimizedImage/OptimizedImage';
+import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
 
 const RecentTrackItem = memo(({ track }) => {
   const { handlePlay, isPlaying, currentTrack } = useAudioPlayer();
@@ -36,18 +37,26 @@ const RecentTrackItem = memo(({ track }) => {
 
   return (
     <div className={style.recent__grid__item}>
-      <OptimizedImage
-        src={track.coverImage}
-        alt={t('common.coverArt', { title: track.title })}
-        className={style.recent__grid__item__thumbnail}
-        sizes="(max-width: 768px) 48px, 64px"
-        loading="lazy"
-      />
+      {track.coverImage ? (
+        <OptimizedImage
+          src={track.coverImage}
+          alt={t('common.coverArt', { title: track.title })}
+          className={style.recent__grid__item__thumbnail}
+          sizes="(max-width: 768px) 48px, 64px"
+          loading="lazy"
+        />
+      ) : (
+        <div className={style.recent__grid__item__fallback}>
+          <CardFallbackIcon />
+        </div>
+      )}
       <div className={style.recent__grid__item__content}>
         <div
           className={`${style.recent__grid__item__content__title} ${isThisPlaying ? style.green : ''}`}
         >
-          {track.title}
+          <span className={style.recent__grid__item__content__title__text}>
+            {track.title}
+          </span>
           <span className={style.recent__grid__item__content__artist}>
             {getArtistName(track)}
           </span>

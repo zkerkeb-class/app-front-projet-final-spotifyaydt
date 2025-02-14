@@ -361,7 +361,9 @@ const FullscreenView = () => {
                 onError={() => setImageError(true)}
               />
             ) : (
-              <CardFallbackIcon type="track" />
+              <div className={styles.artwork__fallback}>
+                <CardFallbackIcon type="track" />
+              </div>
             )}
           </div>
 

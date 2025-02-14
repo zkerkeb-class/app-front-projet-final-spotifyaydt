@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import Controls from './Controls';
 import Options from './Options';
+import OptimizedImage from '../../UI/OptimizedImage/OptimizedImage';
+import CardFallbackIcon from '../../UI/CardFallbackIcon/CardFallbackIcon';
 
 import { IoMdAddCircleOutline } from 'react-icons/io';
 
@@ -120,10 +122,19 @@ const AudioPlayer = ({ onError }) => {
         aria-label={`Now playing: ${currentTrack.title} by ${getArtistName(currentTrack)}`}
       >
         <div className={style.player__music__cover}>
-          <img
-            src={currentTrack.coverUrl}
-            alt={`Album cover for ${currentTrack.title}`}
-          />
+          {!currentTrack.coverUrl ? (
+            <div className={style.player__music__cover__fallback}>
+              <CardFallbackIcon />
+            </div>
+          ) : (
+            <OptimizedImage
+              src={currentTrack.coverUrl}
+              alt={`Album cover for ${currentTrack.title}`}
+              className={style.player__music__cover__image}
+              sizes="(max-width: 768px) 150px, 200px"
+              loading="lazy"
+            />
+          )}
         </div>
         <div className={style.player__music__info}>
           <span
