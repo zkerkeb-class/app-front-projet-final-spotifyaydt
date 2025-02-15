@@ -66,7 +66,9 @@ const Playlist = ({ playlist = {}, onClick }) => {
             onError={handleImageError}
           />
         ) : (
-          <CardFallbackIcon type="playlist" />
+          <div className={styles.imagePlaceholder}>
+            <CardFallbackIcon type="playlist" />
+          </div>
         )}
         <button
           className={styles.playButton}

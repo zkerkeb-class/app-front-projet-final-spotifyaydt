@@ -73,32 +73,74 @@ const FullscreenView = () => {
     return track.artist.name || t('common.unknownArtist');
   };
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+  const getAlbumName = (track) => {
+    if (!track?.album) return t('common.unknownAlbum');
+    if (typeof track.album === 'string') return track.album;
+    return track.album.title || t('common.unknownAlbum');
+  };
 
+  const handleClose = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else if (document.webkitFullscreenElement) {
+        await document.webkitExitFullscreen();
+      } else if (document.msFullscreenElement) {
+        await document.msExitFullscreen();
+      }
+    } catch (error) {
+      console.warn('Error exiting fullscreen:', error);
+    }
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    if (sourceNodeRef.current) {
+      sourceNodeRef.current.disconnect();
+    }
+    if (analyserRef.current) {
+      analyserRef.current.disconnect();
+    }
+
+    setIsAudioInitialized(false);
+    closeFullscreen();
+  };
+
+  useEffect(() => {
     const enterFullscreen = async () => {
       try {
-        if (container.requestFullscreen) {
+        const container = containerRef.current;
+        if (!container) return;
+
+        if (document.fullscreenEnabled) {
           await container.requestFullscreen();
-        } else if (container.webkitRequestFullscreen) {
+        } else if (document.webkitFullscreenEnabled) {
           await container.webkitRequestFullscreen();
-        } else if (container.msRequestFullscreen) {
+        } else if (document.msFullscreenEnabled) {
           await container.msRequestFullscreen();
         }
       } catch (error) {
-        console.error('Failed to enter fullscreen:', error);
+        console.warn('Failed to enter fullscreen:', error);
       }
     };
 
-    enterFullscreen();
+    // Small delay to ensure component is mounted
+    const timeoutId = setTimeout(() => {
+      enterFullscreen();
+    }, 100);
 
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
     const handleFullscreenChange = () => {
-      if (
-        !document.fullscreenElement &&
-        !document.webkitFullscreenElement &&
-        !document.msFullscreenElement
-      ) {
+      const isFullscreen = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.msFullscreenElement
+      );
+
+      if (!isFullscreen) {
         handleClose();
       }
     };
@@ -121,42 +163,71 @@ const FullscreenView = () => {
   }, []);
 
   useEffect(() => {
-    if (!audioRef.current || !canvasRef.current || isAudioInitialized) return;
+    if (!audioRef.current || !canvasRef.current) return;
+
+    let cleanupFunction = () => {};
 
     const initializeAudio = async () => {
       try {
-        if (
-          audioContextRef.current &&
-          audioContextRef.current.state === 'suspended'
-        ) {
-          await audioContextRef.current.resume();
-        }
-
+        // Create audio context only when needed
         if (!audioContextRef.current) {
           audioContextRef.current = new (window.AudioContext ||
             window.webkitAudioContext)();
         }
 
+        // Resume context if suspended
+        if (audioContextRef.current.state === 'suspended') {
+          await audioContextRef.current.resume();
+        }
+
+        // Create analyzer
         if (!analyserRef.current) {
           analyserRef.current = audioContextRef.current.createAnalyser();
           analyserRef.current.fftSize = 256;
         }
 
-        if (!sourceNodeRef.current) {
+        // Clean up any existing connections
+        if (sourceNodeRef.current) {
+          sourceNodeRef.current.disconnect();
+          sourceNodeRef.current = null;
+        }
+
+        // Create new source node
+        try {
           sourceNodeRef.current =
             audioContextRef.current.createMediaElementSource(audioRef.current);
           sourceNodeRef.current.connect(analyserRef.current);
           analyserRef.current.connect(audioContextRef.current.destination);
+          setIsAudioInitialized(true);
+        } catch (error) {
+          console.warn(
+            'Audio visualization disabled due to CORS restrictions:',
+            error
+          );
+          setIsAudioInitialized(false);
+          return;
         }
 
-        setIsAudioInitialized(true);
+        cleanupFunction = () => {
+          if (sourceNodeRef.current) {
+            sourceNodeRef.current.disconnect();
+          }
+          if (analyserRef.current) {
+            analyserRef.current.disconnect();
+          }
+        };
       } catch (error) {
         console.error('Error initializing audio:', error);
+        setIsAudioInitialized(false);
       }
     };
 
     initializeAudio();
-  }, [audioRef, isAudioInitialized]);
+
+    return () => {
+      cleanupFunction();
+    };
+  }, [audioRef.current, currentTrack]);
 
   useEffect(() => {
     if (!isAudioInitialized || !canvasRef.current || !analyserRef.current)
@@ -203,33 +274,6 @@ const FullscreenView = () => {
       }
     };
   }, [isAudioInitialized]);
-
-  const handleClose = async () => {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    } else if (document.webkitFullscreenElement) {
-      await document.webkitExitFullscreen();
-    } else if (document.msFullscreenElement) {
-      await document.msExitFullscreen();
-    }
-
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-
-    if (analyserRef.current) {
-      sourceNodeRef.current?.disconnect(analyserRef.current);
-      analyserRef.current.disconnect();
-      analyserRef.current = null;
-    }
-
-    if (sourceNodeRef.current && audioContextRef.current) {
-      sourceNodeRef.current.connect(audioContextRef.current.destination);
-    }
-
-    setIsAudioInitialized(false);
-    closeFullscreen();
-  };
 
   const handleMouseMove = useCallback(
     (e) => {
@@ -332,29 +376,57 @@ const FullscreenView = () => {
   const progressPercentage =
     ((previewTime !== null ? previewTime : currentTime) / duration) * 100;
 
+  const renderVisualization = () => {
+    if (!isAudioInitialized || !analyserRef.current) {
+      return (
+        <div className={styles.visualization}>
+          <div className={styles.visualization__placeholder}>
+            {t('player.visualizationUnavailable')}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={styles.visualization}>
+        <canvas ref={canvasRef} width="800" height="200" />
+      </div>
+    );
+  };
+
   return (
     <div ref={containerRef} className={styles.fullscreen}>
-      <button className={styles.close} onClick={toggleFullscreen}>
+      <button
+        className={styles.close}
+        onClick={handleClose}
+        aria-label={t('player.exitFullscreen')}
+        title={t('player.exitFullscreen')}
+      >
         <IoClose />
       </button>
       <div
         className={styles.background}
-        style={{ backgroundImage: `url(${currentTrack.coverUrl})` }}
+        style={{
+          backgroundImage: currentTrack?.coverUrl
+            ? `url(${currentTrack.coverUrl})`
+            : 'none',
+        }}
       />
-
       <div className={styles.content}>
         <div className={styles.logo}>
           <div className={styles.logo_icon}>
             <FaSpotify />
           </div>
-          <span>Lecture with Spotify AYDT</span>
+          <span>{t('player.fullscreenTitle')}</span>
         </div>
         <div className={styles.artworkContainer}>
           <div className={styles.artwork}>
             {!imageError && currentTrack?.coverImage ? (
               <OptimizedImage
                 src={currentTrack.coverImage}
-                alt={t('common.coverArt', { title: currentTrack.title })}
+                alt={t('common.coverArt', {
+                  title: currentTrack?.title || t('common.unknownTitle'),
+                })}
                 className={styles.artwork__image}
                 sizes="(max-width: 768px) 200px, 400px"
                 loading="eager"
@@ -368,17 +440,15 @@ const FullscreenView = () => {
           </div>
 
           <div className={styles.metadata}>
-            <h1>{currentTrack.title}</h1>
+            <h1>{currentTrack?.title || t('common.unknownTitle')}</h1>
             <h2>{getArtistName(currentTrack)}</h2>
             <p className={styles.album}>
-              {currentTrack.album} • {currentTrack.releaseYear}
+              {getAlbumName(currentTrack)} • {currentTrack?.releaseYear || ''}
             </p>
           </div>
         </div>
 
-        <div className={styles.visualization}>
-          <canvas ref={canvasRef} width="800" height="200" />
-        </div>
+        {renderVisualization()}
 
         <div className={styles.controls}>
           <div className={styles.progressBar}>
@@ -462,8 +532,12 @@ const FullscreenView = () => {
               <button
                 className={`${styles.controlButton} ${repeatTrack || repeatPlaylist ? styles.active : ''}`}
                 onClick={toggleRepeat}
-                aria-label={`Repeat ${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`}
-                title={`Repeat ${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`}
+                aria-label={t(
+                  `player.repeatStates.${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`
+                )}
+                title={t(
+                  `player.repeatStates.${repeatTrack ? 'track' : repeatPlaylist ? 'playlist' : 'off'}`
+                )}
               >
                 {repeatTrack ? <TbRepeatOnce /> : <TbRepeat />}
               </button>
@@ -473,8 +547,10 @@ const FullscreenView = () => {
               <button
                 className={styles.controlButton}
                 onClick={toggleMute}
-                aria-label={volume === 0 ? 'Unmute' : 'Mute'}
-                title={`${volume === 0 ? 'Unmute' : 'Mute'}`}
+                aria-label={
+                  volume === 0 ? t('player.unmute') : t('player.mute')
+                }
+                title={volume === 0 ? t('player.unmute') : t('player.mute')}
               >
                 {getVolumeIcon()}
               </button>
@@ -486,11 +562,14 @@ const FullscreenView = () => {
                 onMouseDown={initializeVolumeAdjust}
                 onKeyDown={handleVolumeKeyDown}
                 role="slider"
-                aria-label="Volume"
+                aria-label={t('player.volume')}
                 aria-valuemin="0"
                 aria-valuemax="100"
                 aria-valuenow={volumePercentage}
-                aria-valuetext={`Volume ${volumePercentage}%${volume === 0 ? ' (muted)' : ''}`}
+                aria-valuetext={t('player.volumeText', {
+                  volume: volumePercentage,
+                  muted: volume === 0,
+                })}
                 tabIndex="0"
               >
                 <div
@@ -506,8 +585,8 @@ const FullscreenView = () => {
               <button
                 className={styles.minimizeButton}
                 onClick={handleClose}
-                aria-label="Exit fullscreen"
-                title="Exit fullscreen"
+                aria-label={t('player.minimizePlayer')}
+                title={t('player.minimizePlayer')}
               >
                 <LuMinimize2 />
               </button>

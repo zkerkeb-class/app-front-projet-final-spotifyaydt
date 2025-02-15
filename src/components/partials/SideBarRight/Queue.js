@@ -4,10 +4,13 @@ import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { useTranslation } from 'react-i18next';
 import OptimizedImage from '../../UI/OptimizedImage/OptimizedImage';
 import CardFallbackIcon from '../../UI/CardFallbackIcon/CardFallbackIcon';
+import { BsPlayFill } from 'react-icons/bs';
 
 const QueueItem = ({ track }) => {
   const { t } = useTranslation();
   const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const { handlePlay, currentTracks, currentTrackIndex } = useAudioPlayer();
 
   // Helper function to safely get artist name
   const getArtistName = (track) => {
@@ -17,22 +20,44 @@ const QueueItem = ({ track }) => {
     return track.artist.name || t('common.unknownArtist');
   };
 
+  const handleClick = () => {
+    handlePlay({
+      track,
+      tracks: currentTracks,
+      action: 'play',
+    });
+  };
+
   return (
-    <div className={styles.queue__item}>
-      {!imageError && track.coverImage ? (
-        <OptimizedImage
-          src={track.coverImage}
-          alt={t('common.coverArt', { title: track.title })}
-          className={styles.queue__item__cover}
-          sizes="(max-width: 768px) 48px, 64px"
-          loading="lazy"
-          onError={() => setImageError(true)}
-        />
-      ) : (
-        <div className={styles.queue__item__fallback}>
-          <CardFallbackIcon type="track" />
-        </div>
-      )}
+    <div
+      className={styles.queue__item}
+      onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      role="button"
+      aria-label={t('common.playTrack', { title: track.title })}
+    >
+      <div className={styles.queue__item__cover_container}>
+        {!imageError && track.coverImage ? (
+          <OptimizedImage
+            src={track.coverImage}
+            alt={t('common.coverArt', { title: track.title })}
+            className={styles.queue__item__cover}
+            sizes="(max-width: 768px) 48px, 64px"
+            loading="lazy"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className={styles.queue__item__fallback}>
+            <CardFallbackIcon type="track" />
+          </div>
+        )}
+        {isHovered && (
+          <div className={styles.queue__item__play_overlay}>
+            <BsPlayFill />
+          </div>
+        )}
+      </div>
       <div className={styles.queue__item__info}>
         <span className={styles.queue__item__info__title}>{track.title}</span>
         <span className={styles.queue__item__info__artist}>

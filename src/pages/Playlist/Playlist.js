@@ -34,8 +34,21 @@ const Playlist = () => {
   );
 
   const playlistTracks =
-    playlist && tracks
-      ? tracks.filter((track) => playlist.tracks.includes(track._id))
+    playlist && tracks && playlist.tracks
+      ? playlist.tracks
+          .map((playlistTrack) => {
+            // If playlistTrack is already a full track object, return it
+            if (playlistTrack.title) return playlistTrack;
+            // Otherwise find the track in the tracks array
+            return tracks.find(
+              (track) =>
+                track._id ===
+                (typeof playlistTrack === 'string'
+                  ? playlistTrack
+                  : playlistTrack._id)
+            );
+          })
+          .filter(Boolean)
       : [];
 
   // Generate unique gradient for this playlist
@@ -83,8 +96,21 @@ const Playlist = () => {
   }, [playlist, playlistTracks, handlePlay]);
 
   const formatDuration = (duration) => {
-    const [minutes, seconds] = duration.split(':');
-    return `${minutes}:${seconds.padStart(2, '0')}`;
+    if (!duration) return '0:00';
+
+    // If duration is already in MM:SS format
+    if (typeof duration === 'string' && duration.includes(':')) {
+      const [minutes, seconds] = duration.split(':');
+      return `${minutes}:${seconds.padStart(2, '0')}`;
+    }
+
+    // If duration is in seconds (number or string)
+    const totalSeconds = parseInt(duration, 10);
+    if (isNaN(totalSeconds)) return '0:00';
+
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const getArtistName = (track) => {
@@ -92,6 +118,12 @@ const Playlist = () => {
     if (typeof track.artist === 'string') return track.artist;
     if (track.artist._id) return track.artist.name || t('common.unknownArtist');
     return track.artist.name || t('common.unknownArtist');
+  };
+
+  const getAlbumName = (track) => {
+    if (!track?.album) return t('common.unknownAlbum');
+    if (typeof track.album === 'string') return track.album;
+    return track.album.title || t('common.unknownAlbum');
   };
 
   if (playlistLoading || tracksLoading) {
@@ -269,7 +301,9 @@ const Playlist = () => {
                       </span>
                     </div>
                   </div>
-                  <span className={style.track__album}>{track.album}</span>
+                  <span className={style.track__album}>
+                    {getAlbumName(track)}
+                  </span>
                   <span className={style.track__duration}>
                     {formatDuration(track.duration)}
                   </span>

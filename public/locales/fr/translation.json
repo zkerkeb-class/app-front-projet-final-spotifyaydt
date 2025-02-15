@@ -219,5 +219,43 @@
     "noTracks": "Cette liste de lecture ne contient aucun titre",
     "loading": "Chargement de la liste de lecture...",
     "error": "Erreur lors du chargement de la liste de lecture"
+  },
+  "audioPlayer": {
+    "noTrack": "Aucune piste en cours de lecture",
+    "unknownTrack": "Piste inconnue",
+    "unknownArtist": "Artiste inconnu",
+    "unknownAlbum": "Album inconnu",
+    "queue": "File d'attente",
+    "lyrics": "Paroles",
+    "devices": "Appareils",
+    "jam": "Session Jam",
+    "repeat": {
+      "off": "Répétition désactivée",
+      "track": "Répéter la piste",
+      "playlist": "Répéter la playlist"
+    },
+    "shuffle": {
+      "on": "Lecture aléatoire activée",
+      "off": "Lecture aléatoire désactivée"
+    },
+    "volume": {
+      "mute": "Muet",
+      "unmute": "Activer le son"
+    },
+    "devices": {
+      "title": "Écouter sur",
+      "thisDevice": "Cet appareil",
+      "browser": "Ce navigateur web",
+      "desktop": "Ordinateur",
+      "mobile": "Téléphone",
+      "tablet": "Tablette"
+    },
+    "controls": {
+      "play": "Lecture",
+      "pause": "Pause",
+      "next": "Piste suivante",
+      "previous": "Piste précédente",
+      "togglePlay": "Basculer lecture/pause"
+    }
   }
 }
