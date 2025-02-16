@@ -1,7 +1,7 @@
 {
   "common": {
     "title": "Title",
-    "search": "What do you want to listen to?",
+    "search": "Search",
     "library": "Library",
     "home": "Home",
     "playlist": "Playlist",
@@ -114,6 +114,11 @@
     "visualizationUnavailable": "Audio visualization unavailable",
     "enterFullscreen": "Enter fullscreen",
     "minimizePlayer": "Minimize player",
+    "expandPlayer": "Expand player",
+    "openQueue": "Open queue",
+    "closeQueue": "Close queue",
+    "openDevices": "Open available devices",
+    "closeDevices": "Close devices menu",
     "repeatStates": {
       "off": "Repeat off",
       "track": "Repeat track",
@@ -263,7 +268,10 @@
       "browser": "This web browser",
       "desktop": "Computer",
       "mobile": "Phone",
-      "tablet": "Tablet"
+      "tablet": "Tablet",
+      "bluetooth": "Bluetooth device",
+      "cast": "Casting device",
+      "speaker": "Speaker"
     },
     "controls": {
       "play": "Play",

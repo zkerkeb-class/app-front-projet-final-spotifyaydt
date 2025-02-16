@@ -1,7 +1,7 @@
 {
   "common": {
     "title": "Titre",
-    "search": "Que voulez-vous écouter ?",
+    "search": "Recherche",
     "library": "Bibliothèque",
     "home": "Accueil",
     "playlist": "Liste de lecture",
@@ -105,9 +105,29 @@
     "emptyQueue": "Aucune piste dans la file d'attente",
     "titlePlaying": "Titre en cours",
     "upNext": "À suivre",
+    "currentDevice": "Appareil actuel",
     "webPlayer": "Lecteur Web",
     "selectAnotherDevice": "Sélectionner un autre appareil",
-    "deviceNotFound": "Vous ne voyez pas votre appareil ?"
+    "deviceNotFound": "Vous ne voyez pas votre appareil ?",
+    "fullscreenTitle": "Lecture avec Spotify AYDT",
+    "exitFullscreen": "Quitter le mode plein écran",
+    "visualizationUnavailable": "Visualisation audio non disponible",
+    "enterFullscreen": "Passer en plein écran",
+    "minimizePlayer": "Réduire le lecteur",
+    "expandPlayer": "Agrandir le lecteur",
+    "openQueue": "Ouvrir la file d'attente",
+    "closeQueue": "Fermer la file d'attente",
+    "openDevices": "Ouvrir les appareils disponibles",
+    "closeDevices": "Fermer le menu des appareils",
+    "repeatStates": {
+      "off": "Répétition désactivée",
+      "track": "Répéter la piste",
+      "playlist": "Répéter la playlist"
+    },
+    "volume": "Volume",
+    "volumeText": "Volume {{volume}}%{{muted ? ' (muet)' : ''}}",
+    "mute": "Muet",
+    "unmute": "Activer le son"
   },
   "jamSession": {
     "title": "Session Jam",
@@ -248,7 +268,10 @@
       "browser": "Ce navigateur web",
       "desktop": "Ordinateur",
       "mobile": "Téléphone",
-      "tablet": "Tablette"
+      "tablet": "Tablette",
+      "bluetooth": "Appareil Bluetooth",
+      "cast": "Appareil de diffusion",
+      "speaker": "Haut-parleur"
     },
     "controls": {
       "play": "Lecture",

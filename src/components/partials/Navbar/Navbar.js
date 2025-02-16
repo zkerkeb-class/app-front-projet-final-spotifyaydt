@@ -10,6 +10,7 @@ import {
   mockAlbums,
   mockArtists,
 } from '../../../constant/mockData';
+import JamModal from '../AudioPlayer/JamModal';
 
 //icons
 import { FiSearch, FiClock, FiX } from 'react-icons/fi';
@@ -37,6 +38,8 @@ const Navbar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [showJam, setShowJam] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const searchCache = new Map();
 
@@ -114,6 +117,15 @@ const Navbar = () => {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleLanguageChange = (event) => {
@@ -228,6 +240,15 @@ const Navbar = () => {
     setSearchResults([]);
   };
 
+  const handleJamClick = () => {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      setShowJam(true);
+    } else {
+      toggleJam();
+    }
+  };
+
   return (
     <div className={style.container}>
       <div className={style.navigation_buttons}>
@@ -235,7 +256,7 @@ const Navbar = () => {
           <div className={style.logo_icon}>
             <FaSpotify />
           </div>
-          <span>{t('common.appName')}</span>
+          <span className={style.logo_text}>{t('common.appName')}</span>
         </div>
         <div className={style.nav_button}>
           <button
@@ -346,7 +367,7 @@ const Navbar = () => {
         </button>
         <button
           className={style.user_button}
-          onClick={toggleJam}
+          onClick={handleJamClick}
           title={t('jamSession.title')}
         >
           <HiMiniUserGroup className={style.user_icon} />
@@ -368,6 +389,7 @@ const Navbar = () => {
           <FaUserNinja className={style.avatar} />
         </div>
       </div>
+      {isMobile && showJam && <JamModal onClose={() => setShowJam(false)} />}
     </div>
   );
 };

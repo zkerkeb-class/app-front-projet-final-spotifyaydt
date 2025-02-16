@@ -13,7 +13,8 @@ import { useApi } from '../../hooks/useApi';
 
 const Track = () => {
   const { id } = useParams();
-  const { handlePlay, isPlaying, currentTrack, handlePause } = useAudioPlayer();
+  const { handlePlay, isPlaying, currentTrack, togglePlayPause } =
+    useAudioPlayer();
   const { t } = useTranslation();
   const [imageError, setImageError] = useState(false);
 
@@ -41,7 +42,7 @@ const Track = () => {
   const handlePlayClick = useCallback(() => {
     if (track) {
       if (isPlaying && currentTrack?.id === track.id) {
-        handlePause();
+        togglePlayPause();
       } else {
         handlePlay({
           track,
@@ -50,7 +51,7 @@ const Track = () => {
         });
       }
     }
-  }, [track, isPlaying, currentTrack, handlePlay, handlePause]);
+  }, [track, isPlaying, currentTrack, handlePlay, togglePlayPause]);
 
   const handleLike = useCallback(() => {
     if (track) {

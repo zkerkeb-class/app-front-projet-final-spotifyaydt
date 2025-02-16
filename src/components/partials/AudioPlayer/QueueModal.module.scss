@@ -1,0 +1,182 @@
+.queueModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 65px;
+  background-color: var(--background-primary);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  border-radius: 0 0 16px 16px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.3) 0%,
+      var(--background-primary) 100%
+    );
+    z-index: -1;
+    border-radius: 0 0 16px 16px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  color: var(--text-primary);
+
+  .closeButton {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .headerTitle {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .placeholder {
+    width: 40px;
+  }
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px;
+}
+
+.section {
+  margin-bottom: 24px;
+
+  .sectionTitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0 0 16px;
+    padding: 0 8px;
+  }
+}
+
+.trackItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:active {
+    background-color: var(--background-tinted-highlight);
+  }
+
+  .trackArtwork {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    .coverImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--background-tinted-base);
+      color: var(--text-secondary);
+    }
+  }
+
+  .trackInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .trackTitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &.playing {
+        color: var(--accent-color);
+      }
+    }
+
+    .trackArtist {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .playButton {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-size: 32px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menuButton {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 24px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.emptyMessage {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 32px 16px;
+  font-style: italic;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

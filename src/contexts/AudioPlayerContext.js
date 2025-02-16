@@ -326,9 +326,18 @@ export const AudioPlayerProvider = ({ children }) => {
     const handleWaiting = () => setIsBuffering(true);
     const handlePlaying = () => setIsBuffering(false);
     const handleVolumeChange = () => setVolume(audio.volume);
+    const handleTimeUpdate = () => {
+      if (audio && !isNaN(audio.currentTime)) {
+        setCurrentTime(audio.currentTime);
+      }
+    };
 
-    audio.addEventListener('timeupdate', updateTime);
-    audio.addEventListener('loadedmetadata', () => setDuration(audio.duration));
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('loadedmetadata', () => {
+      if (audio && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
+    });
     audio.addEventListener('ended', handleAudioEnd);
     audio.addEventListener('waiting', handleWaiting);
     audio.addEventListener('playing', handlePlaying);
@@ -337,10 +346,12 @@ export const AudioPlayerProvider = ({ children }) => {
     audio.addEventListener('volumechange', handleVolumeChange);
 
     return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-      audio.removeEventListener('loadedmetadata', () =>
-        setDuration(audio.duration)
-      );
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('loadedmetadata', () => {
+        if (audio && !isNaN(audio.duration)) {
+          setDuration(audio.duration);
+        }
+      });
       audio.removeEventListener('ended', handleAudioEnd);
       audio.removeEventListener('waiting', handleWaiting);
       audio.removeEventListener('playing', handlePlaying);
@@ -538,9 +549,12 @@ export const AudioPlayerProvider = ({ children }) => {
     [calculateVolume]
   );
 
-  const updateTime = () => {
-    setCurrentTime(audioRef.current.currentTime);
-  };
+  const updateTime = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio && !isNaN(audio.currentTime)) {
+      setCurrentTime(audio.currentTime);
+    }
+  }, []);
 
   const calculateSeekTime = useCallback(
     (e, element) => {

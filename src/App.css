@@ -2,7 +2,14 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
+  /* Add dynamic viewport height */
   background-color: var(--background-primary);
+  width: 100%;
+  position: relative;
+  /* Add this to contain fixed elements */
+  overflow: hidden;
+  /* Prevent scrolling beyond container */
 }
 
 .main-content {
@@ -10,7 +17,8 @@
   flex: 1;
   overflow: hidden;
   padding: 8px;
-  min-height: 0; /* Important for nested flex containers */
+  min-height: 0;
+  /* Important for nested flex containers */
 }
 
 .content-wrapper {
@@ -66,6 +74,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -134,4 +143,29 @@ button {
 .refresh-button:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.5);
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0;
+    padding-bottom: 120px;
+    /* Increased to accommodate both player and navbar with gap */
+    height: calc(100% - 120px);
+    /* Adjusted to match new padding */
+  }
+
+  .content-wrapper {
+    border-radius: 0;
+  }
+
+  .audio-player {
+    position: fixed;
+    bottom: 65px;
+    /* Position 5px above the navbar */
+    left: 0;
+    right: 0;
+    z-index: 999;
+    margin-bottom: 0;
+    background-color: var(--background-base);
+  }
 }

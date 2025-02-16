@@ -1,0 +1,491 @@
+.mobilePlayer {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block;
+    position: fixed;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    background-color: var(--background-base);
+    z-index: 999;
+
+    &.hidden {
+      display: none;
+    }
+  }
+
+  .user_button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--text-primary);
+    }
+
+    .user_icon {
+      font-size: 20px;
+    }
+  }
+}
+
+.progressBar {
+  width: 100%;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.1);
+  position: relative;
+
+  .progressFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--accent-color);
+    transition: width 0.1s linear;
+  }
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 12px;
+}
+
+.artwork {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  .coverImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-tinted-base);
+    position: relative;
+
+    svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50%;
+      height: 50%;
+    }
+  }
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .artist {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.device {
+  color: var(--text-secondary);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.playButton {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-primary);
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Expanded Player Styles
+.expandedPlayer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 65px;
+  background-color: var(--background-primary);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  border-radius: 0 0 16px 16px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.3) 0%,
+      var(--background-primary) 100%
+    );
+    z-index: -1;
+    border-radius: 0 0 16px 16px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  color: var(--text-primary);
+
+  .closeButton,
+  .menuButton {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .headerTitle {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.expandedContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.artworkLarge {
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+
+  .coverImageLarge {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fallbackLarge {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-tinted-base);
+
+    svg {
+      width: 30%;
+      height: 30%;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.trackInfo {
+  text-align: center;
+  width: 100%;
+
+  .trackTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+  }
+
+  .trackArtist {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+.progressBarLarge {
+  width: 100%;
+
+  .progressBarContainer {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+
+    .progressFill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background-color: var(--accent-color);
+      border-radius: 2px;
+      transition: width 0.1s linear;
+    }
+  }
+
+  .timeInfo {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+
+  .controlButton {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 24px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &.active {
+      color: var(--accent-color);
+    }
+
+    .buttonActive {
+      position: absolute;
+      bottom: 2px;
+      font-size: 8px;
+      color: var(--accent-color);
+    }
+  }
+
+  .playButtonLarge {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 64px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+.deviceControls {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0px 16px;
+
+  .deviceButton {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    span {
+      font-size: 14px;
+    }
+  }
+
+  .queueButton {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    font-size: 20px;
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background-primary);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out;
+
+  .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    color: var(--text-primary);
+    background-color: var(--background-primary);
+    border-bottom: 1px solid var(--border-color);
+
+    .closeButton {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 24px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .headerTitle {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+
+  .modalContent {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--background-primary);
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.jamContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 24px;
+  text-align: center;
+  flex: 1;
+  min-height: 0;
+
+  h2 {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .startJamButton,
+  .joinSessionButton {
+    width: 100%;
+    max-width: 300px;
+    padding: 16px;
+    border-radius: 24px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background: none;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .startJamButton {
+    background-color: var(--accent-color);
+    color: white;
+
+    &:hover {
+      background-color: var(--accent-color-hover);
+    }
+  }
+
+  .joinSessionButton {
+    background-color: var(--background-tinted-highlight);
+    color: var(--text-primary);
+
+    &:hover {
+      background-color: var(--background-tinted-press);
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "common": {
     "title": "العنوان",
-    "search": "ماذا تريد أن تستمع؟",
+    "search": "بحث",
     "library": "المكتبة",
     "home": "الرئيسية",
     "playlist": "قائمة التشغيل",
@@ -107,9 +107,29 @@
     "emptyQueue": "لا توجد مسارات في قائمة الانتظار",
     "titlePlaying": "العنوان قيد التشغيل",
     "upNext": "التالي",
+    "currentDevice": "الجهاز الحالي",
     "webPlayer": "مشغل الويب",
     "selectAnotherDevice": "اختر جهازاً آخر",
-    "deviceNotFound": "لا ترى جهازك؟"
+    "deviceNotFound": "لا ترى جهازك؟",
+    "fullscreenTitle": "التشغيل مع سبوتيفاي AYDT",
+    "exitFullscreen": "الخروج من وضع ملء الشاشة",
+    "visualizationUnavailable": "العرض المرئي للصوت غير متوفر",
+    "enterFullscreen": "تفعيل وضع ملء الشاشة",
+    "minimizePlayer": "تصغير المشغل",
+    "expandPlayer": "توسيع المشغل",
+    "openQueue": "فتح قائمة الانتظار",
+    "closeQueue": "إغلاق قائمة الانتظار",
+    "openDevices": "فتح الأجهزة المتاحة",
+    "closeDevices": "إغلاق قائمة الأجهزة",
+    "repeatStates": {
+      "off": "إيقاف التكرار",
+      "track": "تكرار المسار",
+      "playlist": "تكرار قائمة التشغيل"
+    },
+    "volume": "مستوى الصوت",
+    "volumeText": "مستوى الصوت {{volume}}%{{muted ? ' (صامت)' : ''}}",
+    "mute": "كتم الصوت",
+    "unmute": "تشغيل الصوت"
   },
   "jamSession": {
     "title": "جلسة جام",
@@ -250,7 +270,10 @@
       "browser": "هذا المتصفح",
       "desktop": "الكمبيوتر",
       "mobile": "الهاتف",
-      "tablet": "الجهاز اللوحي"
+      "tablet": "الجهاز اللوحي",
+      "bluetooth": "جهاز بلوتوث",
+      "cast": "جهاز البث",
+      "speaker": "مكبر الصوت"
     },
     "controls": {
       "play": "تشغيل",
