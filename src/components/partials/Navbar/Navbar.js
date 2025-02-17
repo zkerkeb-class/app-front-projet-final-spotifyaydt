@@ -252,7 +252,7 @@ const Navbar = () => {
   return (
     <div className={style.container}>
       <div className={style.navigation_buttons}>
-        <div className={style.logo}>
+        <div className={style.logo} onClick={() => navigate('/')}>
           <div className={style.logo_icon}>
             <FaSpotify />
           </div>
