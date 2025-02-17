@@ -13,7 +13,23 @@
   gap: 16px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1001;
+
+  @media (max-width: 768px) {
+    .logo_text {
+      display: none !important;
+    }
+
+    .middle_cont {
+      display: none !important;
+    }
+
+    .user_controls {
+      .avatar_button {
+        display: none !important;
+      }
+    }
+  }
 
   .navigation_buttons {
     display: flex;
@@ -29,6 +45,8 @@
       font-weight: 700;
       height: 72;
       color: var(--accent-color);
+      cursor: pointer;
+
       .logo_icon {
         display: flex;
         align-items: center;
@@ -438,5 +456,29 @@
     left: 0;
     border-right: 1px solid var(--text-secondary);
     border-left: none !important;
+  }
+}
+
+.user_button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-secondary);
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--text-primary);
+    transform: scale(1.05);
+  }
+
+  .user_icon {
+    font-size: 18px;
   }
 }

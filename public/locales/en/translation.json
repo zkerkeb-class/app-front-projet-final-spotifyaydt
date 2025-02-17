@@ -1,6 +1,7 @@
 {
   "common": {
-    "search": "What do you want to listen to?",
+    "title": "Title",
+    "search": "Search",
     "library": "Library",
     "home": "Home",
     "playlist": "Playlist",
@@ -21,11 +22,6 @@
     "availableDevices": "Available Devices",
     "followers": "followers",
     "following": "following",
-    "allItems": "All Items",
-    "allTracks": "All Tracks",
-    "allAlbums": "All Albums",
-    "allArtists": "All Artists",
-    "allPlaylists": "All Playlists",
     "popular": "Popular",
     "popularTracks": "Popular Tracks",
     "popularArtists": "Popular Artists",
@@ -33,14 +29,15 @@
     "featuredPlaylists": "Featured Playlists",
     "recentlyPlayed": "Recently Played",
     "mostPlayed": "Most Played",
-    "lastPlayed": "Last Played",
     "appName": "Spotify AYDT",
-    "clearSearchHistory": "Clear search history",
-    "selectLanguage": "Select language",
-    "lightMode": "Light mode",
-    "darkMode": "Dark mode",
+    "clearSearchHistory": "Clear Search History",
+    "selectLanguage": "Select Language",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
     "clear": "Clear",
     "sort": "Sort",
+    "filter": "Filter",
+    "all": "All",
     "copyright": "© {{year}} AYDT",
     "toggleSidebar": "Toggle sidebar",
     "expandSidebar": "Expand sidebar",
@@ -63,7 +60,19 @@
     "pauseArtist": "Pause {{name}}'s top tracks",
     "playPlaylist": "Play playlist: {{title}}",
     "pausePlaylist": "Pause playlist: {{title}}",
-    "followerCount": "{{count}} followers"
+    "followerCount": "{{count}} followers",
+    "by": "by",
+    "unknownArtist": "Unknown Artist",
+    "unknownTitle": "Unknown Title",
+    "unknownAlbum": "Unknown Album",
+    "shuffleArtist": "Shuffle {{name}}'s tracks",
+    "followerCount_one": "{{count}} follower",
+    "followerCount_other": "{{count}} followers",
+    "shufflePlaylist": "Shuffle playlist",
+    "playTrack": "Play {{title}}",
+    "pauseTrack": "Pause {{title}}",
+    "trackCount": "{{count}} tracks",
+    "likeCount": "{{count}} likes"
   },
   "filters": {
     "all": "All",
@@ -71,6 +80,7 @@
     "albums": "Albums",
     "artists": "Artists",
     "playlists": "Playlists",
+    "alphabetical": "A-Z",
     "recent": "Recent",
     "popular": "Popular"
   },
@@ -85,22 +95,39 @@
     "networkError": "Network connection error",
     "notFound": "Not found",
     "unauthorized": "Unauthorized access",
-    "noResults": "No results found",
-    "noResultsmessage": "Il n’y a pas encore d’articles dans cette catégorie."
+    "loadingPlaylist": "Error loading playlist",
+    "playlistNotFound": "Playlist not found"
   },
   "player": {
     "nowPlaying": "Now Playing",
-    "emptyPlay": "No Track currently playing",
     "queue": "Queue",
     "connectDevice": "Connect to a device",
     "emptyQueue": "No tracks in queue",
     "titlePlaying": "Title playing",
     "upNext": "Up Next",
     "currentDevice": "Current device",
-    "availableDevices": "Available devices",
     "webPlayer": "Web Player",
     "selectAnotherDevice": "Select another device",
-    "deviceNotFound": "You don't see your device?"
+    "deviceNotFound": "You don't see your device?",
+    "fullscreenTitle": "Playing with Spotify AYDT",
+    "exitFullscreen": "Exit fullscreen",
+    "visualizationUnavailable": "Audio visualization unavailable",
+    "enterFullscreen": "Enter fullscreen",
+    "minimizePlayer": "Minimize player",
+    "expandPlayer": "Expand player",
+    "openQueue": "Open queue",
+    "closeQueue": "Close queue",
+    "openDevices": "Open available devices",
+    "closeDevices": "Close devices menu",
+    "repeatStates": {
+      "off": "Repeat off",
+      "track": "Repeat track",
+      "playlist": "Repeat playlist"
+    },
+    "volume": "Volume",
+    "volumeText": "Volume {{volume}}%{{muted ? ' (muted)' : ''}}",
+    "mute": "Mute",
+    "unmute": "Unmute"
   },
   "jamSession": {
     "title": "Jam Session",
@@ -122,5 +149,136 @@
     "daysAgo": "{{count}} days ago",
     "monthsAgo": "{{count}} months ago",
     "yearsAgo": "{{count}} years ago"
+  },
+  "search": {
+    "placeholder": "What do you want to listen to?",
+    "noResults": "No results found",
+    "bestMatch": "Best Match",
+    "tryAgain": "Try searching for something else",
+    "emptyState": "Type something to search",
+    "tracksCount": "{{count}} tracks found",
+    "albumsCount": "{{count}} albums found",
+    "artistsCount": "{{count}} artists found",
+    "playlistsCount": "{{count}} playlists found",
+    "filters": {
+      "all": "All",
+      "tracks": "Tracks",
+      "albums": "Albums",
+      "artists": "Artists",
+      "playlists": "Playlists"
+    },
+    "sort": {
+      "title": "Sort by",
+      "duration": "Duration",
+      "releaseDate": "Release Date",
+      "popularity": "Popularity",
+      "alphabetical": "A-Z"
+    },
+    "filter": {
+      "title": "Filter by",
+      "artist": "Artist",
+      "album": "Album",
+      "genre": "Genre",
+      "year": "Year",
+      "duration": {
+        "title": "Duration",
+        "short": "Short (≤ 3 min)",
+        "medium": "Medium (3-5 min)",
+        "long": "Long (> 5 min)"
+      },
+      "popularity": {
+        "title": "Popularity",
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    }
+  },
+  "track": {
+    "details": "Track Details",
+    "lyrics": "Lyrics",
+    "lyricsAvailable": "Lyrics are available for this track",
+    "plays": "{{count}} plays",
+    "like": "Like track",
+    "unlike": "Unlike track",
+    "details_labels": {
+      "album": "Album",
+      "artist": "Artist",
+      "genre": "Genre",
+      "releaseYear": "Release Year",
+      "duration": "Duration",
+      "mood": "Mood"
+    },
+    "unknown": {
+      "genre": "Unknown Genre",
+      "year": "Unknown Year",
+      "mood": "Unknown Mood"
+    }
+  },
+  "artist": {
+    "discography": "Discography",
+    "albums": "Albums",
+    "noTracks": "No tracks available",
+    "noAlbums": "No albums available"
+  },
+  "album": {
+    "title": "Album",
+    "tracks": "Tracks",
+    "releaseYear": "Release Year",
+    "trackCount": "{{count}} tracks",
+    "trackCount_one": "{{count}} track",
+    "trackCount_other": "{{count}} tracks",
+    "shufflePlay": "Shuffle Play",
+    "notFound": "Album not found",
+    "loading": "Loading album...",
+    "error": "Error loading album",
+    "duration": "Duration",
+    "trackNumber": "Track number"
+  },
+  "playlist": {
+    "noTracks": "This playlist has no tracks yet",
+    "loading": "Loading playlist...",
+    "error": "Error loading playlist"
+  },
+  "audioPlayer": {
+    "noTrack": "No track currently playing",
+    "unknownTrack": "Unknown track",
+    "unknownArtist": "Unknown artist",
+    "unknownAlbum": "Unknown album",
+    "queue": "Queue",
+    "lyrics": "Lyrics",
+    "devices": "Devices",
+    "jam": "Jam Session",
+    "repeat": {
+      "off": "Repeat off",
+      "track": "Repeat track",
+      "playlist": "Repeat playlist"
+    },
+    "shuffle": {
+      "on": "Shuffle on",
+      "off": "Shuffle off"
+    },
+    "volume": {
+      "mute": "Mute",
+      "unmute": "Unmute"
+    },
+    "devices": {
+      "title": "Listen on",
+      "thisDevice": "This device",
+      "browser": "This web browser",
+      "desktop": "Computer",
+      "mobile": "Phone",
+      "tablet": "Tablet",
+      "bluetooth": "Bluetooth device",
+      "cast": "Casting device",
+      "speaker": "Speaker"
+    },
+    "controls": {
+      "play": "Play",
+      "pause": "Pause",
+      "next": "Next track",
+      "previous": "Previous track",
+      "togglePlay": "Toggle play/pause"
+    }
   }
 }

@@ -9,21 +9,22 @@ const ResizableContainer = ({
   rightPanel,
   mainContent,
   minLeftWidth = 200,
-  minRightWidth = 200,
   maxLeftWidth = 400,
+  minRightWidth = 200,
   maxRightWidth = 400,
-  defaultLeftWidth = 350,
+  defaultLeftWidth = 300,
   defaultRightWidth = 300,
+  isMobileLibraryVisible = false,
   className,
   ...props
 }) => {
   const { t } = useTranslation();
+  const { isRightSidebarVisible } = useAudioPlayer();
   const [leftWidth, setLeftWidth] = useState(defaultLeftWidth);
   const [rightWidth, setRightWidth] = useState(defaultRightWidth);
   const [isResizingLeft, setIsResizingLeft] = useState(false);
   const [isResizingRight, setIsResizingRight] = useState(false);
   const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
-  const { isRightSidebarVisible } = useAudioPlayer();
   const COLLAPSED_WIDTH = 100;
 
   const handleMouseDown = useCallback(
@@ -114,24 +115,19 @@ const ResizableContainer = ({
   return (
     <div className={styles.resizable_layout}>
       <div
-        className={`${styles.resizable_panel} ${isLeftCollapsed ? styles.collapsed : ''}`}
-        style={{
-          width: leftWidth,
-          minWidth: isLeftCollapsed ? COLLAPSED_WIDTH : minLeftWidth,
-          maxWidth: isLeftCollapsed ? COLLAPSED_WIDTH : maxLeftWidth,
-        }}
+        className={`${styles.resizable_panel} ${styles.left} ${
+          isMobileLibraryVisible ? styles.visible : ''
+        }`}
+        style={{ width: leftWidth }}
       >
         {leftPanelWithCollapse}
       </div>
       <div
-        className={`${styles.resizable_divider} ${isLeftCollapsed ? styles.collapsed : ''}`}
+        className={styles.resizable_divider}
         onMouseDown={handleMouseDown('left')}
       />
       <div
-        className={styles.content_panel}
-        style={{
-          marginRight: isRightSidebarVisible ? undefined : '0',
-        }}
+        className={`${styles.content_panel} ${isMobileLibraryVisible ? styles.hidden : ''}`}
       >
         {mainContent}
       </div>
@@ -155,11 +151,12 @@ ResizableContainer.propTypes = {
   rightPanel: PropTypes.node.isRequired,
   mainContent: PropTypes.node.isRequired,
   minLeftWidth: PropTypes.number,
-  minRightWidth: PropTypes.number,
   maxLeftWidth: PropTypes.number,
+  minRightWidth: PropTypes.number,
   maxRightWidth: PropTypes.number,
   defaultLeftWidth: PropTypes.number,
   defaultRightWidth: PropTypes.number,
+  isMobileLibraryVisible: PropTypes.bool,
   className: PropTypes.string,
 };
 

@@ -1,10 +1,13 @@
-import React, { lazy, Suspense, memo } from 'react';
+import React, { lazy, Suspense, memo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import './styles/theme.scss';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { AudioPlayerProvider } from './contexts/AudioPlayerContext';
+import {
+  AudioPlayerProvider,
+  useAudioPlayer,
+} from './contexts/AudioPlayerContext';
 import { JamProvider } from './contexts/JamContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -29,8 +32,14 @@ const SideBarRight = lazy(
 const AudioPlayer = lazy(
   () => import('./components/partials/AudioPlayer/AudioPlayerF')
 );
+const MobileAudioPlayer = lazy(
+  () => import('./components/partials/AudioPlayer/MobileAudioPlayer')
+);
 const ResizableContainer = lazy(
   () => import('./components/UI/ResizableContainer/ResizableContainer')
+);
+const MobileNavBar = lazy(
+  () => import('./components/partials/MobileNavBar/MobileNavBar')
 );
 
 // Loading fallback component
@@ -64,29 +73,89 @@ const MainContentWrapper = memo(() => (
   </div>
 ));
 
-const AppLayout = memo(({ children }) => (
-  <div className="app-container">
-    <Suspense fallback={<LoadingFallback />}>
-      <Navbar />
-      <div className="main-content">
-        <Suspense fallback={<LoadingFallback />}>
-          <ResizableContainer
-            leftPanel={<SidebarLeft />}
-            rightPanel={<SideBarRight />}
-            mainContent={<MainContentWrapper />}
-            minLeftWidth={260}
-            maxLeftWidth={350}
-            minRightWidth={200}
-            maxRightWidth={310}
-            defaultLeftWidth={350}
-            defaultRightWidth={310}
+const AppLayout = memo(({ children }) => {
+  const [isLibraryVisible, setIsLibraryVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const { audioRef, currentTracks, currentTrackIndex } = useAudioPlayer();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleLibraryClick = (value) => {
+    setIsLibraryVisible(typeof value === 'boolean' ? value : !isLibraryVisible);
+  };
+
+  const getFileType = (url) => {
+    if (!url) return null;
+    const extension = url.split('.').pop().toLowerCase();
+    switch (extension) {
+      case 'mp3':
+        return 'audio/mpeg';
+      case 'wav':
+        return 'audio/wav';
+      case 'ogg':
+        return 'audio/ogg';
+      case 'm4a':
+        return 'audio/mp4';
+      case 'aac':
+        return 'audio/aac';
+      case 'webm':
+        return 'audio/webm';
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="app-container">
+      <Suspense fallback={<LoadingFallback />}>
+        <Navbar />
+        <div className="main-content">
+          <Suspense fallback={<LoadingFallback />}>
+            <ResizableContainer
+              leftPanel={<SidebarLeft />}
+              rightPanel={<SideBarRight />}
+              mainContent={<MainContentWrapper />}
+              minLeftWidth={260}
+              maxLeftWidth={350}
+              minRightWidth={200}
+              maxRightWidth={310}
+              defaultLeftWidth={350}
+              defaultRightWidth={310}
+              isMobileLibraryVisible={isLibraryVisible}
+            />
+          </Suspense>
+        </div>
+        {/* Shared audio element */}
+        <audio ref={audioRef} preload="metadata" aria-hidden="true">
+          {currentTracks?.[currentTrackIndex]?.audioUrl && (
+            <source
+              src={currentTracks[currentTrackIndex].audioUrl}
+              type={
+                getFileType(currentTracks[currentTrackIndex].audioUrl) ||
+                'audio/mpeg'
+              }
+            />
+          )}
+          Your browser does not support the audio element.
+        </audio>
+        {isMobile ? <MobileAudioPlayer /> : <AudioPlayer />}
+        {isMobile && (
+          <MobileNavBar
+            onLibraryClick={handleLibraryClick}
+            isLibraryVisible={isLibraryVisible}
           />
-        </Suspense>
-      </div>
-      <AudioPlayer />
-    </Suspense>
-  </div>
-));
+        )}
+      </Suspense>
+    </div>
+  );
+});
 
 AppLayout.propTypes = {
   children: PropTypes.node.isRequired,

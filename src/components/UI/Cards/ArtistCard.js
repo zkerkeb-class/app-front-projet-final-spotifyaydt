@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './Cards.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
-import { mockTracks } from '../../../constant/mockData';
 import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
+import OptimizedImage from '../OptimizedImage/OptimizedImage';
+import { api } from '../../../services/api';
+import { useApi } from '../../../hooks/useApi';
 
 // Icons
 import { FaPlay, FaPause } from 'react-icons/fa';
@@ -14,24 +16,27 @@ const ArtistCard = ({ artist, onPlay }) => {
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
+  const { data: tracks } = useApi(() => api.tracks.getAll(), []);
+
   // Check if this specific artist is the active source of playback
-  const isThisPlaying = isPlaying && activeCardId === artist.id;
+  const isThisPlaying = isPlaying && activeCardId === artist._id;
 
   const handleClick = useCallback(
     (e) => {
       e.preventDefault();
-      navigate(`/artist/${artist.id}`);
+      navigate(`/artist/${artist._id}`);
     },
-    [navigate, artist.id]
+    [navigate, artist._id]
   );
 
   const handlePlayClick = useCallback(
     (e) => {
       e.stopPropagation();
 
-      const artistTracks = mockTracks
-        .filter((track) => track.artist === artist.name)
-        .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0));
+      const artistTracks =
+        tracks
+          ?.filter((track) => track.artist._id === artist._id)
+          .sort((a, b) => (b.playCount || 0) - (a.playCount || 0)) || [];
 
       if (artistTracks.length === 0) {
         console.warn(`No tracks found for artist: ${artist.name}`);
@@ -44,17 +49,26 @@ const ArtistCard = ({ artist, onPlay }) => {
         action: isThisPlaying ? 'pause' : 'play',
       });
     },
-    [artist, handlePlay, isThisPlaying]
+    [artist, tracks, handlePlay, isThisPlaying]
   );
 
   const formatFollowers = (count) => {
+    if (!count) return t('common.noFollowers');
     if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M followers`;
+      return t('common.millionFollowers', {
+        count: (count / 1000000).toFixed(1),
+      });
     } else if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K followers`;
+      return t('common.thousandFollowers', {
+        count: (count / 1000).toFixed(1),
+      });
     }
-    return `${count} followers`;
+    return t('common.followers', { count });
   };
+
+  if (!artist || !artist.name) {
+    return null;
+  }
 
   return (
     <div
@@ -66,10 +80,11 @@ const ArtistCard = ({ artist, onPlay }) => {
     >
       <div className={styles.artistImageContainer}>
         {artist.imageUrl ? (
-          <img
+          <OptimizedImage
             src={artist.imageUrl}
             alt={t('common.artistPhoto', { name: artist.name })}
             className={`${styles.image} ${styles.artistImage}`}
+            sizes="(max-width: 768px) 150px, 200px"
             loading="lazy"
           />
         ) : (
@@ -89,9 +104,7 @@ const ArtistCard = ({ artist, onPlay }) => {
       </div>
       <div className={styles.content}>
         <span className={styles.title}>{artist.name}</span>
-        <p className={styles.followers}>
-          {t('common.followerCount', { count: artist.followers })}
-        </p>
+        <p className={styles.followers}>{formatFollowers(artist.popularity)}</p>
       </div>
     </div>
   );

@@ -44,56 +44,62 @@ export const intelligentSearch = (items, query, options = {}) => {
   const keywords = processSearchQuery(query);
   if (!keywords.length) return [];
 
-  const results = items.map((item) => {
-    let score = 0;
-    let matches = 0;
+  const results = items
+    .map((item) => {
+      let score = 0;
+      let matches = 0;
 
-    // Check each searchable field
-    fields.forEach((field) => {
-      if (!item[field]) return;
+      // Check each searchable field
+      fields.forEach((field) => {
+        // Handle nested fields (e.g., 'artist.name')
+        const fieldValue = field
+          .split('.')
+          .reduce((obj, key) => obj?.[key], item);
+        if (!fieldValue) return;
 
-      const fieldValue = item[field].toLowerCase();
+        // Convert to string and ensure it's lowercase
+        const fieldString = String(fieldValue).toLowerCase();
+        const queryLower = query.toLowerCase();
 
-      // Exact match
-      if (fieldValue.includes(query.toLowerCase())) {
-        score += 1;
-        matches++;
-      }
-
-      // Multiple keyword match
-      if (multiKeywordSearch(fieldValue, keywords)) {
-        score += 0.8;
-        matches++;
-      }
-
-      // Phonetic match (for artist names)
-      if ((usePhonetic && field === 'artist') || field === 'name') {
-        if (phoneticMatch(fieldValue, query)) {
-          score += 0.7;
+        // Exact match
+        if (fieldString.includes(queryLower)) {
+          score += 1;
           matches++;
         }
-      }
 
-      // Similarity match
-      const similarity = getSimilarity(fieldValue, query);
-      if (similarity > similarityThreshold) {
-        score += similarity * 0.6;
-        matches++;
-      }
-    });
+        // Multiple keyword match
+        if (multiKeywordSearch(fieldString, keywords)) {
+          score += 0.8;
+          matches++;
+        }
 
-    return {
-      item,
-      score: matches > 0 ? score / matches : 0,
-    };
-  });
+        // Phonetic match (for artist names)
+        if ((usePhonetic && field === 'artist') || field === 'name') {
+          if (phoneticMatch(fieldString, query)) {
+            score += 0.7;
+            matches++;
+          }
+        }
 
-  // Sort by score and return only items with matches
-  return results
-    .filter((result) => result.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, maxResults)
-    .map((result) => result.item);
+        // Similarity match
+        const similarity = getSimilarity(fieldString, queryLower);
+        if (similarity > similarityThreshold) {
+          score += similarity * 0.6;
+          matches++;
+        }
+      });
+
+      return {
+        ...item,
+        searchScore: score,
+        matches,
+      };
+    })
+    .filter((item) => item.matches > 0)
+    .sort((a, b) => b.searchScore - a.searchScore)
+    .slice(0, maxResults);
+
+  return results;
 };
 
 // Autocomplete suggestions

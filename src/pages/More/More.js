@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router-dom';
 import styles from './More.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import TrackCard from '../../components/UI/Cards/TrackCard';
@@ -8,63 +7,97 @@ import AlbumCard from '../../components/UI/Cards/AlbumCard';
 import ArtistCard from '../../components/UI/Cards/ArtistCard';
 import PlaylistCard from '../../components/UI/Cards/PlaylistCard';
 import Filter from '../../components/UI/Filter/Filter';
-import {
-  mockTracks,
-  mockAlbums,
-  mockArtists,
-  mockPlaylists,
-} from '../../constant/mockData';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
+import { useTranslation } from 'react-i18next';
+import { api } from '../../services/api';
+import { useApi } from '../../hooks/useApi';
+import LoadingSpinner from '../../components/UI/LoadingSpinner/LoadingSpinner';
 
 const More = () => {
   const { category } = useParams();
-  const { handlePlay } = useAudioPlayer();
+  const location = useLocation();
+  const { handlePlay, lastPlays, mostListenedTo } = useAudioPlayer();
+  const { t } = useTranslation();
   const [items, setItems] = useState([]);
   const [sortBy, setSortBy] = useState('default');
-  const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch data from API
+  const { data: tracks, loading: tracksLoading } = useApi(
+    () => api.tracks.getAll(),
+    []
+  );
+  const { data: albums, loading: albumsLoading } = useApi(
+    () => api.albums.getAll(),
+    []
+  );
+  const { data: artists, loading: artistsLoading } = useApi(
+    () => api.artists.getAll(),
+    []
+  );
+  const { data: playlists, loading: playlistsLoading } = useApi(
+    () => api.playlists.getAll(),
+    []
+  );
 
   useEffect(() => {
+    setIsLoading(true);
     let data = [];
     switch (category) {
       case 'tracks':
-        data = mockTracks;
+        data = tracks || [];
+        setIsLoading(tracksLoading);
         break;
       case 'albums':
-        data = mockAlbums;
+        data = albums || [];
+        setIsLoading(albumsLoading);
         break;
       case 'artists':
-        data = mockArtists;
+        data = artists || [];
+        setIsLoading(artistsLoading);
         break;
       case 'playlists':
-        data = mockPlaylists;
+        data = playlists || [];
+        setIsLoading(playlistsLoading);
         break;
       case 'history':
-        // You would get this from your audio player context
-        data = [];
+        data = lastPlays || [];
+        setIsLoading(false);
         break;
       case 'most-played':
-        // You would get this from your audio player context
-        data = [];
+        data = mostListenedTo || [];
+        setIsLoading(false);
         break;
       default:
         data = [];
+        setIsLoading(false);
     }
     setItems(data);
-  }, [category]);
+  }, [
+    category,
+    tracks,
+    albums,
+    artists,
+    playlists,
+    lastPlays,
+    mostListenedTo,
+    tracksLoading,
+    albumsLoading,
+    artistsLoading,
+    playlistsLoading,
+  ]);
 
   const renderItems = () => {
     return items.map((item) => {
       switch (category) {
         case 'tracks':
-          return <TrackCard key={item.id} track={item} onPlay={handlePlay} />;
+          return <TrackCard key={item._id} track={item} />;
         case 'albums':
-          return <AlbumCard key={item.id} album={item} onPlay={handlePlay} />;
+          return <AlbumCard key={item._id} album={item} />;
         case 'artists':
-          return <ArtistCard key={item.id} artist={item} onPlay={handlePlay} />;
+          return <ArtistCard key={item._id} artist={item} />;
         case 'playlists':
-          return (
-            <PlaylistCard key={item.id} playlist={item} onPlay={handlePlay} />
-          );
+          return <PlaylistCard key={item._id} playlist={item} />;
         default:
           return null;
       }
@@ -74,19 +107,19 @@ const More = () => {
   const getCategoryTitle = () => {
     switch (category) {
       case 'tracks':
-        return t('common.allTracks');
+        return t('common.popularTracks');
       case 'albums':
-        return t('common.allAlbums');
+        return t('common.featuredAlbums');
       case 'artists':
-        return t('common.allArtists');
+        return t('common.popularArtists');
       case 'playlists':
-        return t('common.allPlaylists');
+        return t('common.featuredPlaylists');
       case 'history':
         return t('common.recentlyPlayed');
       case 'most-played':
         return t('common.mostPlayed');
       default:
-        return t('common.allItems');
+        return t('common.all');
     }
   };
 
@@ -96,15 +129,26 @@ const More = () => {
 
     switch (sortType) {
       case 'name':
-        sortedItems.sort((a, b) =>
-          (a.title || a.name).localeCompare(b.title || b.name)
-        );
+        sortedItems.sort((a, b) => {
+          const nameA = a.title || a.name;
+          const nameB = b.title || b.name;
+          return nameA.localeCompare(nameB);
+        });
         break;
       case 'recent':
-        sortedItems.reverse();
+        // Sort by createdAt or releaseDate if available
+        sortedItems.sort((a, b) => {
+          const dateA = new Date(a.createdAt || a.releaseDate || 0);
+          const dateB = new Date(b.createdAt || b.releaseDate || 0);
+          return dateB - dateA;
+        });
         break;
       case 'popularity':
-        sortedItems.sort((a, b) => (b.plays || 0) - (a.plays || 0));
+        sortedItems.sort((a, b) => {
+          const popularityA = a.playCount || a.popularity || a.followers || 0;
+          const popularityB = b.playCount || b.popularity || b.followers || 0;
+          return popularityB - popularityA;
+        });
         break;
       default:
         break;
@@ -113,6 +157,10 @@ const More = () => {
     setItems(sortedItems);
   };
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <ErrorBoundary>
       <div className={styles.container}>
@@ -120,7 +168,7 @@ const More = () => {
           <h1>{getCategoryTitle()}</h1>
           <div className={styles.filters}>
             <Filter
-              filterName={t('filters.all')}
+              filterName={t('filters.alphabetical')}
               onFilter={() => handleSort('name')}
               isActive={sortBy === 'name'}
             />
@@ -142,8 +190,8 @@ const More = () => {
             renderItems()
           ) : (
             <div className={styles.empty}>
-              <h2>{t('errors.noResults')}</h2>
-              <p>{t('errors.noResultsmessage')}</p>
+              <h2>{t('errors.notFound')}</h2>
+              <p>{t('errors.loadError')}</p>
             </div>
           )}
         </div>

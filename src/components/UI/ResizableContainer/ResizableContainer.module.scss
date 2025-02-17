@@ -4,6 +4,50 @@
   height: 100%;
   position: relative;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    .resizable_panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      bottom: 60px; /* Leave space for mobile nav */
+      z-index: 1000;
+      width: 100% !important;
+      height: auto !important;
+      margin: 0;
+      border-radius: 0;
+      background-color: var(--background-base);
+
+      &.visible {
+        display: block;
+      }
+
+      &.left {
+        left: 0;
+      }
+
+      &.right {
+        right: 0;
+      }
+    }
+
+    .resizable_divider {
+      display: none;
+    }
+
+    .content_panel {
+      margin: 0 !important;
+      border-radius: 0;
+      width: 100%;
+      max-width: 100%;
+      flex: 1;
+
+      // Hide content when library is visible
+      &.hidden {
+        display: none;
+      }
+    }
+  }
 }
 
 .resizable_panel {
@@ -100,6 +144,11 @@
   height: 100%;
   margin: 0 8px; /* Add some spacing between panels */
 
+  @media (max-width: 768px) {
+    min-width: 100%;
+    margin: 0;
+  }
+
   &:hover {
     overflow-y: auto;
   }
@@ -125,5 +174,39 @@
   & > * {
     width: 100%;
     min-width: 0;
+  }
+}
+
+// Add new mobile overlay styles for right sidebar
+.mobile_overlay {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--background-base);
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+
+    &.visible {
+      transform: translateX(0);
+    }
+
+    .close_button {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1001;
+    }
   }
 }

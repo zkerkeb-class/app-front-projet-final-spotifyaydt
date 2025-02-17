@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { LuVolume, LuVolume1, LuVolume2, LuVolumeX } from 'react-icons/lu';
 
@@ -14,6 +15,7 @@ const AudioPlayerContext = createContext();
 export const useAudioPlayer = () => useContext(AudioPlayerContext);
 
 export const AudioPlayerProvider = ({ children }) => {
+  const { t } = useTranslation();
   const audioRef = useRef(null);
   const progressBarRef = useRef(null);
   const volumeBarRef = useRef(null);
@@ -53,7 +55,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const [playCounts, setPlayCounts] = useState({});
   const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(false);
   const [currentDevice, setCurrentDevice] = useState({
-    name: 'Ce navigateur web',
+    name: t('audioPlayer.devices.browser'),
     type: 'desktop',
     id: 'current',
     isActive: true,
@@ -63,7 +65,9 @@ export const AudioPlayerProvider = ({ children }) => {
     {
       name: window.navigator.userAgent.includes('Windows')
         ? 'DESKTOP-' + Math.random().toString(36).substr(2, 6).toUpperCase()
-        : 'Device-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+        : t('audioPlayer.devices.thisDevice') +
+          '-' +
+          Math.random().toString(36).substr(2, 6).toUpperCase(),
       type: 'desktop',
       id: 'device1',
       isActive: false,
@@ -87,41 +91,90 @@ export const AudioPlayerProvider = ({ children }) => {
   }, [currentTrackIndex, currentTracks.length]);
 
   const handleAudioEnd = useCallback(() => {
-    setIsPlaying(false);
+    const audio = audioRef.current;
+    if (!audio) return;
+
     if (repeatTrack) {
-      const audio = audioRef.current;
-      if (audio) {
-        audio.currentTime = 0;
-        setIsPlaying(true);
-      }
+      // For single track repeat
+      audio.currentTime = 0;
+      audio.play().catch((error) => {
+        console.error('Failed to replay track:', error);
+        setIsPlaying(false);
+      });
+      setIsPlaying(true);
     } else if (shuffleOn) {
+      // For shuffle mode
       if (shuffleQueueIndex < shuffleQueue.length - 1) {
         setShuffleHistory([...shuffleHistory, currentTrackIndex]);
         setShuffleQueueIndex(shuffleQueueIndex + 1);
-        setCurrentTrackIndex(shuffleQueue[shuffleQueueIndex + 1]);
+        const nextIndex = shuffleQueue[shuffleQueueIndex + 1];
+        setCurrentTrackIndex(nextIndex);
+        const nextTrack = currentTracks[nextIndex];
+        setCurrentTrack(nextTrack);
+        setActiveCardId(nextTrack._id);
+        audio.src = nextTrack.audioUrl;
+        audio.load();
+        audio.play().catch((error) => {
+          console.error('Failed to play next shuffled track:', error);
+          setIsPlaying(false);
+        });
         setIsPlaying(true);
       } else if (repeatPlaylist) {
         createShuffleQueue();
+        const nextIndex = shuffleQueue[0];
+        setCurrentTrackIndex(nextIndex);
+        const nextTrack = currentTracks[nextIndex];
+        setCurrentTrack(nextTrack);
+        setActiveCardId(nextTrack._id);
+        audio.src = nextTrack.audioUrl;
+        audio.load();
+        audio.play().catch((error) => {
+          console.error(
+            'Failed to play first track in shuffled playlist:',
+            error
+          );
+          setIsPlaying(false);
+        });
         setIsPlaying(true);
       }
     } else {
+      // For normal sequential playback
       if (currentTrackIndex < currentTracks.length - 1) {
-        setCurrentTrackIndex(currentTrackIndex + 1);
+        const nextIndex = currentTrackIndex + 1;
+        setCurrentTrackIndex(nextIndex);
+        const nextTrack = currentTracks[nextIndex];
+        setCurrentTrack(nextTrack);
+        setActiveCardId(nextTrack._id);
+        audio.src = nextTrack.audioUrl;
+        audio.load();
+        audio.play().catch((error) => {
+          console.error('Failed to play next track:', error);
+          setIsPlaying(false);
+        });
         setIsPlaying(true);
       } else if (repeatPlaylist) {
         setCurrentTrackIndex(0);
+        const nextTrack = currentTracks[0];
+        setCurrentTrack(nextTrack);
+        setActiveCardId(nextTrack._id);
+        audio.src = nextTrack.audioUrl;
+        audio.load();
+        audio.play().catch((error) => {
+          console.error('Failed to play first track in playlist:', error);
+          setIsPlaying(false);
+        });
         setIsPlaying(true);
       }
     }
   }, [
     currentTrackIndex,
+    currentTracks,
     shuffleOn,
     shuffleQueue,
     shuffleQueueIndex,
     shuffleHistory,
     repeatPlaylist,
     repeatTrack,
-    currentTracks.length,
     createShuffleQueue,
   ]);
 
@@ -157,11 +210,11 @@ export const AudioPlayerProvider = ({ children }) => {
     nextTrack = currentTracks[nextIndex];
     setCurrentTrackIndex(nextIndex);
     setCurrentTrack(nextTrack);
-    setActiveCardId(nextTrack.id);
+    setActiveCardId(nextTrack._id);
 
     const audio = audioRef.current;
     if (audio) {
-      audio.src = nextTrack.audio;
+      audio.src = nextTrack.audioUrl;
       audio.load();
       audio.play().catch((error) => {
         console.error('Playback failed:', error);
@@ -223,9 +276,9 @@ export const AudioPlayerProvider = ({ children }) => {
     prevTrack = currentTracks[prevIndex];
     setCurrentTrackIndex(prevIndex);
     setCurrentTrack(prevTrack);
-    setActiveCardId(prevTrack.id);
+    setActiveCardId(prevTrack._id);
 
-    audio.src = prevTrack.audio;
+    audio.src = prevTrack.audioUrl;
     audio.load();
     audio.play().catch((error) => {
       console.error('Playback failed:', error);
@@ -273,9 +326,18 @@ export const AudioPlayerProvider = ({ children }) => {
     const handleWaiting = () => setIsBuffering(true);
     const handlePlaying = () => setIsBuffering(false);
     const handleVolumeChange = () => setVolume(audio.volume);
+    const handleTimeUpdate = () => {
+      if (audio && !isNaN(audio.currentTime)) {
+        setCurrentTime(audio.currentTime);
+      }
+    };
 
-    audio.addEventListener('timeupdate', updateTime);
-    audio.addEventListener('loadedmetadata', () => setDuration(audio.duration));
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('loadedmetadata', () => {
+      if (audio && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
+    });
     audio.addEventListener('ended', handleAudioEnd);
     audio.addEventListener('waiting', handleWaiting);
     audio.addEventListener('playing', handlePlaying);
@@ -284,10 +346,12 @@ export const AudioPlayerProvider = ({ children }) => {
     audio.addEventListener('volumechange', handleVolumeChange);
 
     return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-      audio.removeEventListener('loadedmetadata', () =>
-        setDuration(audio.duration)
-      );
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('loadedmetadata', () => {
+        if (audio && !isNaN(audio.duration)) {
+          setDuration(audio.duration);
+        }
+      });
       audio.removeEventListener('ended', handleAudioEnd);
       audio.removeEventListener('waiting', handleWaiting);
       audio.removeEventListener('playing', handlePlaying);
@@ -324,13 +388,13 @@ export const AudioPlayerProvider = ({ children }) => {
     ({ track, tracks, action = 'play' }) => {
       if (!track || !tracks.length) return;
 
-      const trackIndex = tracks.findIndex((t) => t.id === track.id);
+      const trackIndex = tracks.findIndex((t) => t._id === track._id);
       if (trackIndex === -1) return;
 
       setCurrentTracks(tracks);
       setCurrentTrackIndex(trackIndex);
       setCurrentTrack(track);
-      setActiveCardId(track.id);
+      setActiveCardId(track._id);
 
       if (action === 'play') {
         setIsPlaying(true);
@@ -341,7 +405,7 @@ export const AudioPlayerProvider = ({ children }) => {
           setIsRightSidebarVisible(true);
         }
         if (audioRef.current) {
-          audioRef.current.src = track.audio;
+          audioRef.current.src = track.audioUrl;
           audioRef.current.play();
         }
       } else {
@@ -352,13 +416,16 @@ export const AudioPlayerProvider = ({ children }) => {
       }
 
       setLastPlays((prev) => {
-        const updatedPlays = [track, ...prev.filter((t) => t.id !== track.id)];
+        const updatedPlays = [
+          track,
+          ...prev.filter((t) => t._id !== track._id),
+        ];
         return updatedPlays.slice(0, 20); // Keep only the last 20 plays
       });
 
       setPlayCounts((prevCounts) => {
-        const newCount = (prevCounts[track.id] || 0) + 1;
-        return { ...prevCounts, [track.id]: newCount };
+        const newCount = (prevCounts[track._id] || 0) + 1;
+        return { ...prevCounts, [track._id]: newCount };
       });
     },
     [isRightSidebarVisible]
@@ -482,9 +549,12 @@ export const AudioPlayerProvider = ({ children }) => {
     [calculateVolume]
   );
 
-  const updateTime = () => {
-    setCurrentTime(audioRef.current.currentTime);
-  };
+  const updateTime = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio && !isNaN(audio.currentTime)) {
+      setCurrentTime(audio.currentTime);
+    }
+  }, []);
 
   const calculateSeekTime = useCallback(
     (e, element) => {
@@ -659,7 +729,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const mostListenedTo = Object.entries(playCounts)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 20)
-    .map(([id]) => lastPlays.find((track) => track.id === id))
+    .map(([id]) => lastPlays.find((track) => track._id === id))
     .filter(Boolean);
 
   // Effect to handle sidebar visibility based on display states
@@ -674,7 +744,7 @@ export const AudioPlayerProvider = ({ children }) => {
     const detectDevice = () => {
       const userAgent = window.navigator.userAgent.toLowerCase();
       let deviceType = 'desktop';
-      let deviceName = 'Ce navigateur web';
+      let deviceName = t('audioPlayer.devices.browser');
       let browserInfo = '';
 
       // Detect browser
@@ -695,14 +765,14 @@ export const AudioPlayerProvider = ({ children }) => {
 
       if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(userAgent)) {
         deviceType = 'tablet';
-        deviceName = 'Tablette';
+        deviceName = t('audioPlayer.devices.tablet');
       } else if (
         /Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
           userAgent
         )
       ) {
         deviceType = 'mobile';
-        deviceName = 'Téléphone';
+        deviceName = t('audioPlayer.devices.mobile');
       } else if (window.navigator.userAgent.includes('Windows')) {
         deviceName =
           'DESKTOP-' + Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -718,7 +788,7 @@ export const AudioPlayerProvider = ({ children }) => {
     };
 
     detectDevice();
-  }, []);
+  }, [t]);
 
   // Add function to handle device selection
   const selectDevice = useCallback((deviceId) => {

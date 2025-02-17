@@ -2,11 +2,9 @@ import React from 'react';
 import styles from './Sidebar.module.scss';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
 import { FaLaptop, FaMobileAlt, FaTabletAlt } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next';
 
 const Devices = () => {
   const { currentDevice, availableDevices, selectDevice } = useAudioPlayer();
-  const { t } = useTranslation();
 
   const getDeviceIcon = (type) => {
     switch (type) {
@@ -22,9 +20,7 @@ const Devices = () => {
   return (
     <div className={styles.devices}>
       <div className={styles.devices__current}>
-        <h3 className={styles.devices__section__title}>
-          {t('player.currentDevice')}
-        </h3>
+        <h3 className={styles.devices__section__title}>Appareil actuel</h3>
         <div
           className={`${styles.devices__item} ${styles.devices__item__current}`}
         >
@@ -46,7 +42,7 @@ const Devices = () => {
       {availableDevices.length > 0 && (
         <div className={styles.devices__available}>
           <h3 className={styles.devices__section__title}>
-            {t('player.availableDevices')}
+            Appareils disponibles
           </h3>
           {availableDevices.map((device) => (
             <button
@@ -65,9 +61,7 @@ const Devices = () => {
         </div>
       )}
 
-      <button className={styles.devices__footer__button}>
-        {t('jamSession.startJam')}
-      </button>
+      <button className={styles.devices__footer__button}>Lancer un Jam</button>
     </div>
   );
 };

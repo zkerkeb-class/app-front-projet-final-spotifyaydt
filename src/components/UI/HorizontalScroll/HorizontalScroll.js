@@ -71,17 +71,20 @@ const HorizontalScroll = ({
     }
   };
 
+  const shouldShowMore = showShowMore && itemCount > maxItems;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>{title}</h2>
-        {showShowMore && itemCount > maxItems && (
-          <div className={styles.right_element}>
-            <div className={styles.show_more} onClick={handleShowMore}>
+        <div className={styles.right_element}>
+          {shouldShowMore && (
+            <button className={styles.show_more} onClick={handleShowMore}>
               {t('common.showMore')}
-            </div>
-          </div>
-        )}
+            </button>
+          )}
+          {rightElement}
+        </div>
       </div>
       <div
         className={styles.scroll_wrapper}
@@ -100,8 +103,7 @@ const HorizontalScroll = ({
         <div
           className={styles.scroll_container}
           ref={scrollContainerRef}
-          role="region"
-          aria-label={t('common.scrollableContent')}
+          onScroll={checkScrollButtons}
         >
           {children}
         </div>

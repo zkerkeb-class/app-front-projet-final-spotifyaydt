@@ -4,16 +4,20 @@ import { useTranslation } from 'react-i18next';
 import styles from './Cards.module.scss';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
-import { mockTracks } from '../../../constant/mockData';
 import CardFallbackIcon from '../CardFallbackIcon/CardFallbackIcon';
+import OptimizedImage from '../OptimizedImage/OptimizedImage';
+import { api } from '../../../services/api';
+import { useApi } from '../../../hooks/useApi';
 
 const AlbumCard = ({ album }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
 
+  const { data: tracks } = useApi(() => api.tracks.getAll(), []);
+
   // Check if this specific album is the active source of playback
-  const isThisPlaying = isPlaying && activeCardId === album.id;
+  const isThisPlaying = isPlaying && activeCardId === album._id;
 
   const handleCardClick = useCallback(
     (e) => {
@@ -21,9 +25,9 @@ const AlbumCard = ({ album }) => {
       if (e.target.closest(`.${styles.playButton}`)) {
         return;
       }
-      navigate(`/album/${album.id}`);
+      navigate(`/album/${album._id}`);
     },
-    [navigate, album.id]
+    [navigate, album._id]
   );
 
   const handlePlayClick = useCallback(
@@ -32,9 +36,10 @@ const AlbumCard = ({ album }) => {
       e.stopPropagation(); // Stop event bubbling
 
       // Get all tracks from this album in order
-      const albumTracks = mockTracks
-        .filter((track) => track.album === album.title)
-        .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0));
+      const albumTracks =
+        tracks
+          ?.filter((track) => track.album._id === album._id)
+          .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0)) || [];
 
       if (albumTracks.length === 0) {
         console.warn(`No tracks found for album: ${album.title}`);
@@ -48,8 +53,16 @@ const AlbumCard = ({ album }) => {
         action: isThisPlaying ? 'pause' : 'play',
       });
     },
-    [album, handlePlay, isThisPlaying]
+    [album, tracks, handlePlay, isThisPlaying]
   );
+
+  // Get artist name safely
+  const getArtistName = () => {
+    if (!album.artist) return t('common.unknownArtist');
+    if (typeof album.artist === 'string') return album.artist;
+    if (album.artist._id) return album.artist.name || t('common.unknownArtist');
+    return album.artist.name || t('common.unknownArtist');
+  };
 
   return (
     <div
@@ -60,11 +73,12 @@ const AlbumCard = ({ album }) => {
       aria-label={t('common.album')}
     >
       <div className={styles.imageContainer}>
-        {album.coverUrl ? (
-          <img
-            src={album.coverUrl}
+        {album.coverImage ? (
+          <OptimizedImage
+            src={album.coverImage}
             alt={t('common.albumCover', { title: album.title })}
             className={styles.image}
+            sizes="(max-width: 768px) 150px, 200px"
             loading="lazy"
           />
         ) : (
@@ -84,8 +98,10 @@ const AlbumCard = ({ album }) => {
       </div>
       <div className={styles.content}>
         <span className={styles.title}>{album.title}</span>
-        <p className={styles.artist}>{album.artist}</p>
-        <p className={styles.year}>{album.year}</p>
+        <p className={styles.artist}>{getArtistName()}</p>
+        <p className={styles.year}>
+          {album.releaseDate ? new Date(album.releaseDate).getFullYear() : ''}
+        </p>
       </div>
     </div>
   );

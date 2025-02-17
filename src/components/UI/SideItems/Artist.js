@@ -5,12 +5,18 @@ import { FaPlay, FaPause } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useAudioPlayer } from '../../../contexts/AudioPlayerContext';
-import { mockTracks } from '../../../constant/mockData';
+import { useTranslation } from 'react-i18next';
+import OptimizedImage from '../OptimizedImage/OptimizedImage';
+import { api } from '../../../services/api';
+import { useApi } from '../../../hooks/useApi';
 
 const Artist = ({ artist, onClick }) => {
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
   const { handlePlay, isPlaying, activeCardId } = useAudioPlayer();
+  const { t } = useTranslation();
+
+  const { data: tracks } = useApi(() => api.tracks.getAll(), []);
 
   const isThisPlaying = isPlaying && activeCardId === artist.id;
 
@@ -30,9 +36,10 @@ const Artist = ({ artist, onClick }) => {
     (e) => {
       e.stopPropagation();
 
-      const artistTracks = mockTracks
-        .filter((track) => track.artist === artist.name)
-        .sort((a, b) => (a.trackNumber || 0) - (b.trackNumber || 0));
+      const artistTracks =
+        tracks
+          ?.filter((track) => track.artist.name === artist.name)
+          .sort((a, b) => b.playCount - a.playCount) || [];
 
       if (artistTracks.length === 0) {
         console.warn(`No tracks found for artist: ${artist.name}`);
@@ -45,7 +52,7 @@ const Artist = ({ artist, onClick }) => {
         action: isThisPlaying ? 'pause' : 'play',
       });
     },
-    [artist, handlePlay, isThisPlaying]
+    [artist, tracks, handlePlay, isThisPlaying]
   );
 
   return (
@@ -55,25 +62,38 @@ const Artist = ({ artist, onClick }) => {
       onClick={handleClick}
     >
       <div className={`${styles.imageContainer} ${styles.roundImage}`}>
-        <img
-          src={imageError ? '/default-artist.png' : artist.imageUrl}
-          alt={artist.name}
-          className={styles.image}
-          onError={handleImageError}
-          loading="lazy"
-        />
+        {!imageError ? (
+          <OptimizedImage
+            src={artist.imageUrl}
+            alt={t('common.artistPhoto', { name: artist.name })}
+            className={styles.image}
+            sizes="(max-width: 768px) 50px, 64px"
+            loading="lazy"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <img
+            src="/default-artist.png"
+            alt={t('common.artistPhoto', { name: artist.name })}
+            className={styles.image}
+          />
+        )}
         <button
           className={styles.playButton}
           onClick={handlePlayClick}
-          aria-label={`Play ${artist.name}'s top tracks`}
+          aria-label={
+            isThisPlaying
+              ? t('common.pauseArtist', { name: artist.name })
+              : t('common.playArtist', { name: artist.name })
+          }
         >
-          <FaPlay />
+          {isThisPlaying ? <FaPause /> : <FaPlay />}
         </button>
       </div>
       <div className={styles.content}>
         <span className={styles.title}>{artist.name}</span>
         <p className={styles.artist}>
-          Artist • {artist.followers.toLocaleString()} followers
+          {t('common.followerCount', { count: artist.followers })}
         </p>
       </div>
     </Link>
