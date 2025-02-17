@@ -21,6 +21,11 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  @media (max-width: 768px) {
+    padding: 8px 0;
+    gap: 12px;
+  }
 }
 
 .search_bar {
@@ -28,6 +33,10 @@
   max-width: 700px;
   width: 100%;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    display: none; // Hide the default search bar on mobile
+  }
 
   .search_icon {
     position: absolute;
@@ -59,11 +68,72 @@
   }
 }
 
+.mobile_search_bar {
+  display: none; // Hide by default on desktop
+
+  @media (max-width: 768px) {
+    display: flex; // Only show on mobile
+    padding: 0 8px;
+    align-items: center;
+    flex-direction: row;
+    width: 100%;
+    font-size: 16px;
+    margin-bottom: 16px;
+
+    .search_wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .search_icon {
+      position: absolute;
+      padding: 0 12px;
+      pointer-events: auto;
+      cursor: pointer;
+      font-size: 24px;
+      color: var(--text-secondary);
+
+      &:hover {
+        color: var(--text-primary);
+      }
+    }
+
+    .search_input {
+      width: 100%;
+      padding: 16px;
+      padding-left: 50px;
+      border-radius: 500px;
+      font-size: 16px;
+      border: none;
+      background-color: var(--background-base);
+      color: var(--text-primary);
+
+      &::placeholder {
+        color: var(--text-secondary);
+      }
+
+      &:focus {
+        outline: none;
+        background-color: var(--background-highlight);
+      }
+    }
+  }
+}
+
 .filters {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  padding: 0 16px;
+  width: 100%;
+  padding: 0 8px;
+
+  @media (max-width: 768px) {
+    padding: 0 4px;
+    gap: 6px;
+    margin-top: 4px;
+  }
 }
 
 .results {

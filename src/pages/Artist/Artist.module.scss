@@ -96,16 +96,27 @@
     }
 
     @media (max-width: 768px) {
+      flex-direction: column;
       padding: 16px;
+      gap: 16px;
+      text-align: center;
 
       &__container {
         width: 160px;
         height: 160px;
+        margin-bottom: 0;
       }
 
       &__info {
+        align-items: center;
+        padding: 0;
+
         &__title {
           font-size: 32px;
+        }
+
+        &__more {
+          justify-content: center;
         }
       }
     }
@@ -164,6 +175,22 @@
       display: flex;
       flex-direction: column;
       gap: 48px;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0 16px;
+      gap: 24px;
+
+      &__header {
+        &__container {
+          gap: 16px;
+
+          &__button {
+            padding: 16px;
+            font-size: 24px;
+          }
+        }
+      }
     }
   }
 
@@ -280,6 +307,19 @@
 
     &__image_fallback {
       position: relative;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr auto;
+      padding: 8px;
+
+      &__info {
+        gap: 12px;
+      }
+
+      &__plays {
+        display: none;
+      }
     }
   }
 

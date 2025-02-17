@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import { fetchWithCache } from '../../utils/cacheUtils';
 import Filter from '../../components/UI/Filter/Filter';
+import FilterScroll from '../../components/UI/FilterScroll/FilterScroll';
 import style from './Home.module.scss';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { api } from '../../services/api';
@@ -90,31 +91,33 @@ const Home = () => {
   return (
     <div className={style.home}>
       <header className={style.header}>
-        <Filter
-          filterName={t('filters.all')}
-          onFilter={handleFilterChange}
-          isActive={activeFilter === t('filters.all')}
-        />
-        <Filter
-          filterName={t('filters.tracks')}
-          onFilter={handleFilterChange}
-          isActive={activeFilter === t('filters.tracks')}
-        />
-        <Filter
-          filterName={t('filters.artists')}
-          onFilter={handleFilterChange}
-          isActive={activeFilter === t('filters.artists')}
-        />
-        <Filter
-          filterName={t('filters.albums')}
-          onFilter={handleFilterChange}
-          isActive={activeFilter === t('filters.albums')}
-        />
-        <Filter
-          filterName={t('filters.playlists')}
-          onFilter={handleFilterChange}
-          isActive={activeFilter === t('filters.playlists')}
-        />
+        <FilterScroll>
+          <Filter
+            filterName={t('filters.all')}
+            onFilter={handleFilterChange}
+            isActive={activeFilter === t('filters.all')}
+          />
+          <Filter
+            filterName={t('filters.tracks')}
+            onFilter={handleFilterChange}
+            isActive={activeFilter === t('filters.tracks')}
+          />
+          <Filter
+            filterName={t('filters.artists')}
+            onFilter={handleFilterChange}
+            isActive={activeFilter === t('filters.artists')}
+          />
+          <Filter
+            filterName={t('filters.albums')}
+            onFilter={handleFilterChange}
+            isActive={activeFilter === t('filters.albums')}
+          />
+          <Filter
+            filterName={t('filters.playlists')}
+            onFilter={handleFilterChange}
+            isActive={activeFilter === t('filters.playlists')}
+          />
+        </FilterScroll>
       </header>
 
       <ErrorBoundary>

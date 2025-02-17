@@ -19,6 +19,7 @@ import { useAudioPlayer } from '../../contexts/AudioPlayerContext';
 import { api } from '../../services/api';
 import { useApi } from '../../hooks/useApi';
 import { useTranslation } from 'react-i18next';
+import FilterScroll from '../../components/UI/FilterScroll/FilterScroll';
 
 const Search = () => {
   const navigate = useNavigate();
@@ -67,6 +68,15 @@ const Search = () => {
   );
 
   const INITIAL_LIMIT = 6;
+
+  // Add filters object definition
+  const filters = {
+    all: t('search.filters.all'),
+    tracks: t('search.filters.tracks'),
+    albums: t('search.filters.albums'),
+    artists: t('search.filters.artists'),
+    playlists: t('search.filters.playlists'),
+  };
 
   const getArtistName = (track) => {
     if (!track?.artist) return t('common.unknownArtist');
@@ -360,56 +370,23 @@ const Search = () => {
   return (
     <ErrorBoundary>
       <div className={style.container}>
-        <header className={style.header}>
-          <div className={style.filters}>
-            <Filter
-              filterName={t('search.filters.all')}
-              onFilter={() => setActiveFilter(t('search.filters.all'))}
-              isActive={activeFilter === t('search.filters.all')}
-            />
-            <Filter
-              filterName={t('search.filters.tracks')}
-              onFilter={() => setActiveFilter(t('search.filters.tracks'))}
-              isActive={activeFilter === t('search.filters.tracks')}
-            />
-            <Filter
-              filterName={t('search.filters.albums')}
-              onFilter={() => setActiveFilter(t('search.filters.albums'))}
-              isActive={activeFilter === t('search.filters.albums')}
-            />
-            <Filter
-              filterName={t('search.filters.artists')}
-              onFilter={() => setActiveFilter(t('search.filters.artists'))}
-              isActive={activeFilter === t('search.filters.artists')}
-            />
-            <Filter
-              filterName={t('search.filters.playlists')}
-              onFilter={() => setActiveFilter(t('search.filters.playlists'))}
-              isActive={activeFilter === t('search.filters.playlists')}
-            />
-          </div>
-          <FilterMenu
-            onFilterChange={handleFilterChange}
-            onSortChange={handleSortChange}
-          />
-        </header>
-
-        <main className={style.results}>
-          {isLoading ||
-          tracksLoading ||
-          albumsLoading ||
-          artistsLoading ||
-          playlistsLoading ? (
-            <div className={style.loading}>
-              <div className={style.spinner}></div>
-            </div>
-          ) : query.trim() === '' ? (
-            <div className={style.empty_state}>
-              <FaSearch className={style.empty_icon} />
-              <p>{t('search.emptyState')}</p>
-            </div>
-          ) : (
-            <>
+        <div className={style.header}>
+          {/* Mobile Search Bar */}
+          <div className={style.mobile_search_bar}>
+            <div className={style.search_wrapper}>
+              <FaSearch className={style.search_icon} />
+              <input
+                type="text"
+                className={style.search_input}
+                placeholder={t('search.placeholder')}
+                value={query}
+                onChange={(e) => {
+                  const newQuery = e.target.value;
+                  navigate(`/search?query=${encodeURIComponent(newQuery)}`);
+                  setShowSuggestions(true);
+                  updateSuggestions(newQuery);
+                }}
+              />
               {showSuggestions && suggestions.length > 0 && (
                 <div className={style.suggestions}>
                   {suggestions.map((suggestion, index) => (
@@ -428,7 +405,60 @@ const Search = () => {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
 
+          <div className={style.filters}>
+            <FilterScroll>
+              <Filter
+                filterName={t('search.filters.all')}
+                onFilter={() => setActiveFilter(t('search.filters.all'))}
+                isActive={activeFilter === t('search.filters.all')}
+              />
+              <Filter
+                filterName={t('search.filters.tracks')}
+                onFilter={() => setActiveFilter(t('search.filters.tracks'))}
+                isActive={activeFilter === t('search.filters.tracks')}
+              />
+              <Filter
+                filterName={t('search.filters.albums')}
+                onFilter={() => setActiveFilter(t('search.filters.albums'))}
+                isActive={activeFilter === t('search.filters.albums')}
+              />
+              <Filter
+                filterName={t('search.filters.artists')}
+                onFilter={() => setActiveFilter(t('search.filters.artists'))}
+                isActive={activeFilter === t('search.filters.artists')}
+              />
+              <Filter
+                filterName={t('search.filters.playlists')}
+                onFilter={() => setActiveFilter(t('search.filters.playlists'))}
+                isActive={activeFilter === t('search.filters.playlists')}
+              />
+            </FilterScroll>
+          </div>
+          <FilterMenu
+            onFilterChange={handleFilterChange}
+            onSortChange={handleSortChange}
+          />
+        </div>
+
+        <main className={style.results}>
+          {isLoading ||
+          tracksLoading ||
+          albumsLoading ||
+          artistsLoading ||
+          playlistsLoading ? (
+            <div className={style.loading}>
+              <div className={style.spinner}></div>
+            </div>
+          ) : query.trim() === '' ? (
+            <div className={style.empty_state}>
+              <FaSearch className={style.empty_icon} />
+              <p>{t('search.emptyState')}</p>
+            </div>
+          ) : (
+            <>
               {bestResult && renderBestResult()}
 
               {(activeFilter === t('search.filters.all') ||
