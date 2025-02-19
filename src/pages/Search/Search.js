@@ -23,7 +23,7 @@ import FilterScroll from '../../components/UI/FilterScroll/FilterScroll';
 
 const Search = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [activeFilter, setActiveFilter] = useState(t('search.filters.all'));
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState({
@@ -45,6 +45,29 @@ const Search = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get('query') || '';
+
+  // Set active filter based on current route
+  useEffect(() => {
+    const path = location.pathname.split('/')[2]; // Get the category from the URL
+    if (path) {
+      switch (path) {
+        case 'tracks':
+          setActiveFilter(t('search.filters.tracks'));
+          break;
+        case 'albums':
+          setActiveFilter(t('search.filters.albums'));
+          break;
+        case 'artists':
+          setActiveFilter(t('search.filters.artists'));
+          break;
+        case 'playlists':
+          setActiveFilter(t('search.filters.playlists'));
+          break;
+        default:
+          setActiveFilter(t('search.filters.all'));
+      }
+    }
+  }, [location.pathname, t, i18n.language]);
 
   const [searchParams] = useSearchParams();
   const { handlePlay } = useAudioPlayer();
@@ -163,7 +186,7 @@ const Search = () => {
       setBestResult(bestMatch);
       setIsLoading(false);
     },
-    [tracks, albums, artists, playlists]
+    [tracks, albums, artists, playlists, i18n.language]
   );
 
   const findBestResult = (searchResults, searchQuery) => {
@@ -231,13 +254,13 @@ const Search = () => {
       ];
       setSuggestions(allSuggestions);
     },
-    [tracks, artists]
+    [tracks, artists, i18n.language]
   );
 
   useEffect(() => {
     handleSearch(query);
     updateSuggestions(query);
-  }, [query, handleSearch, updateSuggestions]);
+  }, [query, handleSearch, updateSuggestions, i18n.language]);
 
   const applyFilters = useCallback((filters, items) => {
     return items.filter((item) => {
@@ -345,7 +368,7 @@ const Search = () => {
 
   useEffect(() => {
     setFilteredResults(results);
-  }, [results]);
+  }, [results, i18n.language]);
 
   const renderBestResult = () => {
     if (!bestResult) return null;

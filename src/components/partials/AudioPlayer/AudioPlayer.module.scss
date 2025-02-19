@@ -11,24 +11,6 @@
   justify-content: space-between;
   color: var(--text-primary);
 
-  &.disabled {
-    .player__music,
-    .player__controlsContainer {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .player__optionsContainer {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-
-  &__disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
   &__music {
     display: flex;
     flex-direction: row;
@@ -37,6 +19,11 @@
     padding-inline-start: 16px;
     gap: 10px;
     width: 30%;
+
+    &__disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
 
     &.player__disabled {
       .player__music__cover__placeholder {
@@ -126,6 +113,11 @@
     justify-content: center;
     width: 40%;
     height: 100%;
+
+    &__disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
   }
 
   &__controls {

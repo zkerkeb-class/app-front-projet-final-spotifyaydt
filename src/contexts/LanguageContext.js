@@ -34,14 +34,24 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    load: 'languageOnly',
+    preload: ['en', 'fr', 'ar'],
+    react: {
+      useSuspense: true,
+      bindI18n: 'languageChanged loaded',
+      bindStore: 'added removed',
+      nsMode: 'default',
+    },
   });
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(i18n.language);
   const [dir, setDir] = useState('ltr');
+  const [isLoading, setIsLoading] = useState(false);
 
   const changeLanguage = async (lng) => {
     try {
+      setIsLoading(true);
       await i18n.changeLanguage(lng);
       setLanguage(lng);
       moment.locale(lng);
@@ -57,6 +67,8 @@ export const LanguageProvider = ({ children }) => {
       localStorage.setItem('i18nextLng', lng);
     } catch (error) {
       console.error('Error changing language:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -71,7 +83,16 @@ export const LanguageProvider = ({ children }) => {
     changeLanguage,
     dir,
     t: i18n.t,
+    isLoading,
   };
+
+  if (isLoading) {
+    return (
+      <div className="loading-spinner">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <LanguageContext.Provider value={value}>

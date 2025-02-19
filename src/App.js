@@ -57,6 +57,10 @@ const MainContent = memo(() => (
       <Route path="/album/:id" element={<Album />} />
       <Route path="/track/:id" element={<Track />} />
       <Route path="/search" element={<Search />} />
+      <Route path="/search/tracks" element={<Search />} />
+      <Route path="/search/albums" element={<Search />} />
+      <Route path="/search/artists" element={<Search />} />
+      <Route path="/search/playlists" element={<Search />} />
       <Route path="/playlist/:id" element={<Playlist />} />
       <Route path="/more/:category" element={<More />} />
       <Route path="*" element={<NotFound />} />
@@ -167,17 +171,19 @@ const App = () => {
   return (
     <ErrorBoundary>
       <LanguageProvider>
-        <ThemeProvider>
-          <AudioPlayerProvider>
-            <JamProvider>
-              <Router>
-                <AppLayout>
-                  <MainContentWrapper />
-                </AppLayout>
-              </Router>
-            </JamProvider>
-          </AudioPlayerProvider>
-        </ThemeProvider>
+        <Suspense fallback={<LoadingFallback />}>
+          <ThemeProvider>
+            <AudioPlayerProvider>
+              <JamProvider>
+                <Router>
+                  <AppLayout>
+                    <MainContentWrapper />
+                  </AppLayout>
+                </Router>
+              </JamProvider>
+            </AudioPlayerProvider>
+          </ThemeProvider>
+        </Suspense>
       </LanguageProvider>
     </ErrorBoundary>
   );

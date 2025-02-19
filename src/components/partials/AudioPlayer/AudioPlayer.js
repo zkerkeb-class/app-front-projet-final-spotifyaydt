@@ -71,8 +71,10 @@ const AudioPlayer = ({ onError }) => {
   if (!currentTracks || currentTracks.length === 0) {
     return (
       <div className={style.container}>
-        <div className={`${style.player} ${style.player__disabled}`}>
-          <div className={style.player__music}>
+        <div className={style.player}>
+          <div
+            className={`${style.player__music} ${style.player__music__disabled}`}
+          >
             <div className={style.player__music__cover}>
               <div className={style.player__music__cover__placeholder} />
             </div>
@@ -82,7 +84,9 @@ const AudioPlayer = ({ onError }) => {
               </span>
             </div>
           </div>
-          <div className={style.player__controlsContainer}>
+          <div
+            className={`${style.player__controlsContainer} ${style.player__controlsContainer__disabled}`}
+          >
             <Controls />
           </div>
           <div className={style.player__optionsContainer}>

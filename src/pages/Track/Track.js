@@ -55,7 +55,6 @@ const Track = () => {
 
   const handleLike = useCallback(() => {
     if (track) {
-      console.log('Toggle like for track:', track);
       // Implement your like logic here
     }
   }, [track]);

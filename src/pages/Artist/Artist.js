@@ -39,10 +39,6 @@ const Artist = () => {
     []
   );
 
-  console.log('Artist data:', artist);
-  console.log('Tracks data:', tracks);
-  console.log('Albums data:', albums);
-
   const artistTracks =
     tracks?.filter((track) => {
       if (!track.artist || !artist?._id) return false;
@@ -75,9 +71,6 @@ const Artist = () => {
       // If album.artist is a string (ID)
       return album.artist === artist._id;
     }) || [];
-
-  console.log('Filtered artist tracks:', artistTracks);
-  console.log('Filtered artist albums:', artistAlbums);
 
   // Generate unique gradient for this artist
   const headerStyle = artist ? generateGradient(artist.name) : {};

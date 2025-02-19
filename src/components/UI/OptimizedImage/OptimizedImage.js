@@ -2,13 +2,20 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styles from './OptimizedImage.module.scss';
 
+const DEFAULT_QUALITY = parseInt(process.env.REACT_APP_IMAGE_QUALITY) || 75;
+const DEFAULT_SIZES = (
+  process.env.REACT_APP_DEFAULT_IMAGE_SIZES || '320,640,768,1024,1366,1600,1920'
+)
+  .split(',')
+  .map(Number);
+
 const OptimizedImage = ({
   src,
   alt,
   className,
   sizes = '100vw',
   loading = 'lazy',
-  quality = 75,
+  quality = DEFAULT_QUALITY,
   ...props
 }) => {
   const [imageSrc, setImageSrc] = useState('');
@@ -41,10 +48,9 @@ const OptimizedImage = ({
 
   // Generate srcSet for different sizes
   const generateSrcSet = () => {
-    const widths = [320, 640, 768, 1024, 1366, 1600, 1920];
-    return widths
-      .map((width) => `${src}?w=${width}&q=${quality} ${width}w`)
-      .join(', ');
+    return DEFAULT_SIZES.map(
+      (width) => `${src}?w=${width}&q=${quality} ${width}w`
+    ).join(', ');
   };
 
   return (
