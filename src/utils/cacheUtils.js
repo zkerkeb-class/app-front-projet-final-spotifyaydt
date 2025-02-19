@@ -1,5 +1,7 @@
 class CacheManager {
-  constructor(ttl = 5 * 60 * 1000) {
+  constructor(
+    ttl = parseInt(process.env.REACT_APP_CACHE_TTL) || 5 * 60 * 1000
+  ) {
     // 5 minutes default TTL
     this.cache = new Map();
     this.ttl = ttl;
