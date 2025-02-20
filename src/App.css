@@ -148,9 +148,9 @@ button {
 @media (max-width: 768px) {
   .main-content {
     padding: 0;
-    padding-bottom: 120px;
+    padding-bottom: 60px;
     /* Increased to accommodate both player and navbar with gap */
-    height: calc(100% - 120px);
+    height: calc(100% - 60px);
     /* Adjusted to match new padding */
   }
 

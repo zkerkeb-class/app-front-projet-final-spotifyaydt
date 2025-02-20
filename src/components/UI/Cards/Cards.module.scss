@@ -73,10 +73,7 @@
   z-index: 2;
 
   @media (max-width: 768px) {
-    width: 48px;
-    height: 48px;
-    top: 75%;
-    right: 15%;
+    display: none;
   }
 
   &:hover {
