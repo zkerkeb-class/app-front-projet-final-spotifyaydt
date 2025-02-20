@@ -9,6 +9,9 @@
     right: 0;
     background-color: var(--background-base);
     z-index: 999;
+    margin-inline: 8px;
+    border-radius: 8px;
+    background-color: var(--background-primary);
 
     &.hidden {
       display: none;
@@ -55,7 +58,7 @@
 .content {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
+  padding: 8px;
   gap: 12px;
 }
 
