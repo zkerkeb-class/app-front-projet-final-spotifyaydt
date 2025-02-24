@@ -12,6 +12,9 @@
 ## Frontend
 
 ## Backend
+- <a href="https://youtu.be/XHwi5_tPb5g?si=B8RlVTBUduacWON7" target="_blank">Backend - Jam WebSocket Spotify</a>
+- <a href="https://youtu.be/E1P6DI2pBcs?si=hZ_90fCwtP4WkAVU" target="_blank">Backend Spotify Login JWT Token</a>
+
 
 
 # Getting Started with Create React App
