@@ -1,3 +1,22 @@
+# Liens des vidéos youTube pour valider le projet
+
+## Backoffice
+
+- <a href="https://youtu.be/7zRlJe0QhDU" target="_blank">Spotify AYDT Graphes pour les metrics</a>
+- <a href="https://youtu.be/GJvd0oEIj3E" target="_blank">Lier les sons aux albums</a>
+- <a href="https://youtu.be/wIcekotdmag" target="_blank">Drag and drop dans les pistes</a>
+- <a href="https://youtu.be/vcSP67Drops" target="_blank">Interface améliorée pour création album</a>
+- <a href="https://youtu.be/a6G-6cP3HXM" target="_blank">Modification et suppression d'audio</a>
+- <a href="https://youtu.be/Ffahjvnd_Sw" target="_blank">Barre de recherche dans les pistes</a>
+
+## Frontend
+
+## Backend
+
+- <a href="https://youtu.be/XHwi5_tPb5g?si=B8RlVTBUduacWON7" target="_blank">Backend - Jam WebSocket Spotify</a>
+- <a href="https://youtu.be/E1P6DI2pBcs?si=hZ_90fCwtP4WkAVU" target="_blank">Backend Spotify Login JWT Token</a>
+- <a href="https://youtu.be/ndfKEmIQFYU" target="_blank">Backend - Test Js Spotify</a>
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
