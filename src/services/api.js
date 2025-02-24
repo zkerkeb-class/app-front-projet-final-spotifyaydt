@@ -1,6 +1,8 @@
 import { cacheManager } from '../utils/cacheUtils';
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const BASE_URL =
+  process.env.REACT_APP_API_BASE_URL ||
+  'https://back-end-projet-final-spotifyaydt.onrender.com/api';
 
 const ENDPOINTS = {
   PLAYLISTS: '/playlists',
@@ -17,20 +19,36 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Error types for better error handling
 class ApiError extends Error {
-  constructor(message, status, code) {
+  constructor(message, status, code, details = {}) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.code = code;
+    this.details = details;
+    this.timestamp = new Date().toISOString();
   }
 }
 
 class NetworkError extends Error {
-  constructor(message) {
+  constructor(message, details = {}) {
     super(message);
     this.name = 'NetworkError';
+    this.details = details;
+    this.timestamp = new Date().toISOString();
   }
 }
+
+// Enhanced error logging
+const logError = (error, context = {}) => {
+  const errorLog = {
+    timestamp: new Date().toISOString(),
+    type: error.name,
+    message: error.message,
+    ...context,
+    ...(error.details || {}),
+  };
+  console.error('API Error:', errorLog);
+};
 
 // Get CSRF token from meta tag
 const getCSRFToken = () => {
@@ -45,16 +63,21 @@ const validateResponse = (data) => {
   return data;
 };
 
-async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
-  const csrfToken = getCSRFToken();
-
+async function fetchWithRetry(url, options = {}) {
   const defaultHeaders = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   };
 
-  if (csrfToken) {
-    defaultHeaders[CSRF_HEADER] = csrfToken;
+  // Only add CSRF token for mutation requests
+  const method = options.method || 'GET';
+  if (method !== 'GET' && method !== 'HEAD') {
+    const csrfToken = document.querySelector(
+      'meta[name="csrf-token"]'
+    )?.content;
+    if (csrfToken) {
+      defaultHeaders['X-CSRF-Token'] = csrfToken;
+    }
   }
 
   const fetchOptions = {
@@ -63,69 +86,64 @@ async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
       ...defaultHeaders,
       ...options.headers,
     },
-    credentials: 'include', // Include cookies in requests
+    credentials: 'include',
   };
 
   try {
     const response = await fetch(url, fetchOptions);
-
-    // Store CSRF token if provided in response
-    const newToken = response.headers.get(CSRF_HEADER);
-    if (newToken) {
-      localStorage.setItem('csrfToken', newToken);
-    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new ApiError(
         errorData.message || 'Request failed',
         response.status,
-        errorData.code
+        errorData.code,
+        {
+          url,
+          method: options.method || 'GET',
+        }
       );
     }
 
     const data = await response.json();
     return validateResponse(data);
   } catch (error) {
-    if (error instanceof ApiError) {
-      // Don't retry on client errors (4xx)
-      if (error.status >= 400 && error.status < 500) {
-        throw error;
-      }
+    if (error.name === 'TypeError') {
+      const networkError = new NetworkError('Network error occurred', {
+        url,
+        method: options.method || 'GET',
+      });
+      logError(networkError);
+      throw networkError;
     }
 
-    if (retries > 0) {
-      await sleep(RETRY_DELAY);
-      return fetchWithRetry(url, options, retries - 1);
-    }
-
-    if (error.name === 'TypeError' || error.name === 'NetworkError') {
-      throw new NetworkError('Network error occurred');
-    }
+    logError(error);
     throw error;
   }
 }
 
 async function fetchWithCache(url, options = {}) {
-  const cacheKey = url;
-  const cachedData = cacheManager.get(cacheKey);
+  const cacheKey = `${options.method || 'GET'}-${url}`;
 
-  if (cachedData) {
-    return cachedData;
+  // Only use cache for GET requests
+  if (options.method === 'GET' || !options.method) {
+    const cachedData = cacheManager.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
   }
 
   try {
     const data = await fetchWithRetry(url, options);
-    cacheManager.set(cacheKey, data);
+
+    // Only cache GET requests
+    if (options.method === 'GET' || !options.method) {
+      cacheManager.set(cacheKey, data);
+    }
+
     return data;
   } catch (error) {
-    // Log error for monitoring
-    console.error('API Error:', {
-      url,
-      error: error.message,
-      code: error.code,
-      status: error.status,
-    });
+    logError(error, { url, method: options.method || 'GET' });
     throw error;
   }
 }
@@ -137,6 +155,23 @@ export const api = {
     },
     getById: async (id) => {
       return await fetchWithCache(`${BASE_URL}${ENDPOINTS.PLAYLISTS}/${id}`);
+    },
+    create: async (data) => {
+      return await fetchWithCache(`${BASE_URL}${ENDPOINTS.PLAYLISTS}`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
+    update: async (id, data) => {
+      return await fetchWithCache(`${BASE_URL}${ENDPOINTS.PLAYLISTS}/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+    },
+    delete: async (id) => {
+      return await fetchWithCache(`${BASE_URL}${ENDPOINTS.PLAYLISTS}/${id}`, {
+        method: 'DELETE',
+      });
     },
   },
   tracks: {

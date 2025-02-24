@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './Jam.module.scss';
-import { FaSearch, FaSort } from 'react-icons/fa';
+import { FaSearch, FaSort, FaCrown } from 'react-icons/fa';
 import { IoFilterSharp } from 'react-icons/io5';
 import Participant from './Participant';
 
-const ParticipantList = ({ participants }) => {
+const ParticipantList = ({ participants, currentUserId }) => {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('joinedAt');
   const [sortOrder, setSortOrder] = useState('asc');
@@ -56,6 +58,10 @@ const ParticipantList = ({ participants }) => {
       setSortBy(field);
       setSortOrder('asc');
     }
+  };
+
+  const getInitial = (name) => {
+    return name?.charAt(0).toUpperCase() || '?';
   };
 
   return (
@@ -110,16 +116,73 @@ const ParticipantList = ({ participants }) => {
                     </span>
                   </h4>
                   {participants.map((participant) => (
-                    <Participant
+                    <div
                       key={participant.id}
-                      participant={participant}
-                    />
+                      className={`${styles.participant_item} ${
+                        participant.id === currentUserId ? styles.current : ''
+                      }`}
+                    >
+                      <div className={styles.participant_avatar}>
+                        {getInitial(participant.name)}
+                      </div>
+                      <div className={styles.participant_info}>
+                        <span className={styles.participant_name}>
+                          {participant.name}
+                          {participant.id === currentUserId && (
+                            <span className={styles.you_badge}>
+                              {t('jamSession.you')}
+                            </span>
+                          )}
+                        </span>
+                        {participant.isHost && (
+                          <span className={styles.host_indicator}>
+                            <FaCrown />
+                            {t('jamSession.host')}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.participant_status}>
+                        <span
+                          className={`${styles.status_dot} ${styles[participant.status]}`}
+                        />
+                      </div>
+                    </div>
                   ))}
                 </div>
               )
             )
           : sortedParticipants.map((participant) => (
-              <Participant key={participant.id} participant={participant} />
+              <div
+                key={participant.id}
+                className={`${styles.participant_item} ${
+                  participant.id === currentUserId ? styles.current : ''
+                }`}
+              >
+                <div className={styles.participant_avatar}>
+                  {getInitial(participant.name)}
+                </div>
+                <div className={styles.participant_info}>
+                  <span className={styles.participant_name}>
+                    {participant.name}
+                    {participant.id === currentUserId && (
+                      <span className={styles.you_badge}>
+                        {t('jamSession.you')}
+                      </span>
+                    )}
+                  </span>
+                  {participant.isHost && (
+                    <span className={styles.host_indicator}>
+                      <FaCrown />
+                      {t('jamSession.host')}
+                    </span>
+                  )}
+                </div>
+                <div className={styles.participant_status}>
+                  <span
+                    className={`${styles.status_dot} ${styles[participant.status]}`}
+                  />
+                </div>
+              </div>
             ))}
       </div>
     </div>

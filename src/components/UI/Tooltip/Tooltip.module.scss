@@ -1,0 +1,85 @@
+.tooltip_container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: var(--background-tinted-highlight);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  animation: fadeIn 0.2s ease-in-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    border: 6px solid transparent;
+  }
+
+  &.top {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+
+    &::before {
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-top-color: var(--background-tinted-highlight);
+    }
+  }
+
+  &.bottom {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+
+    &::before {
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-bottom-color: var(--background-tinted-highlight);
+    }
+  }
+
+  &.left {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-8px);
+
+    &::before {
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border-left-color: var(--background-tinted-highlight);
+    }
+  }
+
+  &.right {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%) translateX(8px);
+
+    &::before {
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border-right-color: var(--background-tinted-highlight);
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

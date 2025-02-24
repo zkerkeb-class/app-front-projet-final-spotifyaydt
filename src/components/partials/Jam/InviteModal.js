@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useTranslation } from 'react-i18next';
 import {
   IoClose,
   IoCopy,
@@ -8,59 +8,60 @@ import {
   IoLink,
   IoQrCode,
 } from 'react-icons/io5';
-import { RiHashtag } from 'react-icons/ri';
 import styles from './Jam.module.scss';
 
 const InviteModal = ({ jamSession, onClose }) => {
-  const [activeTab, setActiveTab] = useState('link');
   const [copied, setCopied] = useState(false);
+  const { t } = useTranslation();
 
-  const inviteLink = `${window.location.origin}/jam/${jamSession.id}`;
-  const inviteCode = jamSession.id.slice(0, 8).toUpperCase();
+  const sessionCode = jamSession?.id?.slice(0, 8).toUpperCase();
+  const inviteLink = `${window.location.origin}/jam/${jamSession?.id}`;
 
-  const handleCopy = () => {
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'link':
-        return (
-          <div className={styles.invite__content__link}>
-            <div className={styles.invite__content__link__input}>
-              <input type="text" value={inviteLink} readOnly />
-              <CopyToClipboard text={inviteLink} onCopy={handleCopy}>
-                <button>
-                  {copied ? <IoCheckmark size={20} /> : <IoCopy size={20} />}
-                </button>
-              </CopyToClipboard>
+  return (
+    <div className={styles.invite__overlay} onClick={onClose}>
+      <div
+        className={styles.invite__modal}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={styles.invite__header}>
+          <h3>{t('jamSession.shareOptions.title')}</h3>
+          <button onClick={onClose}>
+            <IoClose size={24} />
+          </button>
+        </div>
+
+        <div className={styles.invite__content}>
+          <div className={styles.invite__section}>
+            <h4>{t('jamSession.sessionCode')}</h4>
+            <div className={styles.invite__code}>
+              <span>{sessionCode}</span>
+              <button onClick={() => handleCopy(sessionCode)}>
+                {copied ? <IoCheckmark size={20} /> : <IoCopy size={20} />}
+              </button>
             </div>
-            <p>
-              Share this link with friends to invite them to your Jam session
-            </p>
+            <p className={styles.invite__hint}>{t('jamSession.shareCode')}</p>
           </div>
-        );
-      case 'code':
-        return (
-          <div className={styles.invite__content__code}>
-            <div className={styles.invite__content__code__display}>
-              <span>{inviteCode}</span>
-              <CopyToClipboard text={inviteCode} onCopy={handleCopy}>
-                <button>
-                  {copied ? <IoCheckmark size={20} /> : <IoCopy size={20} />}
-                </button>
-              </CopyToClipboard>
+
+          <div className={styles.invite__section}>
+            <h4>{t('jamSession.shareOptions.copyLink')}</h4>
+            <div className={styles.invite__link}>
+              <IoLink size={20} />
+              <span>{inviteLink}</span>
+              <button onClick={() => handleCopy(inviteLink)}>
+                {copied ? <IoCheckmark size={20} /> : <IoCopy size={20} />}
+              </button>
             </div>
-            <p>
-              Share this code with friends to invite them to your Jam session
-            </p>
           </div>
-        );
-      case 'qr':
-        return (
-          <div className={styles.invite__content__qr}>
-            <div className={styles.invite__content__qr__code}>
+
+          <div className={styles.invite__section}>
+            <h4>{t('jamSession.shareOptions.showQR')}</h4>
+            <div className={styles.invite__qr}>
               <QRCodeSVG
                 value={inviteLink}
                 size={200}
@@ -70,55 +71,8 @@ const InviteModal = ({ jamSession, onClose }) => {
                 fgColor="var(--text-primary)"
               />
             </div>
-            <p>Scan this QR code to join the Jam session</p>
           </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className={styles.invite__overlay}>
-      <div className={styles.invite__modal}>
-        <div className={styles.invite__header}>
-          <h3>Invite to Jam Session</h3>
-          <button onClick={onClose}>
-            <IoClose size={24} />
-          </button>
         </div>
-
-        <div className={styles.invite__tabs}>
-          <button
-            className={`${styles.invite__tabs__tab} ${
-              activeTab === 'link' ? styles.active : ''
-            }`}
-            onClick={() => setActiveTab('link')}
-          >
-            <IoLink size={20} />
-            <span>Link</span>
-          </button>
-          <button
-            className={`${styles.invite__tabs__tab} ${
-              activeTab === 'code' ? styles.active : ''
-            }`}
-            onClick={() => setActiveTab('code')}
-          >
-            <RiHashtag size={20} />
-            <span>Code</span>
-          </button>
-          <button
-            className={`${styles.invite__tabs__tab} ${
-              activeTab === 'qr' ? styles.active : ''
-            }`}
-            onClick={() => setActiveTab('qr')}
-          >
-            <IoQrCode size={20} />
-            <span>QR Code</span>
-          </button>
-        </div>
-
-        <div className={styles.invite__content}>{renderContent()}</div>
       </div>
     </div>
   );

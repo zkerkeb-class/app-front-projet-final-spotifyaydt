@@ -378,45 +378,186 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--background-primary);
+  background-color: var(--background-base);
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  animation: fadeIn 0.3s ease-out;
+}
 
-  .modalHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+
+  .closeButton {
+    background: none;
+    border: none;
     color: var(--text-primary);
-    background-color: var(--background-primary);
-    border-bottom: 1px solid var(--border-color);
-
-    .closeButton {
-      background: none;
-      border: none;
-      color: var(--text-primary);
-      font-size: 24px;
-      padding: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .headerTitle {
-      font-size: 16px;
-      font-weight: 500;
-    }
+    font-size: 24px;
+    padding: 8px;
+    cursor: pointer;
   }
 
-  .modalContent {
-    flex: 1;
-    overflow-y: auto;
-    background-color: var(--background-primary);
+  .headerTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+.modalContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.jamContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  h2 {
+    font-size: 20px;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .activeSession {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 24px;
+
+    .sessionCode {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+
+      h3 {
+        font-size: 16px;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+      }
+
+      .codeDisplay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background-color: var(--background-tinted-highlight);
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+
+        span {
+          font-size: 24px;
+          font-weight: 600;
+          color: var(--text-primary);
+          letter-spacing: 2px;
+        }
+
+        button {
+          background: none;
+          border: none;
+          color: var(--text-secondary);
+          font-size: 20px;
+          padding: 8px;
+          cursor: pointer;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: var(--text-primary);
+          }
+        }
+      }
+
+      .shareText {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+    }
   }
+
+  .jamOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+
+    .createSessionButton {
+      width: 100%;
+      padding: 16px;
+      border-radius: 8px;
+      background-color: var(--accent-color);
+      color: black;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: var(--accent-color-hover);
+      }
+    }
+
+    .joinSessionSection {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      h3 {
+        font-size: 16px;
+        color: var(--text-primary);
+      }
+
+      .joinInput {
+        display: flex;
+        gap: 8px;
+
+        input {
+          flex: 1;
+          padding: 12px;
+          border-radius: 4px;
+          border: 1px solid var(--border-color);
+          background-color: var(--background-tinted-highlight);
+          color: var(--text-primary);
+          font-size: 16px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+
+          &::placeholder {
+            color: var(--text-secondary);
+            text-transform: none;
+            letter-spacing: normal;
+          }
+        }
+
+        .joinButton {
+          padding: 12px 24px;
+          border-radius: 4px;
+          background-color: var(--background-tinted-highlight);
+          color: var(--text-primary);
+          border: 1px solid var(--border-color);
+          font-size: 16px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background-color: var(--background-tinted-press);
+          }
+        }
+      }
+    }
+  }
+}
+
+.error {
+  color: var(--error-color);
+  font-size: 14px;
+  margin-top: 8px;
 }
 
 @keyframes fadeIn {
@@ -434,59 +575,5 @@
   }
   to {
     transform: translateY(0);
-  }
-}
-
-.jamContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  padding: 24px;
-  text-align: center;
-  flex: 1;
-  min-height: 0;
-
-  h2 {
-    font-size: 18px;
-    color: var(--text-secondary);
-    margin: 0;
-  }
-
-  .startJamButton,
-  .joinSessionButton {
-    width: 100%;
-    max-width: 300px;
-    padding: 16px;
-    border-radius: 24px;
-    border: none;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    background: none;
-
-    &:active {
-      transform: scale(0.98);
-    }
-  }
-
-  .startJamButton {
-    background-color: var(--accent-color);
-    color: white;
-
-    &:hover {
-      background-color: var(--accent-color-hover);
-    }
-  }
-
-  .joinSessionButton {
-    background-color: var(--background-tinted-highlight);
-    color: var(--text-primary);
-
-    &:hover {
-      background-color: var(--background-tinted-press);
-    }
   }
 }
