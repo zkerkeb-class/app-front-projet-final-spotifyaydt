@@ -41,6 +41,7 @@ const ResizableContainer = lazy(
 const MobileNavBar = lazy(
   () => import('./components/partials/MobileNavBar/MobileNavBar')
 );
+const JamRoute = lazy(() => import('./routes/JamRoute'));
 
 // Loading fallback component
 const LoadingFallback = () => (
@@ -63,6 +64,7 @@ const MainContent = memo(() => (
       <Route path="/search/playlists" element={<Search />} />
       <Route path="/playlist/:id" element={<Playlist />} />
       <Route path="/more/:category" element={<More />} />
+      <Route path="/jam/:sessionId" element={<JamRoute />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </div>

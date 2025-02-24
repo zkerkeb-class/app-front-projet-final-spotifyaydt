@@ -140,8 +140,41 @@
     "nextUp": "Next Up",
     "startJam": "Start a Jam",
     "startSession": "Start a Jam Session",
-    "createNew": "Create a new session",
-    "joinExisting": "Join existing session"
+    "createNew": "Create New Session",
+    "joinExisting": "Join Existing Session",
+    "enterCode": "Enter Session Code",
+    "invalidCode": "Invalid session code. Please enter 8 characters.",
+    "joinButton": "Join Session",
+    "sessionCode": "Session Code",
+    "copyCode": "Copy Code",
+    "codeCopied": "Code copied!",
+    "shareCode": "Share this code with friends",
+    "connecting": "Connecting...",
+    "connected": "Connected to session",
+    "disconnected": "Disconnected from session",
+    "reconnecting": "Attempting to reconnect...",
+    "hostLeft": "Host has left the session",
+    "joinedAs": "Joined as",
+    "leaveSession": "Leave Session",
+    "help": "Help & Tips",
+    "helpTitle": "How to Use Jam Sessions",
+    "helpHost": "As a host, you control the music. Your playback will be synced with all participants.",
+    "helpJoin": "To join a session, you need an 8-character code from the host.",
+    "helpControls": "The host controls playback for everyone in the session.",
+    "helpSync": "Music is automatically synchronized between all participants.",
+    "shareOptions": {
+      "title": "Share Session",
+      "copyLink": "Copy Link",
+      "showQR": "Show QR Code",
+      "linkCopied": "Link copied to clipboard!",
+      "shareVia": "Share via"
+    },
+    "errors": {
+      "connectionFailed": "Failed to connect to session",
+      "reconnectionFailed": "Failed to reconnect",
+      "invalidSession": "Invalid or expired session",
+      "networkError": "Network error occurred"
+    }
   },
   "dates": {
     "today": "Today",
