@@ -11,79 +11,90 @@
 
 ## Frontend
 
+- <a href="https://youtu.be/Kzov8YRi15M" target="_blank">Multi Language</a>
+- <a href="https://youtu.be/akWQd9WrJt0" target="_blank">Image optimisée</a>
+- <a href="https://youtu.be/2n5PznpbltM" target="_blank">Responsive mobile</a>
+- <a href="https://youtu.be/Exlt5y62qys" target="_blank">Performance LightHouse</a>
+
 ## Backend
 
 - <a href="https://youtu.be/XHwi5_tPb5g?si=B8RlVTBUduacWON7" target="_blank">Backend - Jam WebSocket Spotify</a>
 - <a href="https://youtu.be/E1P6DI2pBcs?si=hZ_90fCwtP4WkAVU" target="_blank">Backend Spotify Login JWT Token</a>
 - <a href="https://youtu.be/ndfKEmIQFYU" target="_blank">Backend - Test Js Spotify</a>
 
-# Getting Started with Create React App
+# Spotify AYDT
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 🐼 Spotify AYDT
 
-## Available Scripts
+![Spotify AYDT Logo](spotify-aydt.png)
 
-In the project directory, you can run:
+Un clone de spotify pour ecouter des musiques en ligne.
 
-### `npm start`
+- [Voir le site](https://spotify-aydt.vercel.app/)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Aperçu
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![Aperçu du site](spotify-aydt.jpg)
 
-### `npm test`
+## Table des matières
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- [Installation](#installation)
+- [Technologies utilisées](#technologies-utilisées)
+- [Structure du projet](#structure-du-projet)
+- [Fonctionnalités](#fonctionnalités)
 
-### `npm run build`
+## Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Assurez-vous d'avoir Node.js installé avant de démarrer.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Clonez le repository:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+git clone https://github.com/zkerkeb-class/app-front-projet-final-spotifyaydt.git
+```
 
-### `npm run eject`
+2. Accédez au répertoire du projet:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+cd app-front-projet-final-spotifyaydt
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Installez les dépendances de chaques repertoire:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm install --legacy-peer-deps
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+4. Démarrez l'api puis demarrer l'application:
 
-## Learn More
+```bash
+npm run start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+5. Ouvrez votre navigateur et accédez à http://localhost:3000.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Technologies utilisées
 
-### Code Splitting
+### Technologies utilisées
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- React.js
+- SCSS
 
-### Analyzing the Bundle Size
+## Structure du projet
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Pour le front
 
-### Making a Progressive Web App
+- /src: Contient les pages du site.
+- /pages: Contient les pages du site.
+- /context: Contient le contexte de l'application.
+- /hooks: Contient les hooks de l'application.
+- /utils: Contient les utils de l'application.
+- /components: Regroupe les composants réutilisables.
+- /public: Ressources statiques telles que les images.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Fonctionnalités
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Page d'accueil pour visualiser les differentes pistes.
+- Ecouter les musiques en ligne.
+- Page de recherche pour rechercher une piste.
+- Barre de recherche dans les pistes.
