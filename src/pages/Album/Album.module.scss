@@ -1,0 +1,326 @@
+.container {
+  min-height: 100%;
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+
+  @media (max-width: 768px) {
+    padding: 1rem 0;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+    padding: 32px 24px 8px 24px;
+    background-color: var(--background-secondary);
+    background: transparent;
+    position: relative;
+    z-index: 1;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    &__container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-radius: 5px;
+      width: 232px;
+      height: 232px;
+
+      &__image {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        object-fit: cover;
+      }
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 24px 0px;
+
+      &__title {
+        font-size: 72px;
+        font-weight: 800;
+        margin: 0;
+      }
+
+      &__more {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        &__logo {
+          font-size: 20px;
+          color: var(--accent-color);
+        }
+
+        &__icon {
+          font-size: 18px;
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      padding: 16px;
+      gap: 16px;
+      text-align: center;
+
+      &__container {
+        width: 160px;
+        height: 160px;
+        margin: 0 auto;
+      }
+
+      &__info {
+        align-items: center;
+        padding: 0;
+
+        &__title {
+          font-size: 32px;
+        }
+
+        &__more {
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 8px 32px;
+
+    &__header {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      width: 100%;
+      gap: 24px;
+
+      &__container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 16px;
+
+        &__button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: black;
+          gap: 8px;
+          padding: 24px;
+          border-radius: 100%;
+          background-color: var(--accent-color);
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+          transition: transform 0.2s ease;
+
+          &:hover {
+            transform: scale(1.05);
+          }
+
+          &.shuffle_button {
+            background-color: transparent;
+            color: var(--text-primary);
+            font-size: 32px;
+
+            &:hover {
+              color: var(--accent-color);
+            }
+          }
+        }
+      }
+
+      &__table {
+        display: grid;
+        grid-template-columns: 4fr 2fr 1fr;
+        gap: 16px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 8px;
+
+        &__flex {
+          display: flex;
+          gap: 16px;
+        }
+
+        &__item {
+          color: var(--text-primary);
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 16px;
+    gap: 16px;
+
+    &__header {
+      gap: 16px;
+
+      &__container {
+        &__button {
+          padding: 16px;
+          font-size: 24px;
+        }
+      }
+
+      &__table {
+        display: none;
+      }
+    }
+  }
+
+  .tracks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .track {
+    display: grid;
+    grid-template-columns: 4fr 2fr 1fr;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--card-hover);
+
+      .track__number {
+        display: none;
+      }
+
+      .track__play_icon {
+        display: flex;
+      }
+    }
+
+    &__info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    &__number {
+      width: 24px;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    &__play_icon {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      text-align: center;
+      color: var(--text-primary);
+      font-size: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+
+      &.visible {
+        display: flex;
+        position: relative;
+
+        .waveform {
+          position: absolute;
+          opacity: 0;
+        }
+
+        .pause_icon {
+          display: none;
+          position: absolute;
+        }
+
+        &:hover {
+          .waveform {
+            display: none;
+            opacity: 0;
+          }
+
+          .pause_icon {
+            display: flex;
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    &__details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    &__title {
+      color: var(--text-primary);
+      font-weight: 500;
+
+      &.green {
+        color: var(--accent-color);
+      }
+    }
+
+    &__artist {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    &__album {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    &__duration {
+      color: var(--text-secondary);
+      font-size: 14px;
+      text-align: right;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr auto;
+      padding: 8px;
+
+      &__info {
+        gap: 12px;
+      }
+
+      &__album {
+        display: none;
+      }
+    }
+  }
+}

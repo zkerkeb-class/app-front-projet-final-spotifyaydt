@@ -1,0 +1,181 @@
+.card {
+  border-radius: 8px;
+  overflow: hidden;
+  width: 150px;
+  padding: 12px;
+  flex-shrink: 0;
+  transition: background-color 0.3s ease;
+  position: relative;
+  text-decoration: none;
+
+  &:hover {
+    background-color: var(--card-hover);
+
+    .playButton {
+      opacity: 1;
+      transform: translate(50%, -50%) scale(1);
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 120px;
+    padding: 8px;
+  }
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  margin-bottom: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    margin-bottom: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artistImage {
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.playButton {
+  position: absolute;
+  top: 80%;
+  right: 20%;
+  transform: translate(50%, -50%) scale(0.8);
+  background-color: var(--play-button-color);
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+
+  &:hover {
+    transform: translate(50%, -50%) scale(1.1);
+    background-color: var(--accent-color);
+  }
+
+  &.visible {
+    opacity: 1;
+    transform: translate(50%, -50%) scale(1);
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 4px;
+
+  @media (max-width: 768px) {
+    gap: 2px;
+  }
+}
+
+.title {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
+}
+
+.artist,
+.followers,
+.year,
+.duration {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
+}
+
+.artistCard {
+  text-align: left;
+
+  .artistImageContainer {
+    margin-bottom: 15px;
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border-radius: 100%;
+
+    @media (max-width: 768px) {
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .title {
+    font-size: 1rem;
+    @media (max-width: 768px) {
+      font-size: 0.875rem;
+    }
+  }
+
+  .followers {
+    font-size: 0.875rem;
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: var(--accent-color);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    top: 6px;
+    left: 6px;
+  }
+}

@@ -1,70 +1,100 @@
-# Getting Started with Create React App
+# Liens des vidéos youTube pour valider le projet
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Backoffice
 
-## Available Scripts
+- <a href="https://youtu.be/7zRlJe0QhDU" target="_blank">Spotify AYDT Graphes pour les metrics</a>
+- <a href="https://youtu.be/GJvd0oEIj3E" target="_blank">Lier les sons aux albums</a>
+- <a href="https://youtu.be/wIcekotdmag" target="_blank">Drag and drop dans les pistes</a>
+- <a href="https://youtu.be/vcSP67Drops" target="_blank">Interface améliorée pour création album</a>
+- <a href="https://youtu.be/a6G-6cP3HXM" target="_blank">Modification et suppression d'audio</a>
+- <a href="https://youtu.be/Ffahjvnd_Sw" target="_blank">Barre de recherche dans les pistes</a>
 
-In the project directory, you can run:
+## Frontend
 
-### `npm start`
+- <a href="https://youtu.be/Kzov8YRi15M" target="_blank">Multi Language</a>
+- <a href="https://youtu.be/akWQd9WrJt0" target="_blank">Image optimisée</a>
+- <a href="https://youtu.be/2n5PznpbltM" target="_blank">Responsive mobile</a>
+- <a href="https://youtu.be/Exlt5y62qys" target="_blank">Performance LightHouse</a>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Backend
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- <a href="https://youtu.be/XHwi5_tPb5g?si=B8RlVTBUduacWON7" target="_blank">Backend - Jam WebSocket Spotify</a>
+- <a href="https://youtu.be/E1P6DI2pBcs?si=hZ_90fCwtP4WkAVU" target="_blank">Backend Spotify Login JWT Token</a>
+- <a href="https://youtu.be/ndfKEmIQFYU" target="_blank">Backend - Test Js Spotify</a>
 
-### `npm test`
+# Spotify AYDT
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# 🐼 Spotify AYDT
 
-### `npm run build`
+![Spotify AYDT Logo](spotify-aydt.png)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Un clone de spotify pour ecouter des musiques en ligne.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- [Voir le site](https://spotify-aydt.vercel.app/)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Aperçu
 
-### `npm run eject`
+![Aperçu du site](spotify-aydt.jpg)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Table des matières
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- [Installation](#installation)
+- [Technologies utilisées](#technologies-utilisées)
+- [Structure du projet](#structure-du-projet)
+- [Fonctionnalités](#fonctionnalités)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Installation
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Assurez-vous d'avoir Node.js installé avant de démarrer.
 
-## Learn More
+1. Clonez le repository:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+git clone https://github.com/zkerkeb-class/app-front-projet-final-spotifyaydt.git
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2. Accédez au répertoire du projet:
 
-### Code Splitting
+```bash
+cd app-front-projet-final-spotifyaydt
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. Installez les dépendances de chaques repertoire:
 
-### Analyzing the Bundle Size
+```bash
+npm install --legacy-peer-deps
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+4. Démarrez l'api puis demarrer l'application:
 
-### Making a Progressive Web App
+```bash
+npm run start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+5. Ouvrez votre navigateur et accédez à http://localhost:3000.
 
-### Advanced Configuration
+## Technologies utilisées
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Technologies utilisées
 
-### Deployment
+- React.js
+- SCSS
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Structure du projet
 
-### `npm run build` fails to minify
+### Pour le front
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- /src: Contient les pages du site.
+- /pages: Contient les pages du site.
+- /context: Contient le contexte de l'application.
+- /hooks: Contient les hooks de l'application.
+- /utils: Contient les utils de l'application.
+- /components: Regroupe les composants réutilisables.
+- /public: Ressources statiques telles que les images.
+
+## Fonctionnalités
+
+- Page d'accueil pour visualiser les differentes pistes.
+- Ecouter les musiques en ligne.
+- Page de recherche pour rechercher une piste.
+- Barre de recherche dans les pistes.

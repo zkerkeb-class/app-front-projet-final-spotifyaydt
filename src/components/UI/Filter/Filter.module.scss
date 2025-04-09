@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+
+  .filter {
+    display: inline-flex;
+    padding: 8px 12px;
+    border-radius: 50px;
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff1a;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #ffffff33;
+    }
+
+    &.active {
+      background-color: var(--text-primary);
+      color: var(--background-primary);
+    }
+  }
+}
